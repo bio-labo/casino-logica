@@ -426,6 +426,12 @@ html, body {
   box-shadow: 0 7px 0 #064e3b, 0 10px 20px rgba(0,0,0,0.5);
 }
 
+.yokai-btn-slot {
+  background: linear-gradient(180deg, #f43f5e 0%, #e11d48 50%, #9f1239 100%);
+  border-color: #fecdd3;
+  box-shadow: 0 7px 0 #4c0519, 0 10px 20px rgba(0,0,0,0.5);
+}
+
 .yokai-btn-ranking {
   background: linear-gradient(180deg, #ec4899 0%, #db2777 50%, #9d174d 100%);
   border-color: #fbcfe8;
@@ -1068,6 +1074,381 @@ html, body {
 .bigsix-card:active { transform: scale(0.96); }
 
 /* ============================================================================
+   🎰 7. バイオ・スロット (BIO-SLOT MACHINE)
+============================================================================ */
+.slot-machine-cabinet {
+  background: linear-gradient(180deg, #311042 0%, #170826 100%);
+  border: 4px solid #facc15;
+  border-radius: 26px;
+  padding: 16px 14px;
+  box-shadow:
+    inset 0 0 28px rgba(244, 63, 94, 0.35),
+    0 10px 0 #713f12,
+    0 16px 32px rgba(0, 0, 0, 0.75);
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.slot-cabinet-marquee {
+  background: linear-gradient(90deg, #9f1239 0%, #e11d48 50%, #9f1239 100%);
+  border: 2.5px solid #fef08a;
+  border-radius: 999px;
+  padding: 6px 14px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 0.92rem;
+  color: #fef08a;
+  letter-spacing: 0.08em;
+  text-shadow: 0 2px 0 #4c0519;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.65);
+  margin-bottom: 12px;
+}
+
+.slot-reels-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background: #020617;
+  border: 3.5px solid #f59e0b;
+  border-radius: 20px;
+  padding: 12px 10px;
+  box-shadow: inset 0 6px 18px rgba(0,0,0,0.95);
+  margin-bottom: 12px;
+}
+
+.slot-reel-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.slot-reel-window {
+  width: 100%;
+  min-height: 126px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 45%, #1e293b 0%, #090d16 100%);
+  border: 3px solid #64748b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.slot-reel-window.spinning {
+  border-color: #38bdf8;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.55), inset 0 4px 10px rgba(0,0,0,0.8);
+}
+
+.slot-reel-window.spinning .slot-sym-icon {
+  animation: slotSpinBlur 0.16s linear infinite;
+}
+
+@keyframes slotSpinBlur {
+  0%   { transform: translateY(-10px) scale(0.96); filter: blur(1px); }
+  50%  { transform: translateY(10px) scale(1.04); filter: blur(1.5px); }
+  100% { transform: translateY(-10px) scale(0.96); filter: blur(1px); }
+}
+
+.slot-reel-window.hit-glow {
+  border-color: #facc15;
+  background: radial-gradient(circle at 50% 45%, #422006 0%, #090d16 100%);
+  box-shadow: 0 0 22px rgba(250, 204, 21, 0.9), inset 0 0 14px rgba(250, 204, 21, 0.45);
+  transform: scale(1.03);
+}
+
+.slot-reel-window.jackpot-glow {
+  border-color: #f472b6;
+  background: linear-gradient(135deg, #581c87, #831843, #1e1b4b);
+  box-shadow: 0 0 28px rgba(244, 114, 182, 1), inset 0 0 18px rgba(254, 240, 138, 0.7);
+  animation: pulseGlow 0.9s infinite;
+}
+
+.slot-sym-icon {
+  font-size: 3.1rem;
+  line-height: 1.05;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.7));
+  margin-bottom: 4px;
+}
+
+.slot-sym-badge {
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255,255,255,0.6);
+  white-space: nowrap;
+}
+
+.slot-stop-btn {
+  width: 100%;
+  padding: 9px 6px;
+  border-radius: 14px;
+  border: 2.5px solid #fecdd3;
+  background: linear-gradient(180deg, #f43f5e 0%, #be123c 100%);
+  color: #ffffff;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #4c0519;
+  transition: transform 0.1s, opacity 0.15s;
+}
+.slot-stop-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #4c0519;
+}
+.slot-stop-btn:disabled {
+  background: #334155;
+  border-color: #64748b;
+  color: #94a3b8;
+  box-shadow: 0 3px 0 #0f172a;
+  cursor: not-allowed;
+}
+
+.slot-paytable-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.slot-pay-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 2px solid #475569;
+  border-radius: 14px;
+  padding: 8px 12px;
+}
+
+/* ⚡ 稲妻リーチ演出 ＆ リール激震アニメーション */
+@keyframes slotReelShake {
+  0%   { transform: translate(0, 0) scale(1.03); }
+  20%  { transform: translate(-4px, 3px) scale(1.05); }
+  40%  { transform: translate(4px, -3px) scale(1.03); }
+  60%  { transform: translate(-3px, -2px) scale(1.05); }
+  80%  { transform: translate(3px, 2px) scale(1.03); }
+  100% { transform: translate(0, 0) scale(1.03); }
+}
+
+.slot-reel-window.reach-blue {
+  border-color: #38bdf8;
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.95), inset 0 0 18px rgba(56, 189, 248, 0.55);
+  animation: slotReelShake 0.14s linear infinite;
+}
+
+.slot-reel-window.reach-red {
+  border-color: #ef4444;
+  background: radial-gradient(circle at 50% 45%, #450a0a 0%, #090d16 100%);
+  box-shadow: 0 0 28px rgba(239, 68, 68, 1), inset 0 0 20px rgba(244, 63, 94, 0.7);
+  animation: slotReelShake 0.11s linear infinite;
+}
+
+.slot-reel-window.reach-rainbow {
+  border-color: #facc15;
+  background: linear-gradient(135deg, #581c87, #be123c, #0369a1, #ca8a04);
+  background-size: 300% 300%;
+  box-shadow: 0 0 34px rgba(250, 204, 21, 1), 0 0 50px rgba(244, 114, 182, 0.95);
+  animation: slotReelShake 0.09s linear infinite, slotRainbowShift 1.2s linear infinite;
+}
+
+@keyframes slotRainbowShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🧬 DNA OVERDRIVE（フリースピン10回）サイバー虹色キャビネット */
+.slot-machine-cabinet.overdrive-mode {
+  background: linear-gradient(135deg, #1e0a3c 0%, #3b0764 45%, #0c4a6e 100%);
+  border-color: #f472b6;
+  box-shadow:
+    inset 0 0 38px rgba(56, 189, 248, 0.5),
+    0 0 28px rgba(244, 114, 182, 0.85),
+    0 10px 0 #701a75,
+    0 16px 36px rgba(0, 0, 0, 0.85);
+}
+
+.slot-overdrive-banner {
+  display: none;
+  background: linear-gradient(90deg, #9333ea, #ec4899, #eab308, #06b6d4, #9333ea);
+  background-size: 250% 100%;
+  animation: slotRainbowShift 2.2s linear infinite;
+  border: 2.5px solid #ffffff;
+  border-radius: 16px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  text-align: center;
+  box-shadow: 0 0 22px rgba(236, 72, 153, 0.85);
+}
+.slot-overdrive-banner.active {
+  display: block;
+}
+
+/* ⚡ 全画面 稲妻カットイン演出オーバーレイ */
+#slotLightningOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  pointer-events: none;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#slotLightningOverlay.active {
+  display: flex;
+}
+
+.slot-lightning-flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: slotFlashAnim 0.65s ease-out forwards;
+}
+@keyframes slotFlashAnim {
+  0%   { opacity: 0.92; }
+  20%  { opacity: 0.2; }
+  38%  { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+.slot-lightning-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: slotBoltAnim 0.7s ease-out forwards;
+}
+@keyframes slotBoltAnim {
+  0%   { opacity: 0; transform: scale(1.12); }
+  15%  { opacity: 1; transform: scale(1); }
+  45%  { opacity: 0.95; }
+  100% { opacity: 0; transform: scale(0.98); }
+}
+
+.slot-cutin-strip {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 14px 16px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 1.3rem;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  text-shadow: 0 3px 0 rgba(0,0,0,0.85), 0 0 18px rgba(255,255,255,0.9);
+  border-top: 4px solid #ffffff;
+  border-bottom: 4px solid #ffffff;
+  box-shadow: 0 0 36px rgba(0,0,0,0.9);
+  animation: slotCutinSlide 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes slotCutinSlide {
+  0%   { transform: translateX(-100%) skewX(-12deg); opacity: 0; }
+  22%  { transform: translateX(0) skewX(-6deg); opacity: 1; }
+  75%  { transform: translateX(0) skewX(-6deg); opacity: 1; }
+  100% { transform: translateX(100%) skewX(-12deg); opacity: 0; }
+}
+
+/* 🪙 BIG WIN / MEGA WIN / JACKPOT 金貨シャワー全画面オーバーレイ */
+#slotBigWinOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: radial-gradient(circle at 50% 45%, rgba(88, 28, 135, 0.88) 0%, rgba(4, 7, 20, 0.94) 80%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  overflow: hidden;
+}
+#slotBigWinOverlay.active {
+  display: flex;
+}
+
+#slotBigWinCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.bigwin-center-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 460px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(30, 16, 60, 0.94) 0%, rgba(15, 23, 42, 0.96) 100%);
+  border: 4px solid #facc15;
+  border-radius: 28px;
+  padding: 26px 18px 22px;
+  box-shadow: 0 0 50px rgba(250, 204, 21, 0.85), 0 12px 0 #854d0e;
+  animation: bigWinPopIn 0.45s cubic-bezier(0.18, 0.89, 0.32, 1.35);
+}
+
+.bigwin-center-card.jackpot-theme {
+  border-color: #f472b6;
+  box-shadow: 0 0 60px rgba(244, 114, 182, 0.95), 0 0 30px rgba(250, 204, 21, 0.9), 0 12px 0 #701a75;
+}
+
+@keyframes bigWinPopIn {
+  0%   { opacity: 0; transform: scale(0.45) rotate(-6deg); }
+  70%  { opacity: 1; transform: scale(1.06) rotate(1.5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.bigwin-title-text {
+  font-size: 2.25rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  background: linear-gradient(180deg, #ffffff 0%, #fef08a 45%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 0 #713f12) drop-shadow(0 0 18px rgba(250, 204, 21, 0.9));
+  margin-bottom: 6px;
+}
+
+.bigwin-title-text.jackpot-rainbow {
+  background: linear-gradient(90deg, #fef08a, #f472b6, #38bdf8, #4ade80, #fef08a);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: slotRainbowShift 1.6s linear infinite;
+  filter: drop-shadow(0 4px 0 #4a044e) drop-shadow(0 0 22px rgba(244, 114, 182, 0.95));
+}
+
+.bigwin-chip-counter {
+  font-size: 2.35rem;
+  font-weight: 900;
+  color: #fef08a;
+  text-shadow: 0 4px 0 #78350f, 0 0 22px rgba(250, 204, 21, 0.95);
+  margin: 10px 0 14px;
+}
+
+.bigwin-overdrive-pill {
+  display: inline-block;
+  background: linear-gradient(90deg, #9333ea, #ec4899, #eab308);
+  color: #ffffff;
+  border: 2.5px solid #ffffff;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 0.88rem;
+  font-weight: 900;
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.9);
+  margin-bottom: 14px;
+}
+
+/* ============================================================================
    🎉 モーダル演出（初回100チップ・ログボ50チップ・破産救済など）
 ============================================================================ */
 .modal-overlay {
@@ -1173,11 +1554,11 @@ html, body {
   <section id="screen-title" class="screen active">
     <div class="title-hero-box">
       <div class="title-badge-ribbon">✨ LOGICA SERIES 3RD EDITION ✨</div>
-      <div class="title-logo-sub">🎲 DICE × ♠️ CARDS × 🎡 WHEEL</div>
+      <div class="title-logo-sub">🎲 DICE × ♠️ CARDS × 🎡 WHEEL × 🎰 SLOT</div>
       <h1 class="title-logo-main">カジノ・ロジカ</h1>
       <div onclick="triggerCasinoAdminSecretTap()" style="font-size:0.82rem; font-weight:900; color:#fde047; margin-bottom:12px; letter-spacing:0.12em; cursor:pointer;">CASINO LOGICA Ver 1.0</div>
       <div class="title-icons-row">
-        <span>🎲</span><span>🃏</span><span>🎡</span><span>🪙</span><span>👑</span>
+        <span>🎲</span><span>🃏</span><span>🎡</span><span>🎰</span><span>🧬</span>
       </div>
     </div>
 
@@ -1189,7 +1570,7 @@ html, body {
           <div class="yokai-btn-icon">🎰</div>
           <div class="yokai-btn-text-wrap">
             <div class="yokai-btn-title">カジノ</div>
-            <div class="yokai-btn-desc">ダイス・トランプ・ホイールで真剣勝負！</div>
+            <div class="yokai-btn-desc">ダイス・トランプ・ホイール・スロットで真剣勝負！</div>
           </div>
         </div>
         <div class="yokai-btn-arrow">▶</div>
@@ -1357,6 +1738,18 @@ html, body {
           <div class="yokai-btn-text-wrap">
             <div class="yokai-btn-title">ホイール (WHEEL)</div>
             <div class="yokai-btn-desc">「ルーレット」＆「ビッグシックス」</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <!-- 🎰 スロット（バイオ・ロジカ特別仕様！） -->
+      <button class="yokai-btn yokai-btn-slot" onclick="openGame('slot')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🎰</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">スロット (BIO-SLOT)</div>
+            <div class="yokai-btn-desc">🥚卵 ➔ 🧪ATP ➔ 🦠シャーレ ➔ 🌈LR ➔ 🧬二重らせんDNAでJACKPOT！</div>
           </div>
         </div>
         <div class="yokai-btn-arrow">▶</div>
@@ -1989,6 +2382,159 @@ html, body {
   </section>
 
   <!-- ========================================================================
+       🎰 ゲーム7：バイオ・スロット (#screen-game-slot)
+  ======================================================================== -->
+  <section id="screen-game-slot" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🎰 バイオ・スロット <span id="slModeBadge" style="font-size:0.75rem; background:#e11d48; padding:2px 8px; border-radius:999px;">🧬 BIO-LOGICA</span></div>
+      <button class="back-btn" onclick="navigateTo('screen-category')">⬅️ カジノフロアへ</button>
+    </div>
+
+    <div class="slot-machine-cabinet" id="slotMachineCabinet">
+      <div class="slot-cabinet-marquee" id="slotMarqueeBanner">
+        🧬 BIO-LOGICA EVOLUTION SLOT — 🧬DNA 3つで ×100倍 ＆ FREE SPIN 10回！
+      </div>
+
+      <!-- 🧬 DNA OVERDRIVE（フリースピン10回）稼働ステータスバー -->
+      <div class="slot-overdrive-banner" id="slotOverdriveBanner">
+        <div style="font-size:1.05rem; font-weight:900; color:#ffffff; text-shadow:0 2px 0 rgba(0,0,0,0.8); letter-spacing:0.06em;">
+          ⚡🧬 DNA OVERDRIVE 発動中！ 🧬⚡
+        </div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:4px; font-size:0.9rem; font-weight:900; color:#fef08a; text-shadow:0 2px 0 rgba(0,0,0,0.85);">
+          <span>🎰 残りFREE SPIN：<span id="slotFreeSpinLeftText" style="font-size:1.25rem; color:#ffffff;">10</span> 回</span>
+          <span>🪙 OVERDRIVE累計：<span id="slotOverdriveTotalText" style="font-size:1.15rem; color:#4ade80;">+0</span></span>
+        </div>
+      </div>
+
+      <!-- ベット設定バー -->
+      <div class="bet-control-bar" id="slotBetBar" style="margin-bottom:12px;">
+        <div style="font-weight:900; font-size:0.9rem;">
+          1スピン賭け金: <span id="slotBetText" style="color:#fef08a; font-size:1.15rem;">10</span> 🪙
+          <span id="slotFreeTag" style="display:none; margin-left:6px; background:#ec4899; color:#fff; padding:2px 8px; border-radius:999px; font-size:0.74rem;">FREE消費0🪙</span>
+        </div>
+        <div class="bet-chips-btns" id="slotBetBtnsWrap">
+          <button class="chip-bet-btn c-5" onclick="adjustSlotBet(5)">+5</button>
+          <button class="chip-bet-btn c-10" onclick="adjustSlotBet(10)">+10</button>
+          <button class="chip-bet-btn c-50" onclick="adjustSlotBet(50)">+50</button>
+          <button class="chip-bet-btn c-max" onclick="adjustSlotBet('max')">MAX</button>
+          <button class="chip-bet-btn c-clear" onclick="adjustSlotBet('reset')">10に戻す</button>
+        </div>
+      </div>
+
+      <!-- 3リール＆個別STOPボタン -->
+      <div class="slot-reels-row">
+        <!-- 左リール -->
+        <div class="slot-reel-col">
+          <div class="slot-reel-window" id="slotReelWin0">
+            <div class="slot-sym-icon" id="slotSymIcon0">🧬</div>
+            <div class="slot-sym-badge" id="slotSymBadge0" style="background:#581c87; color:#fef08a; border-color:#f472b6;">二重らせんDNA</div>
+          </div>
+          <button class="slot-stop-btn" id="slotStopBtn0" onclick="stopSlotReel(0)" disabled>🛑 STOP</button>
+        </div>
+
+        <!-- 中リール -->
+        <div class="slot-reel-col">
+          <div class="slot-reel-window" id="slotReelWin1">
+            <div class="slot-sym-icon" id="slotSymIcon1">🧬</div>
+            <div class="slot-sym-badge" id="slotSymBadge1" style="background:#581c87; color:#fef08a; border-color:#f472b6;">二重らせんDNA</div>
+          </div>
+          <button class="slot-stop-btn" id="slotStopBtn1" onclick="stopSlotReel(1)" disabled>🛑 STOP</button>
+        </div>
+
+        <!-- 右リール -->
+        <div class="slot-reel-col">
+          <div class="slot-reel-window" id="slotReelWin2">
+            <div class="slot-sym-icon" id="slotSymIcon2">🧬</div>
+            <div class="slot-sym-badge" id="slotSymBadge2" style="background:#581c87; color:#fef08a; border-color:#f472b6;">二重らせんDNA</div>
+          </div>
+          <button class="slot-stop-btn" id="slotStopBtn2" onclick="stopSlotReel(2)" disabled>🛑 STOP</button>
+        </div>
+      </div>
+
+      <!-- 結果メッセージ表示 -->
+      <div id="slotResultText" style="text-align:center; font-weight:900; font-size:1.02rem; color:#fef08a; min-height:30px; margin-bottom:12px;">
+        🎰 スピンボタンを押してリールを回そう！（STOPで目押し停止もOK！）
+      </div>
+
+      <!-- スピン＆一括停止アクションボタン -->
+      <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+        <button class="action-btn" id="slotSpinBtn" onclick="startSlotSpin()" style="min-width:210px; font-size:1.1rem;">
+          🎰 スピンスタート！
+        </button>
+        <button class="action-btn btn-red" id="slotStopAllBtn" onclick="stopAllSlotReels()" style="display:none; font-size:1rem;">
+          ⚡ 全リール一斉ストップ！
+        </button>
+      </div>
+    </div>
+
+    <!-- 🧬 バイオ・スロット 配当＆役一覧（生命の進化ストーリー順） -->
+    <div class="rule-guide-box" style="border-color:#f43f5e;">
+      <div class="rule-guide-title" style="color:#fda4af;">📖 バイオ・スロット 絵柄＆配当表（進化順）</div>
+      <div class="slot-paytable-grid">
+        <!-- 1. JACKPOT: 二重らせんDNA -->
+        <div class="slot-pay-row" style="border-color:#facc15; background:linear-gradient(90deg, rgba(88,28,135,0.85), rgba(15,23,42,0.95));">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.45rem; letter-spacing:2px;">🧬🧬🧬</span>
+            <div>
+              <div style="font-weight:900; font-size:0.92rem; color:#fef08a;">💥 JACKPOT：二重らせんDNA</div>
+              <div style="font-size:0.73rem; color:#e9d5ff;">3つ揃いで×100倍 ＋ <strong>フリースピン10回『DNA OVERDRIVE』突入！</strong>（2個でも×5倍）</div>
+            </div>
+          </div>
+          <div style="font-weight:900; font-size:1.15rem; color:#facc15; white-space:nowrap;">×100倍</div>
+        </div>
+
+        <!-- 2. BAR枠: LR -->
+        <div class="slot-pay-row" style="border-color:#c084fc;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.45rem; letter-spacing:2px;">🌈🌈🌈</span>
+            <div>
+              <div style="font-weight:900; font-size:0.9rem; color:#f3e8ff;">🔥 BAR枠（強当たり）：LR (レジェンド)</div>
+              <div style="font-size:0.73rem; color:#cbd5e1;">伝説ランクの輝き！2個揃いでも×3倍ボーナス！</div>
+            </div>
+          </div>
+          <div style="font-weight:900; font-size:1.1rem; color:#4ade80; white-space:nowrap;">×30倍</div>
+        </div>
+
+        <!-- 3. 中当たり: シャーレ -->
+        <div class="slot-pay-row" style="border-color:#34d399;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.45rem; letter-spacing:2px;">🦠🦠🦠</span>
+            <div>
+              <div style="font-weight:900; font-size:0.88rem; color:#a7f3d0;">✨ 中当たり：シャーレ（培養細胞）</div>
+              <div style="font-size:0.73rem; color:#cbd5e1;">シャーレの中で細胞が元気に大増殖！</div>
+            </div>
+          </div>
+          <div style="font-weight:900; font-size:1.05rem; color:#4ade80; white-space:nowrap;">×10倍</div>
+        </div>
+
+        <!-- 4. 小〜中当たり: ATP -->
+        <div class="slot-pay-row" style="border-color:#38bdf8;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.45rem; letter-spacing:2px;">🧪🧪🧪</span>
+            <div>
+              <div style="font-weight:900; font-size:0.88rem; color:#bae6fd;">⚡ 小〜中当たり：ATP（エネルギー）</div>
+              <div style="font-size:0.73rem; color:#cbd5e1;">育成に欠かせない生命エネルギー補給！</div>
+            </div>
+          </div>
+          <div style="font-weight:900; font-size:1.05rem; color:#4ade80; white-space:nowrap;">×5倍</div>
+        </div>
+
+        <!-- 5. 小当たり: 卵 -->
+        <div class="slot-pay-row" style="border-color:#fde047;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.45rem; letter-spacing:2px;">🥚🥚🥚</span>
+            <div>
+              <div style="font-weight:900; font-size:0.88rem; color:#fef08a;">🌱 小当たり：卵（タマゴ）</div>
+              <div style="font-size:0.73rem; color:#cbd5e1;">すべての生命の始まり！3個で×3倍、2個でも×1.5倍返還！</div>
+            </div>
+          </div>
+          <div style="font-weight:900; font-size:1.05rem; color:#4ade80; white-space:nowrap;">×3倍 <span style="font-size:0.75rem; color:#fde047;">(2個×1.5)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
        ⚙️ メニュー画面 (#screen-menu)
   ======================================================================== -->
   <section id="screen-menu" class="screen">
@@ -2038,7 +2584,7 @@ html, body {
       </div>
     </div>
 
-    <!-- 全6ゲーム ルール解説 -->
+    <!-- 全7ゲーム ルール解説 -->
     <div style="background:rgba(15,23,42,0.92); border:3px solid #38bdf8; border-radius:22px; padding:16px; margin-bottom:14px; box-shadow:0 6px 0 #0369a1; font-size:0.82rem; line-height:1.6;">
       <div style="font-size:1.05rem; font-weight:900; color:#7dd3fc; margin-bottom:8px;">📖 収録ゲーム ルールガイド</div>
       <div style="margin-bottom:8px;"><strong>🥣 チンチロ</strong>：お椀にサイコロ3個を最大3回まで振る。ピンゾロ(5倍)・アラシ(3倍)・シゴロ(2倍)・通常の目(1倍)・ヒフミ(2倍払い)・目なし(1倍負け)。</div>
@@ -2046,7 +2592,8 @@ html, body {
       <div style="margin-bottom:8px;"><strong>🃏 ブラックジャック</strong>：トランプの合計を21に近づける。22以上はバースト負け。A+10点札の21はナチュラルBJで2.5倍配当！</div>
       <div style="margin-bottom:8px;"><strong>👑 ポーカー</strong>：5枚の手札から残したいカードをHOLDして1回交換。相手より強い役を作れば勝利＋高役ボーナス倍率！</div>
       <div style="margin-bottom:8px;"><strong>🎯 ルーレット</strong>：0〜36の回転盤。赤黒・偶数奇数(2倍)、ダズン(3倍)、数字ピンポイント当て(36倍)に自由ベット！</div>
-      <div><strong>🎡 ビッグシックス</strong>：1・2・5・10・20・40が書かれた巨大ホイール。止まったマスの数字の倍率分（元金＋賭け金×数字）がもらえる！</div>
+      <div style="margin-bottom:8px;"><strong>🎡 ビッグシックス</strong>：1〜10の番号を選んで中に書かれた5〜9倍をもらうモードと、1〜40倍の54マス標準モードを切替可能！</div>
+      <div><strong>🎰 バイオ・スロット</strong>：『バイオ・ロジカ』仕様の3リールスロット！🥚卵(3倍) ➔ 🧪ATP(5倍) ➔ 🦠シャーレ(10倍) ➔ 🌈LR(BAR枠・30倍) ➔ 🧬二重らせんDNA(JACKPOT・100倍)！</div>
     </div>
 
     <!-- フレンド(2P)チップリセット・データ管理 -->
@@ -2170,6 +2717,43 @@ html, body {
     </p>
     <button class="action-btn" id="rewardModalBtn" onclick="closeRewardModal()" style="width:100%; font-size:1.1rem;">
       ✨ 受け取ってはじめる！
+    </button>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     ⚡ スロット稲妻カットイン演出オーバーレイ (#slotLightningOverlay)
+========================================================================== -->
+<div id="slotLightningOverlay">
+  <div class="slot-lightning-flash" id="slotLightningFlash"></div>
+  <svg class="slot-lightning-svg" id="slotLightningSvg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+    <polyline id="slotBoltMain1" points="180,0 260,220 190,260 340,560 250,600 410,1000" fill="none" stroke="#38bdf8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline id="slotBoltCore1" points="180,0 260,220 190,260 340,560 250,600 410,1000" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline id="slotBoltMain2" points="820,0 710,250 790,300 630,610 720,650 560,1000" fill="none" stroke="#38bdf8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline id="slotBoltCore2" points="820,0 710,250 790,300 630,610 720,650 560,1000" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  <div class="slot-cutin-strip" id="slotCutinStrip">
+    ⚡ REACH!! あと1つで当たり！！ ⚡
+  </div>
+</div>
+
+<!-- ==========================================================================
+     🪙 BIG WIN / MEGA WIN / JACKPOT 金貨シャワーオーバーレイ (#slotBigWinOverlay)
+========================================================================== -->
+<div id="slotBigWinOverlay">
+  <canvas id="slotBigWinCanvas"></canvas>
+  <div class="bigwin-center-card" id="bigWinCenterCard">
+    <div id="bigWinIconBadge" style="font-size:3.4rem; margin-bottom:4px; filter:drop-shadow(0 0 16px rgba(250,204,21,0.9));">🌈</div>
+    <div class="bigwin-title-text" id="bigWinTitleText">MEGA WIN!!</div>
+    <div id="bigWinSubText" style="font-size:0.95rem; font-weight:900; color:#e2e8f0; margin-bottom:4px;">
+      🌈 LR (レジェンド) 3つ揃い ×30倍！
+    </div>
+    <div class="bigwin-chip-counter" id="bigWinChipCounter">🪙 +0</div>
+    <div id="bigWinOverdrivePill" class="bigwin-overdrive-pill" style="display:none;">
+      ⚡ 🧬 DNA OVERDRIVE (FREE SPIN 10回) 突入！！ ⚡
+    </div>
+    <button class="action-btn" id="bigWinCloseBtn" onclick="closeSlotBigWinOverlay()" style="width:100%; font-size:1.1rem;">
+      ✨ チップを受け取る！
     </button>
   </div>
 </div>
@@ -2555,6 +3139,74 @@ function playSE(type) {
       gain.gain.linearRampToValueAtTime(0.005, now + 0.025);
       osc.connect(gain); gain.connect(audioCtx.destination);
       osc.start(now); osc.stop(now + 0.025);
+    } else if (type === 'thunder' || type === 'reach_super') {
+      // ⚡ 稲妻・雷鳴シンセ（鋭い高周波クラック＋重低音）
+      const bufferSize = Math.floor(audioCtx.sampleRate * 0.32);
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.08));
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(type === 'reach_super' ? 2200 : 1400, now);
+      filter.Q.setValueAtTime(1.5, now);
+      const nGain = audioCtx.createGain();
+      nGain.gain.setValueAtTime(0.32, now);
+      nGain.gain.exponentialRampToValueAtTime(0.008, now + 0.32);
+      noise.connect(filter); filter.connect(nGain); nGain.connect(audioCtx.destination);
+      noise.start(now);
+
+      const bass = audioCtx.createOscillator();
+      const bGain = audioCtx.createGain();
+      bass.type = 'sawtooth';
+      bass.frequency.setValueAtTime(160, now);
+      bass.frequency.exponentialRampToValueAtTime(42, now + 0.28);
+      bGain.gain.setValueAtTime(0.24, now);
+      bGain.gain.exponentialRampToValueAtTime(0.008, now + 0.28);
+      bass.connect(bGain); bGain.connect(audioCtx.destination);
+      bass.start(now); bass.stop(now + 0.28);
+
+      if (type === 'reach_super') {
+        [659.25, 880, 1174.66, 1567.98].forEach((freq, idx) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = 'triangle';
+          o.frequency.setValueAtTime(freq, now + 0.05 + idx * 0.055);
+          g.gain.setValueAtTime(0.18, now + 0.05 + idx * 0.055);
+          g.gain.exponentialRampToValueAtTime(0.008, now + 0.05 + idx * 0.055 + 0.22);
+          o.connect(g); g.connect(audioCtx.destination);
+          o.start(now + 0.05 + idx * 0.055);
+          o.stop(now + 0.05 + idx * 0.055 + 0.22);
+        });
+      }
+    } else if (type === 'jackpot') {
+      // 💥 JACKPOT / MEGA WIN 豪華ファンファーレ
+      const fanfare = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5, 1318.51, 1567.98];
+      fanfare.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = idx >= 6 ? 'sawtooth' : 'triangle';
+        const t0 = now + idx * 0.085;
+        osc.frequency.setValueAtTime(freq, t0);
+        gain.gain.setValueAtTime(idx >= 6 ? 0.16 : 0.22, t0);
+        gain.gain.exponentialRampToValueAtTime(0.008, t0 + (idx === fanfare.length - 1 ? 0.65 : 0.25));
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(t0); osc.stop(t0 + (idx === fanfare.length - 1 ? 0.65 : 0.25));
+      });
+    } else if (type === 'overdrive') {
+      // 🧬 DNA OVERDRIVE 突入サイバー上昇音
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(1760, now + 0.45);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.008, now + 0.48);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.48);
     }
   } catch (e) {}
 }
@@ -3091,6 +3743,17 @@ function challengeRanker(targetId) {
 
 function navigateTo(screenId) {
   playSE('click');
+  if (screenId !== 'screen-game-slot' && typeof slotState !== 'undefined') {
+    if (typeof clearSlotStopAllTimers === 'function') clearSlotStopAllTimers();
+    if (typeof closeSlotBigWinOverlay === 'function') closeSlotBigWinOverlay(true);
+    for (let i = 0; i < 3; i++) {
+      if (slotState.timers[i]) {
+        clearInterval(slotState.timers[i]);
+        slotState.timers[i] = null;
+      }
+      slotState.spinning[i] = false;
+    }
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(screenId);
   if (target) target.classList.add('active');
@@ -3542,7 +4205,8 @@ function handleOnlineRoomDocUpdate(data) {
       blackjack: 'screen-game-blackjack',
       poker: 'screen-game-poker',
       roulette: 'screen-game-roulette',
-      bigsix: 'screen-game-bigsix'
+      bigsix: 'screen-game-bigsix',
+      slot: 'screen-game-slot'
     };
     const targetScreen = screenMap[data.activeGame];
     if (targetScreen && !document.getElementById(targetScreen).classList.contains('active')) {
@@ -3628,6 +4292,10 @@ function openGame(gameKey, fromRemoteSync = false) {
   } else if (gameKey === 'bigsix') {
     initBigSixUI();
     navigateTo('screen-game-bigsix');
+  } else if (gameKey === 'slot') {
+    document.getElementById('slModeBadge').textContent = modeLabel;
+    initSlotUI();
+    navigateTo('screen-game-slot');
   }
 }
 
@@ -5626,6 +6294,753 @@ function settleBigSix(winIdx, totalBet) {
   saveState();
   renderBigSixBoard();
   checkBankruptNotice();
+}
+
+/* ============================================================================
+   🎰 ゲーム7：バイオ・スロット (BIO-SLOT MACHINE) ロジック
+   絵柄（生命の進化ストーリー順）：
+   ・小当たり：🥚 卵 (タマゴ) ➔ 3個で×3倍、2個で×1.5倍
+   ・小〜中当たり：🧪 ATP ➔ 3個で×5倍
+   ・中当たり：🦠 シャーレ ➔ 3個で×10倍
+   ・BAR枠（強当たり）：🌈 LR (レジェンド) ➔ 3個で×30倍、2個で×3倍
+   ・JACKPOT（最強）：🧬 二重らせんDNA ➔ 3個で×100倍、2個で×5倍
+============================================================================ */
+const BIO_SLOT_SYMBOLS = [
+  {
+    id: 'egg',
+    icon: '🥚',
+    name: '卵(タマゴ)',
+    mult3: 3,
+    mult2: 1.5,
+    weight: 34,
+    bg: '#422006',
+    color: '#fef08a',
+    border: '#facc15'
+  },
+  {
+    id: 'atp',
+    icon: '🧪',
+    name: 'ATPカプセル',
+    mult3: 5,
+    mult2: 0,
+    weight: 26,
+    bg: '#082f49',
+    color: '#bae6fd',
+    border: '#38bdf8'
+  },
+  {
+    id: 'petri',
+    icon: '🦠',
+    name: 'シャーレ',
+    mult3: 10,
+    mult2: 0,
+    weight: 20,
+    bg: '#064e3b',
+    color: '#a7f3d0',
+    border: '#34d399'
+  },
+  {
+    id: 'lr',
+    icon: '🌈',
+    name: 'LR(BAR枠)',
+    mult3: 30,
+    mult2: 3,
+    weight: 13,
+    bg: '#3b0764',
+    color: '#f3e8ff',
+    border: '#c084fc'
+  },
+  {
+    id: 'dna',
+    icon: '🧬',
+    name: '二重らせんDNA',
+    mult3: 100,
+    mult2: 5,
+    weight: 7,
+    bg: '#581c87',
+    color: '#fef08a',
+    border: '#f472b6'
+  }
+];
+
+let slotState = {
+  bet: 10,
+  reels: [4, 4, 4], // 現在各リールに表示されている BIO_SLOT_SYMBOLS のインデックス
+  spinning: [false, false, false],
+  timers: [null, null, null],
+  stopAllTimers: [],
+  reachClass: '',          // 'reach-blue' | 'reach-red' | 'reach-rainbow'
+  isOverdrive: false,      // 🧬 DNA OVERDRIVE (フリースピン10回) 稼働中フラグ
+  freeSpinsLeft: 0,        // 残りフリースピン回数
+  overdriveTotalWon: 0,    // OVERDRIVE累計獲得チップ
+  overdriveBaseBet: 10,    // OVERDRIVE突入時の基準ベット額
+  currentSpinIsFree: false // 今回転中のスピンがフリースピンかどうか
+};
+
+let slotLightningTimer = null;
+let slotBigWinAnimId = null;
+let slotBigWinCountTimer = null;
+let slotBigWinAfterCloseCb = null;
+
+function renderSlotReelSymbol(reelIdx, symIdx, extraClass = '') {
+  const sym = BIO_SLOT_SYMBOLS[symIdx] || BIO_SLOT_SYMBOLS[0];
+  const winEl = document.getElementById('slotReelWin' + reelIdx);
+  const iconEl = document.getElementById('slotSymIcon' + reelIdx);
+  const badgeEl = document.getElementById('slotSymBadge' + reelIdx);
+  if (!winEl || !iconEl || !badgeEl) return;
+
+  iconEl.textContent = sym.icon;
+  badgeEl.textContent = sym.name;
+  badgeEl.style.background = sym.bg;
+  badgeEl.style.color = sym.color;
+  badgeEl.style.borderColor = sym.border;
+
+  winEl.className = 'slot-reel-window' + (extraClass ? ' ' + extraClass : '');
+}
+
+function updateSlotOverdriveUI() {
+  const cabinet = document.getElementById('slotMachineCabinet');
+  const banner = document.getElementById('slotOverdriveBanner');
+  const leftEl = document.getElementById('slotFreeSpinLeftText');
+  const totalEl = document.getElementById('slotOverdriveTotalText');
+  const freeTag = document.getElementById('slotFreeTag');
+  const betBtnsWrap = document.getElementById('slotBetBtnsWrap');
+  const spinBtn = document.getElementById('slotSpinBtn');
+
+  if (cabinet) cabinet.classList.toggle('overdrive-mode', slotState.isOverdrive);
+  if (banner) banner.classList.toggle('active', slotState.isOverdrive);
+  if (leftEl) leftEl.textContent = slotState.freeSpinsLeft;
+  if (totalEl) totalEl.textContent = '+' + slotState.overdriveTotalWon.toLocaleString();
+  if (freeTag) freeTag.style.display = slotState.isOverdrive ? 'inline-block' : 'none';
+  if (betBtnsWrap) {
+    betBtnsWrap.style.opacity = slotState.isOverdrive ? '0.4' : '1';
+    betBtnsWrap.style.pointerEvents = slotState.isOverdrive ? 'none' : 'auto';
+  }
+  if (spinBtn && !slotState.spinning.some(Boolean)) {
+    if (slotState.isOverdrive && slotState.freeSpinsLeft > 0) {
+      spinBtn.textContent = `🧬 FREE SPIN！(残り${slotState.freeSpinsLeft}回・0🪙)`;
+    } else {
+      spinBtn.textContent = '🎰 スピンスタート！';
+    }
+  }
+}
+
+function clearSlotStopAllTimers() {
+  slotState.stopAllTimers.forEach(t => clearTimeout(t));
+  slotState.stopAllTimers = [];
+}
+
+function initSlotUI() {
+  clearSlotStopAllTimers();
+  closeSlotBigWinOverlay(true);
+  for (let i = 0; i < 3; i++) {
+    if (slotState.timers[i]) {
+      clearInterval(slotState.timers[i]);
+      slotState.timers[i] = null;
+    }
+    slotState.spinning[i] = false;
+    renderSlotReelSymbol(i, slotState.reels[i]);
+    const stopBtn = document.getElementById('slotStopBtn' + i);
+    if (stopBtn) stopBtn.disabled = true;
+  }
+  slotState.reachClass = '';
+  if (!slotState.isOverdrive) {
+    slotState.bet = Math.min(Math.max(1, slotState.bet), Math.max(1, state.chips));
+  }
+  document.getElementById('slotBetText').textContent = slotState.isOverdrive ? slotState.overdriveBaseBet : slotState.bet;
+  document.getElementById('slotSpinBtn').style.display = 'inline-block';
+  document.getElementById('slotStopAllBtn').style.display = 'none';
+  document.getElementById('slotMarqueeBanner').textContent = slotState.isOverdrive
+    ? `⚡🧬 DNA OVERDRIVE 稼働中！ 残りFREE SPIN ${slotState.freeSpinsLeft}回！`
+    : '🧬 BIO-LOGICA EVOLUTION SLOT — 🧬DNA 3つで ×100倍 ＆ FREE SPIN 10回！';
+  document.getElementById('slotResultText').textContent = slotState.isOverdrive
+    ? '⚡ フリースピン中（消費0🪙・高確率）！スピンボタンを押そう！'
+    : '🎰 スピンボタンを押してリールを回そう！（STOPで目押し停止もOK！）';
+  updateSlotOverdriveUI();
+}
+
+function adjustSlotBet(val) {
+  if (slotState.spinning.some(Boolean) || slotState.isOverdrive) return;
+  playSE('click');
+  if (val === 'reset') slotState.bet = Math.min(10, state.chips);
+  else if (val === 'max') slotState.bet = state.chips;
+  else slotState.bet = Math.min(state.chips, slotState.bet + val);
+  if (slotState.bet < 1 && state.chips > 0) slotState.bet = 1;
+  document.getElementById('slotBetText').textContent = slotState.bet;
+}
+
+function pickWeightedSlotSymbolIndex(isFreeBoost = false) {
+  const weights = BIO_SLOT_SYMBOLS.map(s => {
+    if (!isFreeBoost) return s.weight;
+    if (s.id === 'dna') return s.weight + 6;
+    if (s.id === 'lr') return s.weight + 8;
+    if (s.id === 'petri') return s.weight + 5;
+    return s.weight;
+  });
+  const totalW = weights.reduce((acc, w) => acc + w, 0);
+  let r = Math.random() * totalW;
+  for (let i = 0; i < weights.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return i;
+  }
+  return 0;
+}
+
+/* --- ⚡ 稲妻カットイン（リーチ演出） --- */
+function generateLightningPoints(startX) {
+  let x = startX;
+  const pts = [`${x},0`];
+  for (let y = 140; y <= 920; y += 130) {
+    x = Math.max(40, Math.min(960, x + (Math.random() - 0.5) * 210));
+    pts.push(`${Math.round(x)},${y}`);
+  }
+  pts.push(`${Math.round(Math.max(40, Math.min(960, x + (Math.random() - 0.5) * 160)))},1000`);
+  return pts.join(' ');
+}
+
+function triggerSlotLightningCutin(sym) {
+  const overlay = document.getElementById('slotLightningOverlay');
+  const flash = document.getElementById('slotLightningFlash');
+  const strip = document.getElementById('slotCutinStrip');
+  const b1 = document.getElementById('slotBoltMain1');
+  const c1 = document.getElementById('slotBoltCore1');
+  const b2 = document.getElementById('slotBoltMain2');
+  const c2 = document.getElementById('slotBoltCore2');
+  if (!overlay || !flash || !strip) return;
+
+  let boltColor = '#38bdf8';
+  let flashBg = 'radial-gradient(circle, rgba(186,230,253,0.9) 0%, rgba(2,132,199,0.55) 70%)';
+  let stripBg = 'linear-gradient(90deg, rgba(2,132,199,0.95), rgba(56,189,248,0.98), rgba(2,132,199,0.95))';
+  let labelText = `⚡ REACH!! 【${sym.icon} ${sym.name}】あと1つ！！ ⚡`;
+  let reachCss = 'reach-blue';
+
+  if (sym.id === 'dna') {
+    boltColor = '#f472b6';
+    flashBg = 'linear-gradient(135deg, rgba(250,204,21,0.9), rgba(244,114,182,0.85), rgba(56,189,248,0.85))';
+    stripBg = 'linear-gradient(90deg, #9333ea, #ec4899, #eab308, #06b6d4, #9333ea)';
+    labelText = '⚡🌈 GOD REACH!! 🧬DNA 100倍＆FREE SPIN!! 🌈⚡';
+    reachCss = 'reach-rainbow';
+    playSE('reach_super');
+  } else if (sym.id === 'lr') {
+    boltColor = '#ef4444';
+    flashBg = 'radial-gradient(circle, rgba(254,202,202,0.92) 0%, rgba(220,38,38,0.65) 70%)';
+    stripBg = 'linear-gradient(90deg, #991b1b, #ef4444, #f97316, #ef4444, #991b1b)';
+    labelText = '🔥⚡ SUPER REACH!! 🌈LR (×30倍) 激アツ！！ ⚡🔥';
+    reachCss = 'reach-red';
+    playSE('reach_super');
+  } else {
+    playSE('thunder');
+  }
+
+  slotState.reachClass = reachCss;
+
+  const p1 = generateLightningPoints(220);
+  const p2 = generateLightningPoints(780);
+  if (b1 && c1) {
+    b1.setAttribute('points', p1);
+    c1.setAttribute('points', p1);
+    b1.setAttribute('stroke', boltColor);
+  }
+  if (b2 && c2) {
+    b2.setAttribute('points', p2);
+    c2.setAttribute('points', p2);
+    b2.setAttribute('stroke', sym.id === 'dna' ? '#facc15' : boltColor);
+  }
+
+  flash.style.background = flashBg;
+  strip.style.background = stripBg;
+  strip.textContent = labelText;
+
+  // アニメーション再トリガー
+  overlay.classList.remove('active');
+  void overlay.offsetWidth;
+  overlay.classList.add('active');
+
+  if (slotLightningTimer) clearTimeout(slotLightningTimer);
+  slotLightningTimer = setTimeout(() => {
+    overlay.classList.remove('active');
+  }, 880);
+}
+
+/* --- 🪙 BIG WIN / MEGA WIN / JACKPOT 金貨シャワー全画面演出 --- */
+function showSlotBigWinOverlay(isJackpot, payout, sym, isRetrigger, afterCloseCb = null) {
+  const overlay = document.getElementById('slotBigWinOverlay');
+  const canvas = document.getElementById('slotBigWinCanvas');
+  const card = document.getElementById('bigWinCenterCard');
+  const iconEl = document.getElementById('bigWinIconBadge');
+  const titleEl = document.getElementById('bigWinTitleText');
+  const subEl = document.getElementById('bigWinSubText');
+  const counterEl = document.getElementById('bigWinChipCounter');
+  const odPill = document.getElementById('bigWinOverdrivePill');
+  const closeBtn = document.getElementById('bigWinCloseBtn');
+  if (!overlay || !canvas) return;
+
+  slotBigWinAfterCloseCb = afterCloseCb;
+
+  card.classList.toggle('jackpot-theme', isJackpot);
+  iconEl.textContent = isJackpot ? '🧬' : '🌈';
+  titleEl.textContent = isJackpot ? 'JACKPOT!!' : 'MEGA WIN!!';
+  titleEl.classList.toggle('jackpot-rainbow', isJackpot);
+  subEl.textContent = isJackpot
+    ? `💥 🧬 二重らせんDNA 3つ揃い（×${sym.mult3}倍）！！`
+    : `🔥 🌈 LR (レジェンド) 3つ揃い（×${sym.mult3}倍）！！`;
+
+  if (isJackpot) {
+    odPill.style.display = 'inline-block';
+    odPill.textContent = isRetrigger
+      ? '⚡ 🧬 EXTRA OVERDRIVE！ FREE SPIN +10回 上乗せ！！ ⚡'
+      : '⚡ 🧬 DNA OVERDRIVE (FREE SPIN 10回) 突入！！ ⚡';
+    closeBtn.textContent = isRetrigger ? '⚡ +10回上乗せして続行！' : '⚡ DNA OVERDRIVE 突入！';
+  } else {
+    odPill.style.display = 'none';
+    closeBtn.textContent = '✨ チップを受け取る！';
+  }
+
+  overlay.classList.add('active');
+  playSE('jackpot');
+
+  // 獲得チップ数の高速カウントアップ演出
+  if (slotBigWinCountTimer) clearInterval(slotBigWinCountTimer);
+  const startTime = performance.now();
+  const countDuration = 1350;
+  let lastCoinSound = 0;
+  counterEl.textContent = '🪙 +0';
+  slotBigWinCountTimer = setInterval(() => {
+    const elapsed = performance.now() - startTime;
+    const ratio = Math.min(1, elapsed / countDuration);
+    const eased = 1 - Math.pow(1 - ratio, 3);
+    const val = Math.round(payout * eased);
+    counterEl.textContent = `🪙 +${val.toLocaleString()}`;
+    if (elapsed - lastCoinSound > 160 && ratio < 1) {
+      lastCoinSound = elapsed;
+      playSE('coin');
+    }
+    if (ratio >= 1) {
+      clearInterval(slotBigWinCountTimer);
+      slotBigWinCountTimer = null;
+      counterEl.textContent = `🪙 +${payout.toLocaleString()}`;
+    }
+  }, 30);
+
+  // 全画面Canvas 金貨・宝石・キラキラ物理シャワー
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const resizeCanvas = () => {
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  resizeCanvas();
+
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  const particleCount = isJackpot ? 150 : 105;
+  const particles = [];
+  const gemColors = ['#facc15', '#fef08a', '#f472b6', '#38bdf8', '#4ade80', '#c084fc'];
+
+  for (let i = 0; i < particleCount; i++) {
+    const kindRand = Math.random();
+    const kind = kindRand < 0.65 ? 'coin' : (kindRand < 0.85 ? 'spark' : 'gem');
+    particles.push({
+      kind,
+      x: Math.random() * W,
+      y: -Math.random() * H * 1.15 - 20,
+      vx: (Math.random() - 0.5) * 4.2,
+      vy: 2.5 + Math.random() * 5.2,
+      gravity: 0.16 + Math.random() * 0.1,
+      size: kind === 'coin' ? (12 + Math.random() * 10) : (6 + Math.random() * 8),
+      rot: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.22,
+      flip: Math.random() * Math.PI * 2,
+      flipSpeed: 0.1 + Math.random() * 0.16,
+      color: gemColors[Math.floor(Math.random() * gemColors.length)],
+      bounced: false
+    });
+  }
+
+  if (slotBigWinAnimId) cancelAnimationFrame(slotBigWinAnimId);
+  function drawShower() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.vy += p.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.rotSpeed;
+      p.flip += p.flipSpeed;
+
+      // 下端で1回跳ね返ってから再ループ
+      if (p.y > H - p.size && !p.bounced) {
+        p.y = H - p.size;
+        p.vy = -p.vy * (0.38 + Math.random() * 0.22);
+        p.vx *= 0.85;
+        p.bounced = true;
+      } else if (p.y > H + 40) {
+        p.y = -30 - Math.random() * 120;
+        p.x = Math.random() * W;
+        p.vy = 2.2 + Math.random() * 4.5;
+        p.vx = (Math.random() - 0.5) * 3.8;
+        p.bounced = false;
+      }
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+
+      if (p.kind === 'coin') {
+        const scaleX = Math.max(0.18, Math.abs(Math.cos(p.flip)));
+        ctx.scale(scaleX, 1);
+        // 金貨の外枠
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = '#facc15';
+        ctx.fill();
+        ctx.lineWidth = 2.2;
+        ctx.strokeStyle = '#fef08a';
+        ctx.stroke();
+        // 金貨の内側リング＆光沢
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size * 0.68, 0, Math.PI * 2);
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.fillStyle = '#fffbeb';
+        ctx.font = `900 ${Math.round(p.size * 0.85)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('★', 0, 1);
+      } else if (p.kind === 'gem') {
+        // ダイヤ・宝石ひし形
+        ctx.beginPath();
+        ctx.moveTo(0, -p.size);
+        ctx.lineTo(p.size * 0.78, 0);
+        ctx.lineTo(0, p.size);
+        ctx.lineTo(-p.size * 0.78, 0);
+        ctx.closePath();
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      } else {
+        // キラキラ星粒子
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+    slotBigWinAnimId = requestAnimationFrame(drawShower);
+  }
+  slotBigWinAnimId = requestAnimationFrame(drawShower);
+}
+
+function closeSlotBigWinOverlay(silent = false) {
+  const overlay = document.getElementById('slotBigWinOverlay');
+  if (overlay) overlay.classList.remove('active');
+  if (slotBigWinAnimId) {
+    cancelAnimationFrame(slotBigWinAnimId);
+    slotBigWinAnimId = null;
+  }
+  if (slotBigWinCountTimer) {
+    clearInterval(slotBigWinCountTimer);
+    slotBigWinCountTimer = null;
+  }
+  const cb = slotBigWinAfterCloseCb;
+  slotBigWinAfterCloseCb = null;
+  if (!silent && typeof cb === 'function') {
+    cb();
+  }
+}
+
+function startSlotSpin() {
+  if (slotState.spinning.some(Boolean)) return;
+  clearSlotStopAllTimers();
+  slotState.reachClass = '';
+
+  const isFree = slotState.isOverdrive && slotState.freeSpinsLeft > 0;
+  slotState.currentSpinIsFree = isFree;
+
+  if (isFree) {
+    slotState.freeSpinsLeft--;
+    slotState.bet = slotState.overdriveBaseBet;
+    document.getElementById('slotBetText').textContent = slotState.bet;
+    playSE('overdrive');
+  } else {
+    if (state.chips <= 0) {
+      checkBankruptNotice();
+      return;
+    }
+    slotState.bet = Math.min(Math.max(1, slotState.bet), state.chips);
+    document.getElementById('slotBetText').textContent = slotState.bet;
+    state.chips -= slotState.bet;
+    saveState();
+    playSE('coin');
+  }
+
+  updateSlotOverdriveUI();
+  document.getElementById('slotSpinBtn').style.display = 'none';
+  document.getElementById('slotStopAllBtn').style.display = 'inline-block';
+  document.getElementById('slotResultText').textContent = isFree
+    ? `⚡ DNA OVERDRIVE 回転中！（残りFREE SPIN ${slotState.freeSpinsLeft}回・消費0🪙）`
+    : '🛑 好きなタイミングで「STOP」を押してリールを止めよう！';
+  document.getElementById('slotMarqueeBanner').textContent = isFree
+    ? `⚡🧬 DNA OVERDRIVE 稼働中！ 残り ${slotState.freeSpinsLeft} 回 — 高確率チャンス！`
+    : '🔥 リール回転中！ 🧬二重らせんDNA や 🌈LR を狙え！';
+
+  for (let i = 0; i < 3; i++) {
+    slotState.spinning[i] = true;
+    const stopBtn = document.getElementById('slotStopBtn' + i);
+    if (stopBtn) stopBtn.disabled = false;
+
+    slotState.timers[i] = setInterval(() => {
+      slotState.reels[i] = (slotState.reels[i] + 1) % BIO_SLOT_SYMBOLS.length;
+      const cls = slotState.reachClass ? ('spinning ' + slotState.reachClass) : 'spinning';
+      renderSlotReelSymbol(i, slotState.reels[i], cls);
+      if (i === 0) playSE('tick');
+    }, 82 + i * 12);
+  }
+}
+
+function stopSlotReel(reelIdx) {
+  if (!slotState.spinning[reelIdx]) return;
+  playSE('dice');
+
+  if (slotState.timers[reelIdx]) {
+    clearInterval(slotState.timers[reelIdx]);
+    slotState.timers[reelIdx] = null;
+  }
+  slotState.spinning[reelIdx] = false;
+  const stopBtn = document.getElementById('slotStopBtn' + reelIdx);
+  if (stopBtn) stopBtn.disabled = true;
+
+  const isFree = slotState.currentSpinIsFree;
+
+  // 目押しタイミングの手応えを活かしつつ、リーチ時は揃いやすくなるアシスト抽選（FREE SPIN中は高確率ブースト！）
+  let finalIdx = slotState.reels[reelIdx];
+  const stoppedIndices = [0, 1, 2].filter(idx => !slotState.spinning[idx] && idx !== reelIdx);
+  if (stoppedIndices.length === 1 && Math.random() < (isFree ? 0.54 : 0.38)) {
+    finalIdx = slotState.reels[stoppedIndices[0]];
+  } else if (stoppedIndices.length === 2 && slotState.reels[stoppedIndices[0]] === slotState.reels[stoppedIndices[1]]) {
+    const reachSym = BIO_SLOT_SYMBOLS[slotState.reels[stoppedIndices[0]]];
+    const hitChance = isFree
+      ? (reachSym.id === 'dna' ? 0.22 : (reachSym.id === 'lr' ? 0.36 : 0.58))
+      : (reachSym.id === 'dna' ? 0.16 : (reachSym.id === 'lr' ? 0.24 : 0.42));
+    if (Math.random() < hitChance) {
+      finalIdx = slotState.reels[stoppedIndices[0]];
+    } else if (finalIdx === slotState.reels[stoppedIndices[0]] && Math.random() < (isFree ? 0.3 : 0.5)) {
+      finalIdx = pickWeightedSlotSymbolIndex(isFree);
+    }
+  } else if (Math.random() < 0.35) {
+    finalIdx = pickWeightedSlotSymbolIndex(isFree);
+  }
+
+  slotState.reels[reelIdx] = finalIdx;
+  renderSlotReelSymbol(reelIdx, finalIdx);
+
+  // 2リールが同じ絵柄で止まって残り1リールなら「⚡ 稲妻カットイン＆リール激震リーチ」発動！
+  const activeCount = slotState.spinning.filter(Boolean).length;
+  if (activeCount === 1) {
+    const doneReels = [0, 1, 2].filter(i => !slotState.spinning[i]);
+    const remainIdx = [0, 1, 2].find(i => slotState.spinning[i]);
+    if (slotState.reels[doneReels[0]] === slotState.reels[doneReels[1]]) {
+      const rSym = BIO_SLOT_SYMBOLS[slotState.reels[doneReels[0]]];
+      triggerSlotLightningCutin(rSym);
+      if (remainIdx !== undefined) {
+        renderSlotReelSymbol(remainIdx, slotState.reels[remainIdx], 'spinning ' + slotState.reachClass);
+      }
+      if (rSym.id === 'dna') {
+        document.getElementById('slotResultText').textContent = '⚡🌈 超絶神リーチ！！🧬二重らせんDNA が揃えば 100倍＆FREE SPIN！！';
+      } else if (rSym.id === 'lr') {
+        document.getElementById('slotResultText').textContent = '🔥⚡ 激熱リーチ！！🌈LR (×30倍) を狙い撃て！！';
+      } else {
+        document.getElementById('slotResultText').textContent = `⚡ 【 ${rSym.icon} ${rSym.name} 】リーチ！！最後の1つを止めろ！`;
+      }
+    }
+  } else if (activeCount === 0) {
+    slotState.reachClass = '';
+    settleSlotSpin();
+  }
+}
+
+function stopAllSlotReels() {
+  clearSlotStopAllTimers();
+  const spinningIndices = [0, 1, 2].filter(idx => slotState.spinning[idx]);
+  if (spinningIndices.length === 0) return;
+
+  // 1個目即停止 ➔ 2個目140ms後 ➔ もしリーチ成立なら稲妻演出を味わえるよう680ms溜めて3個目停止！
+  const stopNext = (pos) => {
+    if (pos >= spinningIndices.length) return;
+    const idx = spinningIndices[pos];
+    if (slotState.spinning[idx]) {
+      stopSlotReel(idx);
+    }
+    if (pos + 1 < spinningIndices.length) {
+      const remaining = slotState.spinning.filter(Boolean).length;
+      const delay = (remaining === 1 && slotState.reachClass) ? 680 : 150;
+      const tid = setTimeout(() => stopNext(pos + 1), delay);
+      slotState.stopAllTimers.push(tid);
+    }
+  };
+  stopNext(0);
+}
+
+function finishSlotOverdriveModal(totalWon) {
+  playSE('jackpot');
+  showRewardModal(
+    '🧬',
+    'DNA OVERDRIVE 完走！！',
+    `フリースピン <strong>10回</strong> すべて終了しました！！<br>OVERDRIVE 合計獲得チップ<br><span style="font-size:1.95rem; color:#facc15; font-weight:900;">🪙 +${totalWon.toLocaleString()} チップ</span><br>おつかれさまでした！`,
+    '👑 最高すぎる！！'
+  );
+}
+
+function settleSlotSpin() {
+  clearSlotStopAllTimers();
+  document.getElementById('slotSpinBtn').style.display = 'inline-block';
+  document.getElementById('slotStopAllBtn').style.display = 'none';
+
+  const [i0, i1, i2] = slotState.reels;
+  const s0 = BIO_SLOT_SYMBOLS[i0];
+  const s1 = BIO_SLOT_SYMBOLS[i1];
+  const s2 = BIO_SLOT_SYMBOLS[i2];
+
+  let mult = 0;
+  let winTitle = '';
+  let isJackpot = false;
+  let isMegaWin = false;
+  let matchedReels = [];
+
+  // ① 3つすべて同じ絵柄が揃った場合！
+  if (i0 === i1 && i1 === i2) {
+    mult = s0.mult3;
+    matchedReels = [0, 1, 2];
+    if (s0.id === 'dna') {
+      isJackpot = true;
+      winTitle = `💥🧬 JACKPOT！！【二重らせんDNA】3つ揃い (×${mult}倍)！！`;
+    } else if (s0.id === 'lr') {
+      isMegaWin = true;
+      winTitle = `🌈 MEGA WIN！！【LR (レジェンド)】3つ揃い (×${mult}倍)！`;
+    } else if (s0.id === 'petri') {
+      winTitle = `🦠 中当たり！【シャーレ】細胞大増殖 (×${mult}倍)！`;
+    } else if (s0.id === 'atp') {
+      winTitle = `🧪 当たり！【ATPカプセル】エネルギー満タン (×${mult}倍)！`;
+    } else {
+      winTitle = `🥚 小当たり！【卵(タマゴ)】孵化ボーナス (×${mult}倍)！`;
+    }
+  } else {
+    // ② 2つ揃いボーナス判定（🧬DNA 2個＝×5倍、🌈LR 2個＝×3倍、🥚卵 2個＝×1.5倍）
+    let pairSym = null;
+    if (i0 === i1) { pairSym = s0; matchedReels = [0, 1]; }
+    else if (i1 === i2) { pairSym = s1; matchedReels = [1, 2]; }
+    else if (i0 === i2) { pairSym = s0; matchedReels = [0, 2]; }
+
+    if (pairSym && pairSym.mult2 > 0) {
+      mult = pairSym.mult2;
+      winTitle = `✨ 【${pairSym.icon}${pairSym.name}】2個ボーナス (×${mult}倍)！`;
+    }
+  }
+
+  let payout = 0;
+  const wasOverdrive = slotState.isOverdrive;
+  let triggeredNewOverdrive = false;
+  let isRetrigger = false;
+
+  if (mult > 0) {
+    payout = Math.round(slotState.bet * mult);
+    state.chips += payout;
+    state.totalWins++;
+
+    matchedReels.forEach(rIdx => {
+      renderSlotReelSymbol(rIdx, slotState.reels[rIdx], (isJackpot || isMegaWin) ? 'jackpot-glow' : 'hit-glow');
+    });
+
+    if (slotState.currentSpinIsFree) {
+      slotState.overdriveTotalWon += payout;
+    }
+
+    // 🧬 DNA 3つ揃い ➔ 100倍獲得 ＋ DNA OVERDRIVE (フリースピン10回) 突入 / 上乗せ！
+    if (isJackpot) {
+      if (wasOverdrive) {
+        isRetrigger = true;
+        slotState.freeSpinsLeft += 10;
+      } else {
+        triggeredNewOverdrive = true;
+        slotState.isOverdrive = true;
+        slotState.freeSpinsLeft = 10;
+        slotState.overdriveTotalWon = payout;
+        slotState.overdriveBaseBet = slotState.bet;
+      }
+    }
+
+    const msg = `${winTitle} ➔ +${payout.toLocaleString()} 🪙 獲得！`;
+    document.getElementById('slotResultText').textContent = msg;
+    document.getElementById('slotMarqueeBanner').textContent = isJackpot
+      ? `🌌 DNA JACKPOT 炸裂！！ +${payout.toLocaleString()} CHIP ＆ FREE SPIN 10回！！`
+      : (isMegaWin ? `🔥 MEGA WIN!! +${payout.toLocaleString()} CHIP 獲得！！` : `🎉 WIN! +${payout.toLocaleString()} CHIP 獲得！`);
+
+    if (!isJackpot && !isMegaWin) {
+      playSE('win');
+    }
+  } else {
+    playSE('lose');
+    document.getElementById('slotResultText').textContent = slotState.currentSpinIsFree
+      ? `💨 ${s0.icon} - ${s1.icon} - ${s2.icon} （FREE SPIN中 消費0🪙）`
+      : `💨 ${s0.icon} - ${s1.icon} - ${s2.icon} （ハズレ… -${slotState.bet} 🪙）`;
+    document.getElementById('slotMarqueeBanner').textContent = slotState.isOverdrive
+      ? `⚡🧬 DNA OVERDRIVE 稼働中！ 残り ${slotState.freeSpinsLeft} 回！`
+      : '🧬 BIO-LOGICA EVOLUTION SLOT — 次こそDNAを揃えよう！';
+  }
+
+  // フリースピン完走チェック
+  let overdriveJustFinished = false;
+  let finishedTotalWon = 0;
+  if (slotState.currentSpinIsFree && slotState.freeSpinsLeft <= 0 && !isJackpot) {
+    overdriveJustFinished = true;
+    finishedTotalWon = slotState.overdriveTotalWon;
+    slotState.isOverdrive = false;
+    slotState.freeSpinsLeft = 0;
+    slotState.overdriveTotalWon = 0;
+  }
+
+  updateSlotOverdriveUI();
+  if (!slotState.isOverdrive) {
+    document.getElementById('slotSpinBtn').textContent = '🎰 もう1回スピン！';
+  }
+
+  // 🪙 BIG WIN 金貨シャワー演出（🌈LR 30倍 または 🧬DNA 100倍 の時のみ発動！）
+  if (isJackpot) {
+    showSlotBigWinOverlay(true, payout, s0, isRetrigger, () => {
+      playSE('overdrive');
+      showToast(isRetrigger
+        ? '⚡ DNA OVERDRIVE +10回上乗せ！引き続きフリースピンを楽しもう！'
+        : '⚡ DNA OVERDRIVE 突入！10回無料＆高確率スピンスタート！'
+      );
+    });
+  } else if (isMegaWin) {
+    showSlotBigWinOverlay(false, payout, s0, false, () => {
+      if (overdriveJustFinished) {
+        finishSlotOverdriveModal(finishedTotalWon);
+      }
+    });
+  } else if (overdriveJustFinished) {
+    setTimeout(() => finishSlotOverdriveModal(finishedTotalWon), 350);
+  }
+
+  saveState();
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    pushOnlineRoomPatch({
+      hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
+      guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
+    });
+    if (mult >= 10) {
+      sendOnlineToast(`バイオ・スロット: ${document.getElementById('slotResultText').textContent}`);
+    }
+  }
+  if (!slotState.isOverdrive) {
+    checkBankruptNotice();
+  }
 }
 
 /* ============================================================================
