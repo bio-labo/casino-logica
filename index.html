@@ -2477,7 +2477,7 @@ html, body {
             <span style="font-size:1.45rem; letter-spacing:2px;">🧬🧬🧬</span>
             <div>
               <div style="font-weight:900; font-size:0.92rem; color:#fef08a;">💥 JACKPOT：二重らせんDNA</div>
-              <div style="font-size:0.73rem; color:#e9d5ff;">3つ揃いで×100倍 ＋ <strong>フリースピン10回『DNA OVERDRIVE』突入！</strong>（2個でも×5倍）</div>
+              <div style="font-size:0.73rem; color:#e9d5ff;">3つ揃いで×100倍 ＋ <strong>フリースピン10回『DNA OVERDRIVE』突入！</strong>（2個で×2倍返還）</div>
             </div>
           </div>
           <div style="font-weight:900; font-size:1.15rem; color:#facc15; white-space:nowrap;">×100倍</div>
@@ -2489,7 +2489,7 @@ html, body {
             <span style="font-size:1.45rem; letter-spacing:2px;">🌈🌈🌈</span>
             <div>
               <div style="font-weight:900; font-size:0.9rem; color:#f3e8ff;">🔥 BAR枠（強当たり）：LR (レジェンド)</div>
-              <div style="font-size:0.73rem; color:#cbd5e1;">伝説ランクの輝き！2個揃いでも×3倍ボーナス！</div>
+              <div style="font-size:0.73rem; color:#cbd5e1;">伝説ランクの輝き！2個揃いでも×1.5倍ボーナス！</div>
             </div>
           </div>
           <div style="font-weight:900; font-size:1.1rem; color:#4ade80; white-space:nowrap;">×30倍</div>
@@ -2525,10 +2525,10 @@ html, body {
             <span style="font-size:1.45rem; letter-spacing:2px;">🥚🥚🥚</span>
             <div>
               <div style="font-weight:900; font-size:0.88rem; color:#fef08a;">🌱 小当たり：卵（タマゴ）</div>
-              <div style="font-size:0.73rem; color:#cbd5e1;">すべての生命の始まり！3個で×3倍、2個でも×1.5倍返還！</div>
+              <div style="font-size:0.73rem; color:#cbd5e1;">すべての生命の始まり！3個で×3倍、2個で×0.5倍（半分返還救済）！</div>
             </div>
           </div>
-          <div style="font-weight:900; font-size:1.05rem; color:#4ade80; white-space:nowrap;">×3倍 <span style="font-size:0.75rem; color:#fde047;">(2個×1.5)</span></div>
+          <div style="font-weight:900; font-size:1.05rem; color:#4ade80; white-space:nowrap;">×3倍 <span style="font-size:0.75rem; color:#fde047;">(2個×0.5)</span></div>
         </div>
       </div>
     </div>
@@ -6299,11 +6299,11 @@ function settleBigSix(winIdx, totalBet) {
 /* ============================================================================
    🎰 ゲーム7：バイオ・スロット (BIO-SLOT MACHINE) ロジック
    絵柄（生命の進化ストーリー順）：
-   ・小当たり：🥚 卵 (タマゴ) ➔ 3個で×3倍、2個で×1.5倍
+   ・小当たり：🥚 卵 (タマゴ) ➔ 3個で×3倍、2個で×0.5倍(半分返還)
    ・小〜中当たり：🧪 ATP ➔ 3個で×5倍
    ・中当たり：🦠 シャーレ ➔ 3個で×10倍
-   ・BAR枠（強当たり）：🌈 LR (レジェンド) ➔ 3個で×30倍、2個で×3倍
-   ・JACKPOT（最強）：🧬 二重らせんDNA ➔ 3個で×100倍、2個で×5倍
+   ・BAR枠（強当たり）：🌈 LR (レジェンド) ➔ 3個で×30倍、2個で×1.5倍
+   ・JACKPOT（最強）：🧬 二重らせんDNA ➔ 3個で×100倍＋フリースピン10回、2個で×2倍返還
 ============================================================================ */
 const BIO_SLOT_SYMBOLS = [
   {
@@ -6311,9 +6311,9 @@ const BIO_SLOT_SYMBOLS = [
     icon: '🥚',
     name: '卵(タマゴ)',
     mult3: 3,
-    mult2: 1.5,
-    weight: 36,
-    freeWeight: 26,
+    mult2: 0.5,
+    weight: 42,
+    freeWeight: 30,
     bg: '#422006',
     color: '#fef08a',
     border: '#facc15'
@@ -6325,7 +6325,7 @@ const BIO_SLOT_SYMBOLS = [
     mult3: 5,
     mult2: 0,
     weight: 26,
-    freeWeight: 22,
+    freeWeight: 24,
     bg: '#082f49',
     color: '#bae6fd',
     border: '#38bdf8'
@@ -6336,8 +6336,8 @@ const BIO_SLOT_SYMBOLS = [
     name: 'シャーレ',
     mult3: 10,
     mult2: 0,
-    weight: 20,
-    freeWeight: 24,
+    weight: 18,
+    freeWeight: 22,
     bg: '#064e3b',
     color: '#a7f3d0',
     border: '#34d399'
@@ -6347,9 +6347,9 @@ const BIO_SLOT_SYMBOLS = [
     icon: '🌈',
     name: 'LR(BAR枠)',
     mult3: 30,
-    mult2: 3,
-    weight: 12,
-    freeWeight: 19,
+    mult2: 1.5,
+    weight: 9,
+    freeWeight: 15,
     bg: '#3b0764',
     color: '#f3e8ff',
     border: '#c084fc'
@@ -6359,8 +6359,8 @@ const BIO_SLOT_SYMBOLS = [
     icon: '🧬',
     name: '二重らせんDNA',
     mult3: 100,
-    mult2: 5,
-    weight: 6,
+    mult2: 2,
+    weight: 5,
     freeWeight: 9,
     bg: '#581c87',
     color: '#fef08a',
@@ -6821,39 +6821,39 @@ function stopSlotReel(reelIdx) {
 
   const isFree = slotState.currentSpinIsFree;
 
-  // 厳密な重み付き確率テーブル（通常時：🧬DNA 3つ揃い＝約1/172、🌈LR 3つ揃い＝約1/79 ／ FREE SPIN中：高確率優遇）
+  // 厳密な重み付き確率テーブル（案Bバランス型：通常時RTP 約95〜98% ／ FREE SPIN中：高確率優遇）
   let finalIdx = 0;
   const stoppedIndices = [0, 1, 2].filter(idx => !slotState.spinning[idx] && idx !== reelIdx);
 
   if (stoppedIndices.length === 0) {
-    // 1個目の停止：重み付きテーブルで厳密抽選（通常時 DNA=6%, LR=12% ...）
+    // 1個目の停止：重み付きテーブルで厳密抽選（通常時 DNA=5%, LR=9%, シャーレ=18%, ATP=26%, 卵=42%）
     finalIdx = pickWeightedSlotSymbolIndex(isFree);
   } else if (stoppedIndices.length === 1) {
     // 2個目の停止：1個目の絵柄に応じたリーチ発生率で抽選（外れたら1個目以外から抽選）
     const firstIdx = slotState.reels[stoppedIndices[0]];
     const firstSym = BIO_SLOT_SYMBOLS[firstIdx];
     const reachChance = isFree
-      ? (firstSym.id === 'dna' ? 0.45 : (firstSym.id === 'lr' ? 0.42 : 0.48))
-      : (firstSym.id === 'dna' ? 0.42 : (firstSym.id === 'lr' ? 0.35 : 0.34));
+      ? (firstSym.id === 'dna' ? 0.40 : (firstSym.id === 'lr' ? 0.36 : 0.42))
+      : (firstSym.id === 'dna' ? 0.32 : (firstSym.id === 'lr' ? 0.28 : 0.26));
     if (Math.random() < reachChance) {
       finalIdx = firstIdx;
     } else {
       finalIdx = pickWeightedSlotSymbolIndex(isFree, firstIdx);
     }
   } else if (stoppedIndices.length === 2 && slotState.reels[stoppedIndices[0]] === slotState.reels[stoppedIndices[1]]) {
-    // 3個目の停止（リーチ状態）：絵柄ごとの厳密当選率で3つ揃い判定
+    // 3個目の停止（リーチ状態）：絵柄ごとの厳密当選率で3つ揃い判定（外れたらリーチ絵柄以外から抽選）
     const reachIdx = slotState.reels[stoppedIndices[0]];
     const reachSym = BIO_SLOT_SYMBOLS[reachIdx];
     const hitChance = isFree
-      ? (reachSym.id === 'dna' ? 0.25 : (reachSym.id === 'lr' ? 0.35 : (reachSym.id === 'petri' ? 0.48 : (reachSym.id === 'atp' ? 0.55 : 0.58))))
-      : (reachSym.id === 'dna' ? 0.23 : (reachSym.id === 'lr' ? 0.30 : (reachSym.id === 'petri' ? 0.35 : (reachSym.id === 'atp' ? 0.42 : 0.45))));
+      ? (reachSym.id === 'dna' ? 0.22 : (reachSym.id === 'lr' ? 0.28 : (reachSym.id === 'petri' ? 0.38 : (reachSym.id === 'atp' ? 0.44 : 0.48))))
+      : (reachSym.id === 'dna' ? 0.20 : (reachSym.id === 'lr' ? 0.24 : (reachSym.id === 'petri' ? 0.25 : (reachSym.id === 'atp' ? 0.30 : 0.36))));
     if (Math.random() < hitChance) {
       finalIdx = reachIdx;
     } else {
       finalIdx = pickWeightedSlotSymbolIndex(isFree, reachIdx);
     }
   } else {
-    // 3個目の停止（非リーチ状態）：重み付きテーブルで抽選（2個揃いボーナス等が発生）
+    // 3個目の停止（非リーチ状態）：重み付きテーブルで抽選
     finalIdx = pickWeightedSlotSymbolIndex(isFree);
   }
 
