@@ -1,0 +1,4826 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>カジノ・ロジカ (CASINO LOGICA) - 総合テーブル＆ダイスカジノ</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+/* ============================================================================
+   🎨 カジノ・ロジカ (CASINO LOGICA)
+   妖怪ウォッチ風ポップ＆立体タイトルUI × ゴージャスカジノテーマ
+============================================================================ */
+:root {
+  --bg-deep: #0b1026;
+  --bg-royal: #17204a;
+  --gold-light: #fef08a;
+  --gold-main: #facc15;
+  --gold-dark: #ca8a04;
+  --gold-border: #854d0e;
+  --red-main: #ef4444;
+  --red-dark: #b91c1c;
+  --blue-main: #3b82f6;
+  --blue-dark: #1d4ed8;
+  --green-felt: #065f46;
+  --green-dark: #064e3b;
+  --purple-main: #a855f7;
+  --purple-dark: #6b21a8;
+  --orange-main: #f97316;
+  --orange-dark: #c2410c;
+  --ink-dark: #1e1b4b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
+  background: radial-gradient(circle at 50% 25%, #25347a 0%, #101738 60%, #070b1c 100%);
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* 背景アニメーションCanvas */
+#bgCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* メインラッパー */
+.app-container {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px 36px;
+}
+
+/* ============================================================================
+   👑 上部ステータスバー（妖怪ウォッチ風立体カプセル）
+============================================================================ */
+.top-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 3px solid #facc15;
+  border-radius: 999px;
+  padding: 6px 14px;
+  box-shadow: 0 5px 0 #854d0e, 0 8px 20px rgba(0,0,0,0.6);
+  margin-bottom: 12px;
+  flex-wrap: nowrap;
+}
+
+.brand-mini {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 900;
+  font-size: 0.92rem;
+  color: #fef08a;
+  text-shadow: 0 2px 0 #000;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip-counter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chip-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(180deg, #fef08a 0%, #facc15 50%, #eab308 100%);
+  color: #422006;
+  border: 2.5px solid #ffffff;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-weight: 900;
+  font-size: 0.95rem;
+  box-shadow: 0 3px 0 #854d0e, inset 0 2px 2px rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+
+.chip-pill.p2-pill {
+  background: linear-gradient(180deg, #bfdbfe 0%, #60a5fa 50%, #3b82f6 100%);
+  color: #1e3a8a;
+  box-shadow: 0 3px 0 #1e40af, inset 0 2px 2px rgba(255,255,255,0.8);
+}
+
+.top-right-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.icon-circle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #1e3a8a;
+  transition: transform 0.1s;
+}
+.icon-circle-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #1e3a8a;
+}
+
+/* ============================================================================
+   📺 画面切り替え
+============================================================================ */
+.screen {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  animation: popIn 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+.screen.active {
+  display: flex;
+}
+
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.94) translateY(8px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes floatBounce {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50% { transform: translateY(-7px) rotate(1deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 6px 0 #7f1d1d, 0 0 18px rgba(239,68,68,0.6); transform: scale(1); }
+  50% { box-shadow: 0 6px 0 #7f1d1d, 0 0 30px rgba(250,204,21,0.95); transform: scale(1.03); }
+}
+
+/* ============================================================================
+   🌟 妖怪ウォッチ風タイトル画面 (#screen-title)
+============================================================================ */
+.title-hero-box {
+  position: relative;
+  text-align: center;
+  margin: 10px 0 18px;
+  padding: 24px 16px 20px;
+  background: radial-gradient(circle at 50% 35%, rgba(250,204,21,0.22) 0%, rgba(30,41,59,0.88) 75%);
+  border: 4px solid #facc15;
+  border-radius: 28px;
+  box-shadow: 0 8px 0 #854d0e, 0 14px 30px rgba(0,0,0,0.65), inset 0 0 25px rgba(250,204,21,0.25);
+  overflow: hidden;
+}
+
+/* 背景の回転サンバースト風装飾 */
+.title-hero-box::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(250, 204, 21, 0.07) 0deg 12deg,
+    transparent 12deg 24deg
+  );
+  animation: spinSlow 35s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes spinSlow {
+  100% { transform: rotate(360deg); }
+}
+
+.title-badge-ribbon {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(90deg, #dc2626, #f97316, #dc2626);
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.78rem;
+  padding: 4px 16px;
+  border-radius: 999px;
+  border: 2px solid #fef08a;
+  box-shadow: 0 3px 0 #7f1d1d;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.title-logo-main {
+  position: relative;
+  font-size: clamp(2.1rem, 7vw, 3.1rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: #fef08a;
+  -webkit-text-stroke: 2.5px #713f12;
+  text-shadow:
+    0 4px 0 #713f12,
+    0 7px 0 #422006,
+    0 10px 18px rgba(0,0,0,0.8);
+  letter-spacing: 0.04em;
+  animation: floatBounce 3.2s ease-in-out infinite;
+  margin-bottom: 6px;
+}
+
+.title-logo-sub {
+  position: relative;
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #38bdf8;
+  letter-spacing: 0.16em;
+  text-shadow: 0 2px 0 #082f49;
+  margin-bottom: 14px;
+}
+
+.title-icons-row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  font-size: 1.7rem;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+}
+
+/* 妖怪ウォッチ風の立体カプセルボタン群 */
+.yokai-menu-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.yokai-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 22px;
+  border-radius: 22px;
+  border: 4px solid #ffffff;
+  font-family: inherit;
+  font-weight: 900;
+  color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.12s, filter 0.15s;
+  overflow: hidden;
+}
+
+.yokai-btn::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 12px;
+  right: 12px;
+  height: 36%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.03) 100%);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.yokai-btn:active:not(:disabled) {
+  transform: translateY(4px) !important;
+}
+
+.yokai-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 1;
+}
+
+.yokai-btn-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.yokai-btn-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.yokai-btn-title {
+  font-size: 1.32rem;
+  line-height: 1.2;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.65);
+}
+
+.yokai-btn-desc {
+  font-size: 0.78rem;
+  opacity: 0.95;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+}
+
+.yokai-btn-arrow {
+  font-size: 1.4rem;
+  font-weight: 900;
+  background: rgba(0,0,0,0.25);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* ボタンカラーバリエーション */
+.yokai-btn-casino {
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 45%, #d97706 100%);
+  border-color: #fef08a;
+  color: #3b0764;
+  box-shadow: 0 7px 0 #78350f, 0 12px 24px rgba(0,0,0,0.5);
+}
+.yokai-btn-casino .yokai-btn-title {
+  color: #fff;
+  -webkit-text-stroke: 1.2px #78350f;
+  text-shadow: 0 3px 0 #78350f;
+  font-size: 1.5rem;
+}
+.yokai-btn-casino .yokai-btn-desc {
+  color: #fef9c3;
+}
+
+.yokai-btn-study-locked {
+  background: linear-gradient(180deg, #475569 0%, #334155 100%);
+  border-color: #94a3b8;
+  color: #cbd5e1;
+  box-shadow: 0 6px 0 #1e293b, 0 10px 18px rgba(0,0,0,0.4);
+  opacity: 0.85;
+}
+
+.yokai-btn-study-active {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+  border-color: #fef08a;
+  color: #ffffff;
+  box-shadow: 0 7px 0 #7f1d1d, 0 12px 25px rgba(239,68,68,0.6);
+  animation: pulseGlow 1.6s infinite;
+}
+
+.yokai-btn-menu {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 55%, #0369a1 100%);
+  border-color: #bae6fd;
+  box-shadow: 0 6px 0 #0c4a6e, 0 10px 20px rgba(0,0,0,0.45);
+}
+
+.yokai-btn-dice {
+  background: linear-gradient(180deg, #f97316 0%, #ea580c 55%, #c2410c 100%);
+  border-color: #fed7aa;
+  box-shadow: 0 7px 0 #7c2d12, 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.yokai-btn-cards {
+  background: linear-gradient(180deg, #a855f7 0%, #9333ea 55%, #6b21a8 100%);
+  border-color: #e9d5ff;
+  box-shadow: 0 7px 0 #4c1d95, 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.yokai-btn-wheel {
+  background: linear-gradient(180deg, #10b981 0%, #059669 55%, #047857 100%);
+  border-color: #a7f3d0;
+  box-shadow: 0 7px 0 #064e3b, 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.yokai-btn-ranking {
+  background: linear-gradient(180deg, #ec4899 0%, #db2777 50%, #9d174d 100%);
+  border-color: #fbcfe8;
+  box-shadow: 0 7px 0 #500724, 0 10px 20px rgba(0,0,0,0.5);
+}
+
+/* 🏆 ランキング画面用スタイル */
+.ranking-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ranking-row-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 2.5px solid #475569;
+  border-radius: 16px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 0 #0f172a;
+}
+
+.ranking-row-card.is-me {
+  background: linear-gradient(90deg, rgba(250,204,21,0.22), rgba(15,23,42,0.95));
+  border-color: #facc15;
+  box-shadow: 0 4px 0 #854d0e, 0 0 16px rgba(250,204,21,0.35);
+}
+
+.ranking-row-card.rank-1 { border-color: #facc15; }
+.ranking-row-card.rank-2 { border-color: #cbd5e1; }
+.ranking-row-card.rank-3 { border-color: #f97316; }
+
+.rank-badge-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 2px solid #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.rank-1 .rank-badge-circle { background: linear-gradient(180deg, #fef08a, #eab308); color: #422006; border-color: #fff; font-size: 1.15rem; }
+.rank-2 .rank-badge-circle { background: linear-gradient(180deg, #f1f5f9, #94a3b8); color: #0f172a; border-color: #fff; font-size: 1.08rem; }
+.rank-3 .rank-badge-circle { background: linear-gradient(180deg, #fed7aa, #ea580c); color: #431407; border-color: #fff; font-size: 1.05rem; }
+
+/* ============================================================================
+   🧭 サブ画面ナビバー ＆ モード切替バー
+============================================================================ */
+.sub-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 2.5px solid #475569;
+  border-radius: 18px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 0 #0f172a;
+}
+
+.sub-nav-title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #fef08a;
+  text-shadow: 0 2px 0 #000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 100%);
+  color: #0f172a;
+  border: 2.5px solid #475569;
+  border-radius: 12px;
+  padding: 6px 14px;
+  font-weight: 900;
+  font-size: 0.86rem;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #334155;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.back-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #334155;
+}
+
+/* 対戦相手モード選択（🤖 AI対戦 / 👥 フレンド対戦） */
+.mode-selector-card {
+  background: linear-gradient(180deg, rgba(30,41,59,0.95), rgba(15,23,42,0.95));
+  border: 3px solid #38bdf8;
+  border-radius: 20px;
+  padding: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 5px 0 #0369a1;
+}
+
+.mode-selector-label {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #7dd3fc;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.mode-tabs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.mode-tab-btn {
+  padding: 10px 8px;
+  border-radius: 14px;
+  border: 2.5px solid #475569;
+  background: #1e293b;
+  color: #94a3b8;
+  font-weight: 900;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.mode-tab-btn.active {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: 0 3px 0 #075985;
+}
+
+/* ============================================================================
+   🎲 ゲームテーブル共通コンテナ
+============================================================================ */
+.casino-table-card {
+  background: radial-gradient(circle at 50% 35%, #065f46 0%, #064e3b 65%, #022c22 100%);
+  border: 5px solid #d97706;
+  border-radius: 24px;
+  padding: 16px;
+  box-shadow: 0 8px 0 #78350f, inset 0 0 30px rgba(0,0,0,0.55);
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.bet-control-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 2px solid #facc15;
+  border-radius: 16px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.bet-chips-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip-bet-btn {
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  font-weight: 900;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: #fff;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.5);
+}
+.chip-bet-btn.c-5 { background: #3b82f6; }
+.chip-bet-btn.c-10 { background: #10b981; }
+.chip-bet-btn.c-25 { background: #a855f7; }
+.chip-bet-btn.c-50 { background: #f97316; }
+.chip-bet-btn.c-max { background: #ef4444; }
+.chip-bet-btn.c-clear { background: #64748b; }
+
+.action-btn {
+  padding: 12px 22px;
+  border-radius: 16px;
+  border: 3px solid #ffffff;
+  font-weight: 900;
+  font-size: 1rem;
+  color: #ffffff;
+  cursor: pointer;
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 5px 0 #78350f;
+  transition: transform 0.1s;
+}
+.action-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #78350f;
+}
+.action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.action-btn.btn-green {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 5px 0 #064e3b;
+}
+.action-btn.btn-blue {
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+  box-shadow: 0 5px 0 #1e3a8a;
+}
+.action-btn.btn-red {
+  background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+  box-shadow: 0 5px 0 #7f1d1d;
+}
+
+/* ============================================================================
+   🥣 1. チンチロ (Chinchiro)
+============================================================================ */
+.chinchiro-bowl-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.chinchiro-bowl {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #7f1d1d 0%, #450a0a 65%, #1c0404 100%);
+  border: 12px solid #b45309;
+  box-shadow:
+    inset 0 12px 28px rgba(0,0,0,0.85),
+    0 8px 0 #451a03,
+    0 14px 28px rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  position: relative;
+}
+
+.chinchiro-bowl::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  border: 2px dashed rgba(250, 204, 21, 0.35);
+  pointer-events: none;
+}
+
+/* サイコロ共通描画 */
+.dice-cube {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  border: 2.5px solid #94a3b8;
+  box-shadow: 0 5px 0 #64748b, 0 8px 14px rgba(0,0,0,0.5);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  padding: 7px;
+  position: relative;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.dice-cube.rolling {
+  animation: diceShake 0.14s infinite;
+}
+
+.dice-cube.kept {
+  border-color: #facc15;
+  background: linear-gradient(145deg, #fef9c3 0%, #fde047 100%);
+  box-shadow: 0 5px 0 #ca8a04, 0 0 15px rgba(250,204,21,0.85);
+  transform: translateY(-6px);
+}
+
+@keyframes diceShake {
+  0% { transform: rotate(-14deg) translate(-3px, -3px) scale(1.06); }
+  50% { transform: rotate(14deg) translate(3px, 2px) scale(0.96); }
+  100% { transform: rotate(-10deg) translate(-2px, 3px) scale(1.04); }
+}
+
+.pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0f172a;
+  align-self: center;
+  justify-self: center;
+  visibility: hidden;
+}
+
+.dice-cube[data-val="1"] .pip-5 {
+  visibility: visible;
+  width: 16px;
+  height: 16px;
+  background: #dc2626;
+}
+.dice-cube[data-val="2"] .pip-1, .dice-cube[data-val="2"] .pip-9 { visibility: visible; }
+.dice-cube[data-val="3"] .pip-1, .dice-cube[data-val="3"] .pip-5, .dice-cube[data-val="3"] .pip-9 { visibility: visible; }
+.dice-cube[data-val="4"] .pip-1, .dice-cube[data-val="4"] .pip-3, .dice-cube[data-val="4"] .pip-7, .dice-cube[data-val="4"] .pip-9 { visibility: visible; }
+.dice-cube[data-val="5"] .pip-1, .dice-cube[data-val="5"] .pip-3, .dice-cube[data-val="5"] .pip-5, .dice-cube[data-val="5"] .pip-7, .dice-cube[data-val="5"] .pip-9 { visibility: visible; }
+.dice-cube[data-val="6"] .pip-1, .dice-cube[data-val="6"] .pip-3, .dice-cube[data-val="6"] .pip-4, .dice-cube[data-val="6"] .pip-6, .dice-cube[data-val="6"] .pip-7, .dice-cube[data-val="6"] .pip-9 { visibility: visible; }
+
+/* ============================================================================
+   ⛵ 2. ヨット (Yacht - 点差マッチ)
+============================================================================ */
+.yacht-dice-tray {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 14px 10px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 2.5px solid #facc15;
+  border-radius: 18px;
+  margin-bottom: 12px;
+}
+
+.yacht-dice-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.keep-badge {
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #334155;
+  color: #94a3b8;
+}
+.keep-badge.active {
+  background: #facc15;
+  color: #422006;
+}
+
+.yacht-score-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(15, 23, 42, 0.92);
+  border-radius: 14px;
+  overflow: hidden;
+  font-size: 0.82rem;
+}
+
+.yacht-score-table th,
+.yacht-score-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  text-align: center;
+}
+
+.yacht-score-table th {
+  background: #1e293b;
+  color: #fef08a;
+  font-weight: 900;
+}
+
+.yacht-score-table td.cat-name {
+  text-align: left;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+
+.yacht-cell-selectable {
+  cursor: pointer;
+  background: rgba(56, 189, 248, 0.14);
+  color: #7dd3fc;
+  font-weight: 900;
+  border: 1.5px dashed rgba(56, 189, 248, 0.5);
+  border-radius: 6px;
+}
+.yacht-cell-selectable:hover {
+  background: rgba(250, 204, 21, 0.3);
+  color: #fef08a;
+}
+
+.yacht-cell-filled {
+  font-weight: 900;
+  color: #ffffff;
+  background: rgba(16, 185, 129, 0.2);
+}
+
+/* ============================================================================
+   🃏 3 & 4. トランプカード描画 (ブラックジャック / ポーカー)
+============================================================================ */
+.cards-hand-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 108px;
+  padding: 8px 4px;
+}
+
+.playing-card {
+  width: 68px;
+  height: 98px;
+  background: linear-gradient(160deg, #ffffff 0%, #f1f5f9 100%);
+  border-radius: 10px;
+  border: 2.5px solid #cbd5e1;
+  box-shadow: 0 5px 0 #64748b, 0 8px 14px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px;
+  font-weight: 900;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.16s, box-shadow 0.16s;
+}
+
+.playing-card.red-suit { color: #dc2626; }
+.playing-card.black-suit { color: #0f172a; }
+
+.playing-card.face-down {
+  background: repeating-linear-gradient(
+    45deg,
+    #1e3a8a,
+    #1e3a8a 7px,
+    #1d4ed8 7px,
+    #1d4ed8 14px
+  );
+  border-color: #fef08a;
+  color: transparent;
+}
+
+.playing-card.held {
+  transform: translateY(-10px);
+  border-color: #facc15;
+  box-shadow: 0 5px 0 #ca8a04, 0 0 16px rgba(250,204,21,0.9);
+}
+
+.card-corner-top {
+  font-size: 0.85rem;
+  line-height: 1;
+  text-align: left;
+}
+.card-center-suit {
+  font-size: 1.75rem;
+  text-align: center;
+  line-height: 1;
+}
+.card-corner-bot {
+  font-size: 0.78rem;
+  line-height: 1;
+  text-align: right;
+}
+
+.hold-tag {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #facc15;
+  color: #422006;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1.5px solid #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* 📖 ルールガイド＆ポーカー役ビジュアル見本カード */
+.rule-guide-box {
+  background: rgba(15, 23, 42, 0.92);
+  border: 2.5px solid #38bdf8;
+  border-radius: 18px;
+  padding: 14px;
+  margin-top: 12px;
+  box-shadow: 0 5px 0 #075985;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.rule-guide-title {
+  font-size: 0.98rem;
+  font-weight: 900;
+  color: #fef08a;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.poker-guide-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.poker-guide-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1.5px solid rgba(148, 163, 184, 0.35);
+  border-radius: 14px;
+  padding: 8px 12px;
+}
+
+.poker-guide-info {
+  flex: 1;
+  min-width: 170px;
+}
+
+.poker-guide-name {
+  font-weight: 900;
+  font-size: 0.88rem;
+  color: #fef08a;
+}
+
+.poker-guide-desc {
+  font-size: 0.74rem;
+  color: #cbd5e1;
+}
+
+.mini-cards-sample {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.mini-card {
+  width: 34px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 2px solid #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.75rem;
+  line-height: 1.05;
+  box-shadow: 0 2px 0 #475569;
+}
+.mini-card.red { color: #dc2626; }
+.mini-card.black { color: #0f172a; }
+.mini-card.hi {
+  border-color: #facc15;
+  background: #fefce8;
+  box-shadow: 0 2px 0 #ca8a04, 0 0 8px rgba(250, 204, 21, 0.7);
+}
+.mini-card.dim {
+  opacity: 0.55;
+}
+
+/* ============================================================================
+   🎯 5. ルーレット (Roulette)
+============================================================================ */
+.roulette-grid-outside {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.roulette-numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.r-bet-cell {
+  position: relative;
+  padding: 9px 4px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.75);
+  font-weight: 900;
+  font-size: 0.84rem;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.1s;
+}
+.r-bet-cell:active { transform: scale(0.95); }
+.r-bet-cell.r-red { background: #dc2626; }
+.r-bet-cell.r-black { background: #1e293b; }
+.r-bet-cell.r-green { background: #059669; }
+.r-bet-cell.r-out { background: #0f172a; border-color: #facc15; }
+
+.placed-chip-badge {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  background: #facc15;
+  color: #422006;
+  border: 1.5px solid #fff;
+  border-radius: 999px;
+  padding: 1px 6px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+}
+
+/* ============================================================================
+   🎡 6. ビッグシックス (Big Six Wheel)
+============================================================================ */
+.bigsix-bet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.bigsix-card {
+  position: relative;
+  background: rgba(15, 23, 42, 0.9);
+  border: 3px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 10px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.bigsix-card:active { transform: scale(0.96); }
+
+/* ============================================================================
+   🎉 モーダル演出（初回100チップ・ログボ50チップ・破産救済など）
+============================================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 7, 20, 0.84);
+  backdrop-filter: blur(5px);
+  z-index: 999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-box {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 4px solid #facc15;
+  border-radius: 28px;
+  max-width: 440px;
+  width: 100%;
+  padding: 24px 20px;
+  text-align: center;
+  box-shadow: 0 10px 0 #854d0e, 0 20px 40px rgba(0,0,0,0.85);
+  animation: popIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+/* トースト通知 */
+#toastContainer {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  width: 90%;
+  max-width: 420px;
+}
+
+.toast-msg {
+  background: rgba(15, 23, 42, 0.96);
+  border: 2.5px solid #facc15;
+  color: #fef08a;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 0.88rem;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+  animation: popIn 0.2s ease-out;
+}
+
+@media (max-width: 480px) {
+  .dice-cube { width: 48px; height: 48px; padding: 5px; }
+  .playing-card { width: 58px; height: 86px; }
+  .chinchiro-bowl { width: 210px; height: 210px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div class="app-container">
+  <!-- 👑 上部ステータスバー -->
+  <header class="top-status-bar">
+    <div class="brand-mini" onclick="navigateTo('screen-title')">
+      <span>🎰</span>
+      <span>カジノ・ロジカ</span>
+    </div>
+    <div class="chip-counter-group" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:center;">
+      <div class="chip-pill" style="background:linear-gradient(180deg,#e0f2fe,#7dd3fc); color:#0c4a6e; box-shadow:0 3px 0 #0369a1; cursor:pointer;" onclick="openNameChangeModal()" title="タップでプレイヤー名変更">
+        <span>🧑</span>
+        <span id="headerPlayerName">ゲスト</span>
+      </div>
+      <div class="chip-pill" title="プレイヤー1の所持チップ">
+        <span>🪙</span>
+        <span id="p1ChipText">100</span>
+        <span style="font-size:0.72rem;">CHIP</span>
+      </div>
+      <div class="chip-pill p2-pill" id="p2ChipBadge" style="display:none;" title="フレンド(2P)の所持チップ">
+        <span>👥2P:</span>
+        <span id="p2ChipText">100</span>
+      </div>
+      <button id="exitAdminModeBtn" onclick="exitAdminTestMode()" style="display:none; background:linear-gradient(180deg,#d946ef,#a21caf); color:#fff; border:2px solid #fdf4ff; border-radius:999px; padding:4px 10px; font-weight:900; font-size:0.74rem; cursor:pointer; box-shadow:0 2px 0 #701a75; white-space:nowrap;">
+        🔧 管理者終了(元に戻る)
+      </button>
+    </div>
+    <div class="top-right-btns">
+      <button class="icon-circle-btn" id="soundToggleBtn" onclick="toggleSound()" title="効果音 ON/OFF">🔊</button>
+      <button class="icon-circle-btn" onclick="navigateTo('screen-menu')" title="メニュー">⚙️</button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       1. 妖怪ウォッチ風タイトル画面 (#screen-title)
+  ======================================================================== -->
+  <section id="screen-title" class="screen active">
+    <div class="title-hero-box">
+      <div class="title-badge-ribbon">✨ LOGICA SERIES 3RD EDITION ✨</div>
+      <div class="title-logo-sub">🎲 DICE × ♠️ CARDS × 🎡 WHEEL</div>
+      <h1 class="title-logo-main">カジノ・ロジカ</h1>
+      <div onclick="triggerCasinoAdminSecretTap()" style="font-size:0.82rem; font-weight:900; color:#fde047; margin-bottom:12px; letter-spacing:0.12em; cursor:pointer;">CASINO LOGICA Ver 1.0</div>
+      <div class="title-icons-row">
+        <span>🎲</span><span>🃏</span><span>🎡</span><span>🪙</span><span>👑</span>
+      </div>
+    </div>
+
+    <!-- 妖怪ウォッチ風のメインボタン群 -->
+    <div class="yokai-menu-stack">
+      <!-- ① カジノボタン -->
+      <button class="yokai-btn yokai-btn-casino" onclick="openCasinoCategoryScreen()">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🎰</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">カジノ</div>
+            <div class="yokai-btn-desc">ダイス・トランプ・ホイールで真剣勝負！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <!-- ② ランキングボタン（チップ数ランキング＆賭けバトル） -->
+      <button class="yokai-btn yokai-btn-ranking" onclick="openRankingScreen()">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🏆</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ランキング</div>
+            <div class="yokai-btn-desc">所持チップ数を競え！ランカーとのチップ賭け勝負も！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <!-- ③ 勉強でチップ稼ぎ（0チップの人専用！） -->
+      <button id="titleStudyBtn" class="yokai-btn yokai-btn-study-locked" onclick="handleStudyEarnClick()">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon" id="titleStudyIcon">🔒</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title" id="titleStudyTitle">勉強でチップ稼ぎ</div>
+            <div class="yokai-btn-desc" id="titleStudyDesc">【0チップ専用】破産したらバイオ・ロジカで出稼ぎ！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow" id="titleStudyArrow">🔒</div>
+      </button>
+
+      <!-- ④ メニューボタン -->
+      <button class="yokai-btn yokai-btn-menu" onclick="navigateTo('screen-menu')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">⚙️</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">メニュー</div>
+            <div class="yokai-btn-desc">ルール図鑑・戦績データ・バイオ・ロジカ連動</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       2. カジノ 3大ジャンル選択画面 (#screen-category)
+  ======================================================================== -->
+  <section id="screen-category" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🎰 カジノ・フロア選択</div>
+      <button class="back-btn" onclick="navigateTo('screen-title')">⬅️ タイトルへ</button>
+    </div>
+
+    <!-- 対戦相手モード切替（🤖 AI / 👥 その場でフレンド / 🌐 通信フレンド） -->
+    <div class="mode-selector-card">
+      <div class="mode-selector-label">⚔️ 対戦モードを選んでください（全ゲーム共通）</div>
+      <div class="mode-tabs-row">
+        <button class="mode-tab-btn active" id="modeTabAi" onclick="setPlayMode('ai')">
+          🤖 AIと対戦<br><span style="font-size:0.7rem; font-weight:700;">1人でチップ稼ぎ</span>
+        </button>
+        <button class="mode-tab-btn" id="modeTabLocal" onclick="setPlayMode('local')">
+          👥 フレンド対戦<br><span style="font-size:0.7rem; font-weight:700;">1台で交互に対戦</span>
+        </button>
+        <button class="mode-tab-btn" id="modeTabOnline" onclick="setPlayMode('online')">
+          🌐 通信ルーム<br><span style="font-size:0.7rem; font-weight:700;">コードで友達と</span>
+        </button>
+      </div>
+
+      <!-- 通信ルーム設定パネル（🌐通信ルーム選択時のみ表示） -->
+      <div id="onlineRoomPanel" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed rgba(56,189,248,0.4);">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;">
+          <div style="font-size:0.8rem; font-weight:900; color:#bae6fd;">
+            ルーム番号: <span id="myRoomCodeText" style="color:#fef08a; font-size:1rem;">未作成</span>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="back-btn" style="background:#facc15; border-color:#854d0e;" onclick="createOnlineRoom()">🏠 部屋を作る</button>
+            <input id="joinRoomInput" type="text" maxlength="4" placeholder="4桁番号" style="width:84px; padding:6px 8px; border-radius:10px; border:2px solid #38bdf8; background:#0f172a; color:#fff; font-weight:900; text-align:center;">
+            <button class="back-btn" style="background:#38bdf8; color:#fff; border-color:#0284c7;" onclick="joinOnlineRoom()">🚪 参加</button>
+          </div>
+        </div>
+        <div id="onlineStatusMsg" style="font-size:0.75rem; color:#94a3b8; margin-top:6px;">※友達と同じ4桁コードで接続すると、サイコロや勝敗がリアルタイム同期されます。</div>
+      </div>
+    </div>
+
+    <div class="yokai-menu-stack">
+      <!-- 🎲 ダイス -->
+      <button class="yokai-btn yokai-btn-dice" onclick="navigateTo('screen-sub-dice')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🎲</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ダイス (DICE)</div>
+            <div class="yokai-btn-desc">「チンチロ」＆「ヨット（点差マッチ）」</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <!-- ♠️ トランプ -->
+      <button class="yokai-btn yokai-btn-cards" onclick="navigateTo('screen-sub-cards')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">♠️</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">トランプ (CARDS)</div>
+            <div class="yokai-btn-desc">「ブラックジャック」＆「ポーカー」</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <!-- 🎡 ホイール -->
+      <button class="yokai-btn yokai-btn-wheel" onclick="navigateTo('screen-sub-wheel')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🎡</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ホイール (WHEEL)</div>
+            <div class="yokai-btn-desc">「ルーレット」＆「ビッグシックス」</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       2-A. ダイス選択画面 (#screen-sub-dice)
+  ======================================================================== -->
+  <section id="screen-sub-dice" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🎲 ダイスゲーム選択</div>
+      <button class="back-btn" onclick="navigateTo('screen-category')">⬅️ ジャンル選択へ</button>
+    </div>
+    <div class="yokai-menu-stack">
+      <button class="yokai-btn yokai-btn-dice" onclick="openGame('chinchiro')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🥣</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">チンチロ</div>
+            <div class="yokai-btn-desc">お椀にサイコロ3個！ピンゾロ5倍・アラシ3倍・シゴロ2倍！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <button class="yokai-btn yokai-btn-casino" onclick="openGame('yacht')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">⛵</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ヨット (1戦点差マッチ)</div>
+            <div class="yokai-btn-desc">5個のサイコロで役を作れ！最終スコアの点差×レートで精算！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       2-B. トランプ選択画面 (#screen-sub-cards)
+  ======================================================================== -->
+  <section id="screen-sub-cards" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">♠️ トランプゲーム選択</div>
+      <button class="back-btn" onclick="navigateTo('screen-category')">⬅️ ジャンル選択へ</button>
+    </div>
+    <div class="yokai-menu-stack">
+      <button class="yokai-btn yokai-btn-cards" onclick="openGame('blackjack')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🃏</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ブラックジャック</div>
+            <div class="yokai-btn-desc">合計21に近づけろ！ヒット・スタンド・ダブルダウン完全対応！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <button class="yokai-btn yokai-btn-menu" onclick="openGame('poker')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">👑</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ポーカー</div>
+            <div class="yokai-btn-desc">5枚ドローポーカー！手札をホールド＆交換して役で勝負！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       2-C. ホイール選択画面 (#screen-sub-wheel)
+  ======================================================================== -->
+  <section id="screen-sub-wheel" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🎡 ホイールゲーム選択</div>
+      <button class="back-btn" onclick="navigateTo('screen-category')">⬅️ ジャンル選択へ</button>
+    </div>
+    <div class="yokai-menu-stack">
+      <button class="yokai-btn yokai-btn-wheel" onclick="openGame('roulette')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🎯</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ルーレット</div>
+            <div class="yokai-btn-desc">赤黒2倍・ダズン3倍・数字ピンポイント当て36倍！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <button class="yokai-btn yokai-btn-casino" onclick="openGame('bigsix')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🎡</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ビッグシックス</div>
+            <div class="yokai-btn-desc">止まったマスの数字の倍率分（最大40倍）そのまま獲得！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       🥣 ゲーム1：チンチロ (#screen-game-chinchiro)
+  ======================================================================== -->
+  <section id="screen-game-chinchiro" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🥣 チンチロ <span id="ccModeBadge" style="font-size:0.75rem; background:#0284c7; padding:2px 8px; border-radius:999px;">🤖 AI戦</span></div>
+      <button class="back-btn" onclick="navigateTo('screen-sub-dice')">⬅️ ダイス選択へ</button>
+    </div>
+
+    <div class="casino-table-card">
+      <!-- ベット設定バー -->
+      <div class="bet-control-bar">
+        <div style="font-weight:900; font-size:0.9rem;">
+          賭けチップ: <span id="ccBetText" style="color:#fef08a; font-size:1.15rem;">10</span> 🪙
+        </div>
+        <div class="bet-chips-btns">
+          <button class="chip-bet-btn c-5" onclick="adjustCcBet(5)">+5</button>
+          <button class="chip-bet-btn c-10" onclick="adjustCcBet(10)">+10</button>
+          <button class="chip-bet-btn c-50" onclick="adjustCcBet(50)">+50</button>
+          <button class="chip-bet-btn c-max" onclick="adjustCcBet('max')">MAX</button>
+          <button class="chip-bet-btn c-clear" onclick="adjustCcBet('reset')">10に戻す</button>
+        </div>
+      </div>
+
+      <!-- 親・子の出目ステータス -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+        <div style="background:rgba(15,23,42,0.85); border:2px solid #f87171; border-radius:14px; padding:10px; text-align:center;">
+          <div style="font-size:0.76rem; color:#fca5a5; font-weight:900;" id="ccDealerLabel">👹 親 (AIディーラー)</div>
+          <div style="font-size:1.05rem; font-weight:900; color:#fff; margin-top:4px;" id="ccDealerResultText">待機中...</div>
+        </div>
+        <div style="background:rgba(15,23,42,0.85); border:2px solid #38bdf8; border-radius:14px; padding:10px; text-align:center;">
+          <div style="font-size:0.76rem; color:#7dd3fc; font-weight:900;" id="ccPlayerLabel">🧑 子 (あなた)</div>
+          <div style="font-size:1.05rem; font-weight:900; color:#fef08a; margin-top:4px;" id="ccPlayerResultText">待機中...</div>
+        </div>
+      </div>
+
+      <!-- どんぶり（お椀）＆ サイコロ3個 -->
+      <div class="chinchiro-bowl-wrap">
+        <div class="chinchiro-bowl" id="ccBowl">
+          <div class="dice-cube" id="ccDie0" data-val="1">
+            <span class="pip pip-1"></span><span class="pip pip-2"></span><span class="pip pip-3"></span>
+            <span class="pip pip-4"></span><span class="pip pip-5"></span><span class="pip pip-6"></span>
+            <span class="pip pip-7"></span><span class="pip pip-8"></span><span class="pip pip-9"></span>
+          </div>
+          <div class="dice-cube" id="ccDie1" data-val="1">
+            <span class="pip pip-1"></span><span class="pip pip-2"></span><span class="pip pip-3"></span>
+            <span class="pip pip-4"></span><span class="pip pip-5"></span><span class="pip pip-6"></span>
+            <span class="pip pip-7"></span><span class="pip pip-8"></span><span class="pip pip-9"></span>
+          </div>
+          <div class="dice-cube" id="ccDie2" data-val="1">
+            <span class="pip pip-1"></span><span class="pip pip-2"></span><span class="pip pip-3"></span>
+            <span class="pip pip-4"></span><span class="pip pip-5"></span><span class="pip pip-6"></span>
+            <span class="pip pip-7"></span><span class="pip pip-8"></span><span class="pip pip-9"></span>
+          </div>
+        </div>
+      </div>
+
+      <div id="ccBannerMsg" style="text-align:center; font-weight:900; font-size:1rem; color:#fef08a; min-height:28px; margin-bottom:10px;">
+        賭けチップを決めて「勝負開始！」を押そう！
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+        <button class="action-btn" id="ccStartBtn" onclick="startChinchiroRound()">🎲 勝負開始！</button>
+        <button class="action-btn btn-green" id="ccRollBtn" onclick="playerRollChinchiro()" style="display:none;">🥣 いざ振る！(残り3回)</button>
+      </div>
+    </div>
+
+    <!-- 役と配当早見表 -->
+    <div style="background:rgba(15,23,42,0.85); border:2px solid #475569; border-radius:16px; padding:10px 14px; font-size:0.76rem; line-height:1.6;">
+      <div style="font-weight:900; color:#fef08a; margin-bottom:4px;">📜 チンチロ役・倍率表</div>
+      <div>🔥 <strong>ピンゾロ (1-1-1)</strong>：5倍勝ち ｜ ⚡ <strong>アラシ (2〜6のゾロ目)</strong>：3倍勝ち</div>
+      <div>✨ <strong>シゴロ (4-5-6)</strong>：2倍勝ち ｜ 🎲 <strong>通常の目 (ペア＋1個)</strong>：残りの目の強さ(6＞1)で1倍勝負</div>
+      <div>💀 <strong>ヒフミ (1-2-3)</strong>：2倍払い（負け） ｜ 💦 <strong>目なし (3回出ず)・しょんべん</strong>：1倍負け</div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       ⛵ ゲーム2：ヨット - 1戦点差マッチ (#screen-game-yacht)
+  ======================================================================== -->
+  <section id="screen-game-yacht" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">⛵ ヨット (1戦点差マッチ) <span id="ytModeBadge" style="font-size:0.75rem; background:#0284c7; padding:2px 8px; border-radius:999px;">🤖 AI戦</span></div>
+      <button class="back-btn" onclick="navigateTo('screen-sub-dice')">⬅️ ダイス選択へ</button>
+    </div>
+
+    <div class="casino-table-card">
+      <!-- レート設定＆ターン表示 -->
+      <div class="bet-control-bar">
+        <div style="font-weight:900; font-size:0.86rem;">
+          点差レート: 1点差につき <span id="ytRateText" style="color:#fef08a; font-size:1.05rem;">1</span> 🪙
+        </div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button class="chip-bet-btn c-5" onclick="setYachtRate(1)">1点=1🪙</button>
+          <button class="chip-bet-btn c-10" onclick="setYachtRate(2)">1点=2🪙</button>
+          <button class="chip-bet-btn c-50" onclick="setYachtRate(5)">1点=5🪙</button>
+          <button class="chip-bet-btn c-clear" onclick="initYachtMatch()">🔄 新規1戦</button>
+        </div>
+      </div>
+
+      <!-- 現在の手番＆ロールボタン -->
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+        <div id="ytTurnBanner" style="font-weight:900; font-size:0.95rem; color:#fef08a;">
+          🎯 あなたの番 (ラウンド 1/12) - サイコロを振ってください
+        </div>
+        <button class="action-btn btn-green" id="ytRollBtn" onclick="rollYachtDice()" style="padding:8px 18px; font-size:0.92rem;">
+          🎲 サイコロを振る (残り3回)
+        </button>
+      </div>
+
+      <!-- サイコロ5個トレイ（タップでKEEP） -->
+      <div class="yacht-dice-tray" id="ytDiceTray">
+        <!-- JSで5個生成 -->
+      </div>
+
+      <!-- スコアシート（12役＋ボーナス） -->
+      <div style="overflow-x:auto;">
+        <table class="yacht-score-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">役 (カテゴリー)</th>
+              <th id="ytColP1">🧑 あなた</th>
+              <th id="ytColP2">🤖 AI</th>
+            </tr>
+          </thead>
+          <tbody id="ytScoreBody">
+            <!-- JSで生成 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       🃏 ゲーム3：ブラックジャック (#screen-game-blackjack)
+  ======================================================================== -->
+  <section id="screen-game-blackjack" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🃏 ブラックジャック <span id="bjModeBadge" style="font-size:0.75rem; background:#0284c7; padding:2px 8px; border-radius:999px;">🤖 AI戦</span></div>
+      <button class="back-btn" onclick="navigateTo('screen-sub-cards')">⬅️ トランプ選択へ</button>
+    </div>
+
+    <div class="casino-table-card">
+      <div class="bet-control-bar">
+        <div style="font-weight:900; font-size:0.9rem;">
+          賭けチップ: <span id="bjBetText" style="color:#fef08a; font-size:1.15rem;">10</span> 🪙
+        </div>
+        <div class="bet-chips-btns">
+          <button class="chip-bet-btn c-5" onclick="adjustBjBet(5)">+5</button>
+          <button class="chip-bet-btn c-10" onclick="adjustBjBet(10)">+10</button>
+          <button class="chip-bet-btn c-50" onclick="adjustBjBet(50)">+50</button>
+          <button class="chip-bet-btn c-max" onclick="adjustBjBet('max')">MAX</button>
+          <button class="chip-bet-btn c-clear" onclick="adjustBjBet('reset')">10に戻す</button>
+        </div>
+      </div>
+
+      <!-- ディーラー（または2P）ハンド -->
+      <div style="text-align:center; margin-bottom:10px;">
+        <div style="font-size:0.84rem; font-weight:900; color:#fca5a5; margin-bottom:4px;">
+          <span id="bjDealerTitle">🎩 ディーラー</span> (合計: <span id="bjDealerTotal">?</span>)
+        </div>
+        <div class="cards-hand-row" id="bjDealerHand"></div>
+      </div>
+
+      <!-- プレイヤー1ハンド -->
+      <div style="text-align:center; margin-bottom:12px;">
+        <div style="font-size:0.84rem; font-weight:900; color:#7dd3fc; margin-bottom:4px;">
+          <span id="bjPlayerTitle">🧑 あなた</span> (合計: <span id="bjPlayerTotal">0</span>)
+        </div>
+        <div class="cards-hand-row" id="bjPlayerHand"></div>
+      </div>
+
+      <div id="bjStatusText" style="text-align:center; font-weight:900; font-size:1rem; color:#fef08a; min-height:28px; margin-bottom:12px;">
+        ベットを決めて「ディール（配る）」を押そう！
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+        <button class="action-btn" id="bjDealBtn" onclick="startBlackjack()">🃏 ディール (配る)</button>
+        <button class="action-btn btn-green" id="bjHitBtn" onclick="bjHit()" style="display:none;">➕ ヒット (引く)</button>
+        <button class="action-btn btn-red" id="bjStandBtn" onclick="bjStand()" style="display:none;">✋ スタンド (勝負)</button>
+        <button class="action-btn btn-blue" id="bjDoubleBtn" onclick="bjDoubleDown()" style="display:none;">⚡ ダブルダウン (2倍)</button>
+      </div>
+    </div>
+
+    <!-- 📖 ブラックジャック 初心者向けルール＆点数ガイド -->
+    <div class="rule-guide-box">
+      <div class="rule-guide-title">📖 ブラックジャックのルール（初めての人向け）</div>
+      <div style="margin-bottom:8px;">
+        🎯 <strong>目的</strong>：手札の合計点数をディーラーより <strong>「21」</strong> に近づければ勝ち！<br>
+        💥 <strong>注意</strong>：合計が <strong>22以上</strong> になると「バースト」でその場で負けになります。
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px; margin-bottom:8px;">
+        <div style="background:#1e293b; padding:8px 10px; border-radius:10px; border:1px solid #475569;">
+          🃏 <strong>カードの数え方</strong><br>
+          ・<strong>2 〜 10</strong>：数字そのままの点数<br>
+          ・<strong>J・Q・K</strong>：すべて <strong>10点</strong><br>
+          ・<strong>A (エース)</strong>：<strong>1点</strong> または <strong>11点</strong>（21を超えないよう自動で一番有利な方に計算されます！）
+        </div>
+        <div style="background:#1e293b; padding:8px 10px; border-radius:10px; border:1px solid #475569;">
+          🎮 <strong>ボタンの意味</strong><br>
+          ・<strong style="color:#4ade80;">➕ ヒット</strong>：カードをもう1枚引く<br>
+          ・<strong style="color:#f87171;">✋ スタンド</strong>：今の点数でストップして勝負！<br>
+          ・<strong style="color:#60a5fa;">⚡ ダブルダウン</strong>：賭け金を2倍にして<strong>あと1枚だけ</strong>引いて勝負！
+        </div>
+      </div>
+      <div style="background:rgba(250,204,21,0.15); border:1px solid #facc15; padding:6px 10px; border-radius:10px; color:#fef08a; font-weight:800;">
+        👑 <strong>ナチュラル・ブラックジャック</strong>：最初の2枚で「A ＋ 10点札（10/J/Q/K）」のぴったり21ができると、通常の1.5倍のチップがもらえます！
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       👑 ゲーム4：ポーカー (#screen-game-poker)
+  ======================================================================== -->
+  <section id="screen-game-poker" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">👑 ポーカー (5枚ドロー対戦) <span id="pkModeBadge" style="font-size:0.75rem; background:#0284c7; padding:2px 8px; border-radius:999px;">🤖 AI戦</span></div>
+      <button class="back-btn" onclick="navigateTo('screen-sub-cards')">⬅️ トランプ選択へ</button>
+    </div>
+
+    <div class="casino-table-card">
+      <div class="bet-control-bar">
+        <div style="font-weight:900; font-size:0.9rem;">
+          参加ベット: <span id="pkBetText" style="color:#fef08a; font-size:1.15rem;">10</span> 🪙
+        </div>
+        <div class="bet-chips-btns">
+          <button class="chip-bet-btn c-5" onclick="adjustPkBet(5)">+5</button>
+          <button class="chip-bet-btn c-10" onclick="adjustPkBet(10)">+10</button>
+          <button class="chip-bet-btn c-50" onclick="adjustPkBet(50)">+50</button>
+          <button class="chip-bet-btn c-max" onclick="adjustPkBet('max')">MAX</button>
+          <button class="chip-bet-btn c-clear" onclick="adjustPkBet('reset')">10に戻す</button>
+        </div>
+      </div>
+
+      <!-- 相手の手札 -->
+      <div style="text-align:center; margin-bottom:10px;">
+        <div style="font-size:0.82rem; font-weight:900; color:#fca5a5; margin-bottom:4px;">
+          <span id="pkOpponentLabel">🤖 対戦相手 (AI)</span> — <span id="pkOpponentRank">???</span>
+        </div>
+        <div class="cards-hand-row" id="pkOpponentHand"></div>
+      </div>
+
+      <!-- 自分の手札（タップでHOLD） -->
+      <div style="text-align:center; margin-bottom:12px;">
+        <div style="font-size:0.82rem; font-weight:900; color:#7dd3fc; margin-bottom:4px;">
+          <span id="pkPlayerLabel">🧑 あなたの手札（残すカードをタップでHOLD）</span> — <span id="pkPlayerRank" style="color:#fef08a;">-</span>
+        </div>
+        <div class="cards-hand-row" id="pkPlayerHand"></div>
+      </div>
+
+      <div id="pkStatusText" style="text-align:center; font-weight:900; font-size:0.95rem; color:#fef08a; min-height:28px; margin-bottom:10px;">
+        「カードを配る」でポーカー開始！勝てば相手の賭け金＋役ボーナス獲得！
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+        <button class="action-btn" id="pkDealBtn" onclick="startPoker()">🃏 カードを配る</button>
+        <button class="action-btn btn-green" id="pkDrawBtn" onclick="pokerDrawAndShowdown()" style="display:none;">🔄 カード交換 ＆ 勝負！</button>
+        <button class="action-btn btn-blue" id="pkRaiseBtn" onclick="pokerRaiseAndDraw()" style="display:none;">🔥 レイズ(賭け金2倍)して交換！</button>
+      </div>
+    </div>
+
+    <!-- 📖 ポーカーの遊び方 ＆ トランプ揃え方ビジュアル役図鑑 -->
+    <div class="rule-guide-box">
+      <div class="rule-guide-title">📖 ポーカーの遊び方 ＆ 役の揃え方図鑑（強い順）</div>
+      <div style="background:#1e293b; padding:8px 12px; border-radius:12px; margin-bottom:10px; border:1px solid #475569;">
+        <strong>🎮 遊び方（3ステップ）</strong>：<br>
+        ① <strong>「🃏 カードを配る」</strong>で5枚の手札が配られます。<br>
+        ② 手元に残したいカードをタップして <strong>「HOLD（固定）」</strong> をつけます（ペアは自動でHOLDがつきます）。<br>
+        ③ <strong>「🔄 カード交換＆勝負！」</strong>を押すと、HOLDしていないカードが引き直され、相手より強い役を作れば勝利！（同じ役なら数字が強い方：<strong>A ＞ K ＞ Q ＞ J ＞ 10 … ＞ 2</strong> の勝ち）
+      </div>
+
+      <div class="poker-guide-grid">
+        <!-- 1. ロイヤルストレートフラッシュ -->
+        <div class="poker-guide-row" style="border-color:#facc15;">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">👑 ロイヤルストレートフラッシュ <span style="color:#4ade80;">(×50倍)</span></div>
+            <div class="poker-guide-desc">すべて<strong>同じマーク</strong>で <strong>10・J・Q・K・A</strong> を揃える最強の役！</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card black hi"><span>10</span><span>♠</span></div>
+            <div class="mini-card black hi"><span>J</span><span>♠</span></div>
+            <div class="mini-card black hi"><span>Q</span><span>♠</span></div>
+            <div class="mini-card black hi"><span>K</span><span>♠</span></div>
+            <div class="mini-card black hi"><span>A</span><span>♠</span></div>
+          </div>
+        </div>
+
+        <!-- 2. ストレートフラッシュ -->
+        <div class="poker-guide-row">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">🌈 ストレートフラッシュ <span style="color:#4ade80;">(×20倍)</span></div>
+            <div class="poker-guide-desc">すべて<strong>同じマーク</strong>で、<strong>数字が5枚連続</strong>して並ぶ！</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card red hi"><span>5</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>6</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>7</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>8</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>9</span><span>♥</span></div>
+          </div>
+        </div>
+
+        <!-- 3. フォーカード -->
+        <div class="poker-guide-row">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">💎 フォーカード <span style="color:#4ade80;">(×10倍)</span></div>
+            <div class="poker-guide-desc"><strong>同じ数字のカードを4枚</strong>揃える！（残り1枚は何でもOK）</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card black hi"><span>7</span><span>♠</span></div>
+            <div class="mini-card red hi"><span>7</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>7</span><span>♦</span></div>
+            <div class="mini-card black hi"><span>7</span><span>♣</span></div>
+            <div class="mini-card black dim"><span>K</span><span>♠</span></div>
+          </div>
+        </div>
+
+        <!-- 4. フルハウス -->
+        <div class="poker-guide-row">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">🏠 フルハウス <span style="color:#4ade80;">(×5倍)</span></div>
+            <div class="poker-guide-desc"><strong>同じ数字3枚 ＋ 別の同じ数字2枚</strong> のセット！</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card black hi"><span>Q</span><span>♠</span></div>
+            <div class="mini-card red hi"><span>Q</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>Q</span><span>♦</span></div>
+            <div class="mini-card black hi"><span>4</span><span>♣</span></div>
+            <div class="mini-card black hi"><span>4</span><span>♠</span></div>
+          </div>
+        </div>
+
+        <!-- 5. フラッシュ -->
+        <div class="poker-guide-row">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">✨ フラッシュ <span style="color:#4ade80;">(×4倍)</span></div>
+            <div class="poker-guide-desc">数字はバラバラでも、<strong>5枚すべて同じマーク（♠♥♦♣）</strong>にする！</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card red hi"><span>2</span><span>♦</span></div>
+            <div class="mini-card red hi"><span>5</span><span>♦</span></div>
+            <div class="mini-card red hi"><span>9</span><span>♦</span></div>
+            <div class="mini-card red hi"><span>J</span><span>♦</span></div>
+            <div class="mini-card red hi"><span>K</span><span>♦</span></div>
+          </div>
+        </div>
+
+        <!-- 6. ストレート -->
+        <div class="poker-guide-row">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">📏 ストレート <span style="color:#4ade80;">(×3倍)</span></div>
+            <div class="poker-guide-desc">マークはバラバラでも、<strong>数字が5枚順番に連続</strong>して並ぶ！</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card black hi"><span>4</span><span>♠</span></div>
+            <div class="mini-card red hi"><span>5</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>6</span><span>♦</span></div>
+            <div class="mini-card black hi"><span>7</span><span>♣</span></div>
+            <div class="mini-card black hi"><span>8</span><span>♠</span></div>
+          </div>
+        </div>
+
+        <!-- 7. スリーカード -->
+        <div class="poker-guide-row">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">🍀 スリーカード <span style="color:#4ade80;">(×2倍)</span></div>
+            <div class="poker-guide-desc"><strong>同じ数字のカードを3枚</strong>揃える！</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card black hi"><span>9</span><span>♠</span></div>
+            <div class="mini-card red hi"><span>9</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>9</span><span>♦</span></div>
+            <div class="mini-card black dim"><span>2</span><span>♣</span></div>
+            <div class="mini-card black dim"><span>J</span><span>♠</span></div>
+          </div>
+        </div>
+
+        <!-- 8. ツーペア -->
+        <div class="poker-guide-row">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">✌️ ツーペア <span style="color:#4ade80;">(×1.5倍)</span></div>
+            <div class="poker-guide-desc"><strong>同じ数字2枚のペアを「2組」</strong>作る！</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card black hi"><span>8</span><span>♠</span></div>
+            <div class="mini-card red hi"><span>8</span><span>♥</span></div>
+            <div class="mini-card red hi"><span>3</span><span>♦</span></div>
+            <div class="mini-card black hi"><span>3</span><span>♣</span></div>
+            <div class="mini-card black dim"><span>A</span><span>♠</span></div>
+          </div>
+        </div>
+
+        <!-- 9. ワンペア -->
+        <div class="poker-guide-row">
+          <div class="poker-guide-info">
+            <div class="poker-guide-name">👍 ワンペア <span style="color:#4ade80;">(×1倍)</span></div>
+            <div class="poker-guide-desc"><strong>同じ数字2枚のペアを「1組」</strong>作る！</div>
+          </div>
+          <div class="mini-cards-sample">
+            <div class="mini-card black hi"><span>A</span><span>♠</span></div>
+            <div class="mini-card red hi"><span>A</span><span>♥</span></div>
+            <div class="mini-card red dim"><span>4</span><span>♦</span></div>
+            <div class="mini-card black dim"><span>7</span><span>♣</span></div>
+            <div class="mini-card black dim"><span>10</span><span>♠</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       🎯 ゲーム5：ルーレット (#screen-game-roulette)
+  ======================================================================== -->
+  <section id="screen-game-roulette" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🎯 ルーレット <span id="rlModeBadge" style="font-size:0.75rem; background:#0284c7; padding:2px 8px; border-radius:999px;">シングル/対戦</span></div>
+      <button class="back-btn" onclick="navigateTo('screen-sub-wheel')">⬅️ ホイール選択へ</button>
+    </div>
+
+    <div class="casino-table-card">
+      <!-- ① ベット選択ビュー（選ぶときは盤面を広く表示！） -->
+      <div id="rlBetStage">
+        <div class="bet-control-bar">
+          <div style="font-size:0.86rem; font-weight:900;">
+            1タップ配置額:
+            <select id="rlChipUnitSelect" style="padding:4px 8px; border-radius:8px; background:#0f172a; color:#fef08a; border:2px solid #facc15; font-weight:900;">
+              <option value="5">5 🪙</option>
+              <option value="10" selected>10 🪙</option>
+              <option value="25">25 🪙</option>
+              <option value="50">50 🪙</option>
+            </select>
+            ｜ 合計ベット: <span id="rlTotalBetText" style="color:#fef08a; font-size:1.1rem;">0</span> 🪙
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="action-btn btn-green" id="rlSpinBtn" onclick="spinRoulette()" style="padding:8px 18px; font-size:0.95rem;">🎡 ルーレットを回す！</button>
+            <button class="chip-bet-btn c-clear" id="rlClearBtn" onclick="clearRouletteBets()">クリア</button>
+          </div>
+        </div>
+
+        <!-- 外側ベット（赤/黒・偶数/奇数・1-18/19-36・ダズン） -->
+        <div style="font-size:0.78rem; font-weight:900; color:#a7f3d0; margin-bottom:4px;">▼ 色・偶数奇数・範囲を選んでタップ（2倍〜3倍）</div>
+        <div class="roulette-grid-outside" id="rlOutsideGrid"></div>
+
+        <!-- 数字ストレートベット（0〜36：36倍！） -->
+        <div style="font-size:0.78rem; font-weight:900; color:#fde047; margin-bottom:4px;">▼ 数字ピンポイント当て（的中時 36倍配当！）</div>
+        <div class="roulette-numbers-grid" id="rlNumbersGrid"></div>
+      </div>
+
+      <!-- ② スピン中＆結果の大画面ルーレットビュー（ルーレットだけをドカンと大きく映し、端に自分の選んだベットを表示！） -->
+      <div id="rlWheelStage" style="display:none; position:relative; padding:8px 0;">
+        <!-- 端っこ（右上・上部）に自分が選んだベット一覧を固定表示 -->
+        <div style="display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:12px;">
+          <div id="rlResultBubble" style="flex:1; min-width:180px; font-size:1.15rem; font-weight:900; color:#fef08a; background:rgba(15,23,42,0.92); border:2.5px solid #facc15; border-radius:16px; padding:10px 14px; text-align:center;">
+            🎡 ルーレット回転中...！
+          </div>
+          <div style="background:rgba(15,23,42,0.95); border:2px solid #38bdf8; border-radius:14px; padding:8px 12px; min-width:165px; max-width:240px;">
+            <div style="font-size:0.74rem; font-weight:900; color:#7dd3fc; margin-bottom:4px;">🎯 あなたの選択ベット</div>
+            <div id="rlSelectedBetsList" style="display:flex; flex-wrap:wrap; gap:4px; font-size:0.75rem; font-weight:900;"></div>
+          </div>
+        </div>
+
+        <!-- 中央に特大ルーレット盤 (340x340) -->
+        <div style="display:flex; justify-content:center; align-items:center; margin:6px 0 14px;">
+          <canvas id="rouletteCanvas" width="340" height="340" style="max-width:100%; height:auto; background:radial-gradient(circle, #1e293b 0%, #0f172a 100%); border-radius:50%; box-shadow:0 10px 30px rgba(0,0,0,0.8);"></canvas>
+        </div>
+
+        <div style="text-align:center;">
+          <button class="action-btn" id="rlBackToBetBtn" onclick="backToRouletteBetStage()" style="display:none;">🔄 次のベットを選ぶ（盤面へ戻る）</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       🎡 ゲーム6：ビッグシックス (#screen-game-bigsix)
+  ======================================================================== -->
+  <section id="screen-game-bigsix" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🎡 ビッグシックス (マネーホイール)</div>
+      <button class="back-btn" onclick="navigateTo('screen-sub-wheel')">⬅️ ホイール選択へ</button>
+    </div>
+
+    <!-- ルールモード切替（🎯 1〜10の数字を選んで中の倍率分もらえるモード / 🏛️ カジノ標準モード） -->
+    <div class="mode-selector-card" style="margin-bottom:12px;">
+      <div class="mode-selector-label">🎡 ビッグシックスのルールを選べます</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <button class="mode-tab-btn active" id="bsTab1to10" onclick="setBigSixRuleMode('num1to10')">
+          🎯 1〜10数字＆高倍率モード<br><span style="font-size:0.7rem; font-weight:700;">1〜10を当てて中の倍率(5〜9倍等)獲得！</span>
+        </button>
+        <button class="mode-tab-btn" id="bsTabClassic" onclick="setBigSixRuleMode('classic')">
+          🏛️ カジノ標準モード<br><span style="font-size:0.7rem; font-weight:700;">1・2・5・10・20・40倍の54マス</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="casino-table-card">
+      <div style="display:flex; flex-direction:column; align-items:center;">
+        <canvas id="bigSixCanvas" width="310" height="310" style="max-width:100%; height:auto;"></canvas>
+        <div id="bsResultText" style="font-size:1.05rem; font-weight:900; color:#fef08a; margin:8px 0; text-align:center;">
+          1〜10の番号を選んでベット！当たればその枠に書いてある倍数分もらえる！
+        </div>
+      </div>
+
+      <div class="bet-control-bar">
+        <div style="font-weight:900; font-size:0.86rem;">
+          1タップ追加額:
+          <select id="bsChipUnit" style="padding:4px 8px; border-radius:8px; background:#0f172a; color:#fef08a; border:2px solid #facc15; font-weight:900;">
+            <option value="5">5 🪙</option>
+            <option value="10" selected>10 🪙</option>
+            <option value="25">25 🪙</option>
+            <option value="50">50 🪙</option>
+          </select>
+          ｜ 合計ベット: <span id="bsTotalBetText" style="color:#fef08a;">0</span> 🪙
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="action-btn btn-green" id="bsSpinBtn" onclick="spinBigSix()" style="padding:8px 18px; font-size:0.92rem;">🎡 ホイールを回す！</button>
+          <button class="chip-bet-btn c-5" id="bsShuffleMultBtn" onclick="shuffleBigSix1to10Multipliers()">🎲 倍率シャッフル</button>
+          <button class="chip-bet-btn c-clear" onclick="clearBigSixBets()">クリア</button>
+        </div>
+      </div>
+
+      <!-- ベットパネル -->
+      <div class="bigsix-bet-grid" id="bsBetGrid"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       ⚙️ メニュー画面 (#screen-menu)
+  ======================================================================== -->
+  <section id="screen-menu" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">⚙️ メニュー ＆ ルール図鑑</div>
+      <button class="back-btn" onclick="navigateTo('screen-title')">⬅️ タイトルへ</button>
+    </div>
+
+    <!-- プレイヤー戦績カード -->
+    <div style="background:rgba(15,23,42,0.92); border:3px solid #facc15; border-radius:22px; padding:16px; margin-bottom:14px; box-shadow:0 6px 0 #854d0e;">
+      <div onclick="triggerCasinoAdminSecretTap()" style="font-size:1.05rem; font-weight:900; color:#fef08a; margin-bottom:10px; cursor:pointer;">📊 カジノ・ロジカ 戦績レコード</div>
+      <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; font-size:0.86rem; font-weight:800;">
+        <div style="background:#1e293b; padding:10px; border-radius:12px;">🪙 現在チップ: <span id="menuCurrentChips" style="color:#fef08a;">100</span></div>
+        <div style="background:#1e293b; padding:10px; border-radius:12px;">👑 最高所持記録: <span id="menuMaxChips" style="color:#38bdf8;">100</span></div>
+        <div style="background:#1e293b; padding:10px; border-radius:12px;">🏆 通算勝利数: <span id="menuTotalWins" style="color:#4ade80;">0</span> 勝</div>
+        <div style="background:#1e293b; padding:10px; border-radius:12px;">📝 勉強獲得チップ: <span id="menuStudyChips" style="color:#f472b6;">0</span></div>
+      </div>
+    </div>
+
+    <!-- 👑 管理者専用コントロールパネル（管理者モード起動時のみ表示） -->
+    <div id="adminControlPanelCard" style="display:none; background:linear-gradient(135deg, #4a044e 0%, #1e1b4b 100%); border:3px solid #f472b6; border-radius:22px; padding:16px; margin-bottom:14px; box-shadow:0 6px 0 #701a75;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
+        <div style="font-size:1.02rem; font-weight:900; color:#fbcfe8;">👑 管理者専用テストパネル（ランキング非反映）</div>
+        <button class="back-btn" style="background:#f472b6; color:#fff; border-color:#fff; font-size:0.76rem; padding:4px 10px;" onclick="exitAdminTestMode()">🔧 通常データに戻る</button>
+      </div>
+      <p style="font-size:0.78rem; color:#f5d0fe; line-height:1.5; margin-bottom:10px;">
+        ※現在、本来のセーブデータは安全に裏へ保護されており、このモード中のチップや勝敗は<strong>ランキングには一切反映・送信されません</strong>。
+      </p>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <button class="chip-bet-btn c-25" id="adminInfToggleBtn" onclick="toggleAdminInfiniteChips()">♾️ チップ無限固定: ON</button>
+        <button class="chip-bet-btn c-10" onclick="setAdminCustomChips(999999)">🪙 999,999チップにする</button>
+        <button class="chip-bet-btn c-5" onclick="setAdminCustomChips(10000)">🪙 10,000チップにする</button>
+        <button class="chip-bet-btn c-max" onclick="setAdminCustomChips(0)">💸 0チップにする(破産テスト)</button>
+      </div>
+    </div>
+
+    <!-- バイオ・ロジカ連動ステータス -->
+    <div style="background:rgba(15,23,42,0.92); border:3px solid #10b981; border-radius:22px; padding:16px; margin-bottom:14px; box-shadow:0 6px 0 #064e3b;">
+      <div style="font-size:1.05rem; font-weight:900; color:#6ee7b7; margin-bottom:6px;">🧬 『バイオ・ロジカ』連動システム</div>
+      <p style="font-size:0.82rem; color:#cbd5e1; line-height:1.55; margin-bottom:10px;">
+        所持チップが <strong>0チップ（破産）</strong> になった時だけ、タイトル画面の「📝 勉強でチップ稼ぎ」が解放され、『バイオ・ロジカ』に出稼ぎへ飛べます！<br>
+        ※普通にバイオ・ロジカを開いて勉強している時はカジノ通知は出ず、破産して出稼ぎに行った時だけクイズ正解でチップがもらえます。
+      </p>
+      <div id="bioLinkStatusBox" style="background:#064e3b; border:1.5px solid #34d399; border-radius:12px; padding:10px; font-size:0.82rem; font-weight:900; color:#ecfdf5;">
+        連動状態を確認中...
+      </div>
+    </div>
+
+    <!-- 全6ゲーム ルール解説 -->
+    <div style="background:rgba(15,23,42,0.92); border:3px solid #38bdf8; border-radius:22px; padding:16px; margin-bottom:14px; box-shadow:0 6px 0 #0369a1; font-size:0.82rem; line-height:1.6;">
+      <div style="font-size:1.05rem; font-weight:900; color:#7dd3fc; margin-bottom:8px;">📖 収録ゲーム ルールガイド</div>
+      <div style="margin-bottom:8px;"><strong>🥣 チンチロ</strong>：お椀にサイコロ3個を最大3回まで振る。ピンゾロ(5倍)・アラシ(3倍)・シゴロ(2倍)・通常の目(1倍)・ヒフミ(2倍払い)・目なし(1倍負け)。</div>
+      <div style="margin-bottom:8px;"><strong>⛵ ヨット</strong>：5個のサイコロをキープしながら3回振り、12個の役を埋める。1戦終了時の「お互いの合計スコア差 × 点差レート」でチップを奪い合う点差マッチ！</div>
+      <div style="margin-bottom:8px;"><strong>🃏 ブラックジャック</strong>：トランプの合計を21に近づける。22以上はバースト負け。A+10点札の21はナチュラルBJで2.5倍配当！</div>
+      <div style="margin-bottom:8px;"><strong>👑 ポーカー</strong>：5枚の手札から残したいカードをHOLDして1回交換。相手より強い役を作れば勝利＋高役ボーナス倍率！</div>
+      <div style="margin-bottom:8px;"><strong>🎯 ルーレット</strong>：0〜36の回転盤。赤黒・偶数奇数(2倍)、ダズン(3倍)、数字ピンポイント当て(36倍)に自由ベット！</div>
+      <div><strong>🎡 ビッグシックス</strong>：1・2・5・10・20・40が書かれた巨大ホイール。止まったマスの数字の倍率分（元金＋賭け金×数字）がもらえる！</div>
+    </div>
+
+    <!-- フレンド(2P)チップリセット・データ管理 -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="back-btn" style="background:#fef08a; border-color:#854d0e;" onclick="openNameChangeModal()">✏️ プレイヤー名を変更する</button>
+      <button class="back-btn" onclick="resetP2Chips()">🔄 フレンド(2P)のチップを100に戻す</button>
+      <button class="back-btn" style="background:#fee2e2; color:#991b1b; border-color:#f87171;" onclick="resetAllCasinoData()">🗑️ セーブデータ初期化</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       🏆 ランキング画面 (#screen-ranking)
+  ======================================================================== -->
+  <section id="screen-ranking" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🏆 チップ数ランキング</div>
+      <button class="back-btn" onclick="navigateTo('screen-title')">⬅️ タイトルへ</button>
+    </div>
+
+    <!-- 自分のランキングカード -->
+    <div style="background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border:3.5px solid #facc15; border-radius:22px; padding:14px 16px; margin-bottom:12px; box-shadow:0 6px 0 #854d0e;">
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px;">
+        <div>
+          <div style="font-size:0.76rem; font-weight:900; color:#fde047;" id="myRankTitleBadge">🌱 カジノチャレンジャー</div>
+          <div style="font-size:1.25rem; font-weight:900; color:#ffffff; display:flex; align-items:center; gap:8px;">
+            <span>🧑 <span id="myRankNameText">プレイヤー</span></span>
+            <span id="myRankPosBadge" style="font-size:0.88rem; background:#facc15; color:#422006; padding:2px 10px; border-radius:999px;">第 - 位</span>
+          </div>
+          <div style="font-size:0.82rem; font-weight:800; color:#94a3b8; margin-top:3px;">
+            現在所持: <strong style="color:#fef08a;" id="myRankChipsText">100</strong> 🪙 ｜ 最高記録: <strong style="color:#38bdf8;" id="myRankMaxText">100</strong> 🪙
+          </div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="back-btn" style="background:#fef08a; border-color:#ca8a04;" onclick="openNameChangeModal()">✏️ 名前変更</button>
+          <button class="back-btn" style="background:#38bdf8; color:#fff; border-color:#0284c7;" onclick="refreshRankingData(true)">🔄 更新</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⚔️ ランキング賭け挑戦バー（チップを賭けてランカーとダイス一発勝負！） -->
+    <div class="bet-control-bar" style="border-color:#ec4899; background:rgba(80, 7, 36, 0.7);">
+      <div style="font-size:0.84rem; font-weight:900; color:#fbcfe8;">
+        ⚔️ ランカー挑戦の賭けチップ: <span id="rankBetAmountText" style="color:#fef08a; font-size:1.1rem;">10</span> 🪙
+      </div>
+      <div class="bet-chips-btns">
+        <button class="chip-bet-btn c-5" onclick="setRankChallengeBet(10)">10🪙</button>
+        <button class="chip-bet-btn c-10" onclick="setRankChallengeBet(30)">30🪙</button>
+        <button class="chip-bet-btn c-25" onclick="setRankChallengeBet(50)">50🪙</button>
+        <button class="chip-bet-btn c-50" onclick="setRankChallengeBet(100)">100🪙</button>
+        <button class="chip-bet-btn c-max" onclick="setRankChallengeBet('max')">MAX</button>
+      </div>
+    </div>
+
+    <!-- ランキング種別タブ -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+      <button class="mode-tab-btn active" id="rankTabCurrent" onclick="switchRankingTab('current')">
+        🪙 現在所持チップ順
+      </button>
+      <button class="mode-tab-btn" id="rankTabMax" onclick="switchRankingTab('max')">
+        👑 歴代最高チップ順
+      </button>
+    </div>
+
+    <div id="adminRankingNoticeBanner" style="display:none; background:rgba(112,26,117,0.85); border:2px solid #f472b6; color:#fdf4ff; padding:10px 14px; border-radius:14px; font-size:0.8rem; font-weight:900; margin-bottom:10px; text-align:center;">
+      🔧 現在「管理者専用モード（チップ無限）」のため、あなたのテストデータはランキングには反映・送信されません。
+    </div>
+
+    <!-- ランキングリスト -->
+    <div class="ranking-list-wrap" id="rankingListContainer"></div>
+  </section>
+</div>
+
+<!-- ==========================================================================
+     ✏️ プレイヤー名決定 ＆ 初回100チップ受け取りモーダル (#nameEntryModal)
+========================================================================== -->
+<div class="modal-overlay" id="nameEntryModal">
+  <div class="modal-box">
+    <div style="font-size:3.2rem; margin-bottom:4px;" id="nameModalEmoji">🎰</div>
+    <h2 id="nameModalTitle" style="font-size:1.35rem; font-weight:900; color:#fef08a; margin-bottom:6px; text-shadow:0 2px 0 #713f12;">
+      プレイヤー名を決めよう！
+    </h2>
+    <p id="nameModalSubDesc" style="font-size:0.84rem; font-weight:800; color:#cbd5e1; line-height:1.5; margin-bottom:12px;">
+      決めた名前は「🏆 ランキング」に表示されます！<br>
+      <span style="color:#facc15;" id="nameModalBonusNotice">（初回スタートボーナス 🪙100チップ プレゼント！）</span>
+    </p>
+
+    <div style="margin-bottom:10px;">
+      <input
+        id="playerNameInputBox"
+        type="text"
+        maxlength="10"
+        placeholder="名前を入力 (1〜10文字)"
+        style="width:100%; padding:12px 14px; border-radius:14px; border:3px solid #facc15; background:#0f172a; color:#ffffff; font-weight:900; font-size:1.05rem; text-align:center; outline:none;"
+      >
+      <div id="nameErrorMsg" style="color:#f87171; font-size:0.78rem; font-weight:900; margin-top:6px; min-height:20px;"></div>
+    </div>
+
+    <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:14px;">
+      ※暴言・下ネタ・誹謗中傷などの不適切な名前は登録できません。
+    </div>
+
+    <button class="action-btn" onclick="confirmPlayerNameSubmit()" style="width:100%; font-size:1.05rem;">
+      ✨ この名前で決定！
+    </button>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     🎉 モーダル（初回100チップ演出 / デイリーログボ50チップ / 破産案内）
+========================================================================== -->
+<div class="modal-overlay" id="rewardModal">
+  <div class="modal-box">
+    <div id="rewardModalIcon" style="font-size:3.6rem; margin-bottom:6px;">🎉</div>
+    <h2 id="rewardModalTitle" style="font-size:1.45rem; font-weight:900; color:#fef08a; margin-bottom:8px; text-shadow:0 2px 0 #713f12;">
+      カジノ・ロジカへようこそ！
+    </h2>
+    <p id="rewardModalDesc" style="font-size:0.92rem; font-weight:800; color:#e2e8f0; line-height:1.6; margin-bottom:16px;">
+      初回スタート記念として<br>
+      <span style="font-size:1.5rem; color:#facc15; font-weight:900;">🪙 100 チップ</span><br>
+      をプレゼントします！
+    </p>
+    <button class="action-btn" id="rewardModalBtn" onclick="closeRewardModal()" style="width:100%; font-size:1.1rem;">
+      ✨ 受け取ってはじめる！
+    </button>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<script>
+/* ============================================================================
+   🎰 カジノ・ロジカ (CASINO LOGICA) メインエンジン Ver 1.0
+============================================================================ */
+const SAVE_KEY = 'casino_logica_save_v1';
+const PROD_BACKUP_KEY = 'casino_logica_prod_backup_v1';
+const WORK_SESSION_KEY = 'casino_logica_work_session';
+
+let state = {
+  playerId: '',
+  playerName: '',
+  chips: 100,
+  p2Chips: 100,
+  maxChips: 100,
+  totalWins: 0,
+  studyEarnedTotal: 0,
+  firstGiftClaimed: false,
+  lastLoginDate: '',
+  soundOn: true,
+  playMode: 'ai', // 'ai' | 'local' | 'online'
+  isTestAccount: false,
+  infiniteChips: false
+};
+
+/* --- 👑 管理者専用テストモード（本番データ自動保護 ＆ チップ無限 ＆ ランキング完全非反映） --- */
+const CASINO_ADMIN_PASS_DEFAULT = 'bio2026';
+let adminSecretTapCounter = 0;
+let adminTapResetTimer = null;
+
+function triggerCasinoAdminSecretTap() {
+  adminSecretTapCounter++;
+  if (adminTapResetTimer) clearTimeout(adminTapResetTimer);
+  adminTapResetTimer = setTimeout(() => { adminSecretTapCounter = 0; }, 2500);
+
+  if (adminSecretTapCounter >= 5) {
+    adminSecretTapCounter = 0;
+    if (state.isTestAccount) {
+      navigateTo('screen-menu');
+      showToast('👑 管理者専用テストパネルを表示中です');
+      return;
+    }
+    const savedPass = localStorage.getItem('biologica_admin_pass') || CASINO_ADMIN_PASS_DEFAULT;
+    const input = prompt('👑【管理者専用認証】\nマスターパスコードを入力してください：');
+    if (input === null) return;
+    const trimmed = input.trim();
+    if (trimmed === savedPass || trimmed.toUpperCase() === 'DEBUG_MAX') {
+      enterAdminTestMode();
+    } else {
+      playSE('lose');
+      showToast('❌ パスコードが一致しません');
+    }
+  }
+}
+
+function enterAdminTestMode() {
+  // 既にテストモードでない場合、現在の本番セーブデータを安全に裏へ退避！
+  if (!state.isTestAccount) {
+    try {
+      const prodSnapshot = JSON.stringify({ ...state, isTestAccount: false, infiniteChips: false });
+      localStorage.setItem(PROD_BACKUP_KEY, prodSnapshot);
+    } catch (e) {}
+
+    // クラウド上に自分のドキュメントがあれば、管理者テスト中は一時的でも混ざらないよう保護
+  }
+
+  state.isTestAccount = true;
+  state.infiniteChips = true;
+  state.chips = 999999;
+  state.p2Chips = 999999;
+  state.maxChips = 999999;
+  saveState();
+  playSE('win');
+  showToast('👑 管理者専用モード（チップ無限・ランキング非反映）を起動しました！');
+}
+
+function exitAdminTestMode() {
+  playSE('click');
+  try {
+    const rawBackup = localStorage.getItem(PROD_BACKUP_KEY);
+    if (rawBackup) {
+      const restored = JSON.parse(rawBackup);
+      state = { ...state, ...restored, isTestAccount: false, infiniteChips: false };
+      localStorage.removeItem(PROD_BACKUP_KEY);
+    } else {
+      state.isTestAccount = false;
+      state.infiniteChips = false;
+      state.chips = 100;
+      state.maxChips = 100;
+    }
+  } catch (e) {
+    state.isTestAccount = false;
+    state.infiniteChips = false;
+    state.chips = 100;
+  }
+  saveState();
+  if (document.getElementById('screen-ranking').classList.contains('active')) {
+    renderRankingList();
+  }
+  showToast('🔧 管理者専用モードを終了し、本来のセーブデータに復元しました！');
+}
+
+function toggleAdminInfiniteChips() {
+  if (!state.isTestAccount) return;
+  playSE('click');
+  state.infiniteChips = !state.infiniteChips;
+  if (state.infiniteChips) {
+    state.chips = 999999;
+  }
+  saveState();
+  showToast(state.infiniteChips ? '♾️ チップ無限固定を ON にしました！' : '🔓 チップ無限固定を OFF にしました（増減テスト可能）');
+}
+
+function setAdminCustomChips(amount) {
+  if (!state.isTestAccount) return;
+  playSE('coin');
+  state.infiniteChips = (amount >= 999999);
+  state.chips = amount;
+  saveState();
+  showToast(`🪙 テスト所持チップを ${amount.toLocaleString()} 枚に設定しました`);
+}
+
+/* --- 🛡️ 不適切ネーム（NGワード・暴言・下ネタ・差別表現）厳格ブロックフィルター --- */
+const NG_WORDS_LIST = [
+  '死ね', 'しね', 'シネ', 'shine', '殺す', 'ころす', 'コロス', '殺せ', '自殺',
+  'ばか', 'バカ', '馬鹿', 'あほ', 'アホ', '阿呆', 'かす', 'カス', 'ごみ', 'ゴミ', 'くず', 'クズ',
+  'きもい', 'キモい', 'キモイ', 'うざい', 'ウザい', 'ウザイ', 'ぶす', 'ブス', 'でぶ', 'デブ', 'はげ', 'ハゲ',
+  'きちがい', 'キチガイ', 'がいじ', 'ガイジ', '池沼', '障害', 'しょうがい',
+  'うんこ', 'ウンコ', 'うんち', 'ウンチ', 'ちんこ', 'チンコ', 'ちんちん', 'チンチン', 'ちんぽ', 'チンポ',
+  'まんこ', 'マンコ', 'おまんこ', 'おっぱい', 'オッパイ', 'ちくび', 'チクビ', '乳首', 'きんたま', 'キンタマ', '金玉',
+  'せっくす', 'セックス', 'sex', 'fuck', 'shit', 'bitch', 'asshole', 'penis', 'vagina', 'pussy', 'dick', 'cock',
+  'えろ', 'エロ', 'へんたい', '変態', 'オナニー', 'おなにー', '自慰', 'れいぷ', 'レイプ', '強姦',
+  'ぱんつ', 'パンツ', '下着', '裸', 'はだか', 'アナル', 'あなる', 'フェラ', 'ふぇら', 'ホモ', 'ほも'
+];
+
+// カタカナをひらがなに変換＆英数字・空白記号を正規化して伏せ字すり抜けもブロック
+function normalizeForNgCheck(str) {
+  return String(str || '')
+    .toLowerCase()
+    .replace(/[\s　_・.。、,\-*＊/／\\|｜!！?？~〜]+/g, '')
+    .replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+}
+
+function validatePlayerName(rawName) {
+  const trimmed = String(rawName || '').trim();
+  if (!trimmed) {
+    return { ok: false, reason: '⚠️ 名前を入力してください（1〜10文字）' };
+  }
+  if (trimmed.length > 10) {
+    return { ok: false, reason: '⚠️ 名前は10文字以内で入力してください' };
+  }
+  if (/[<>\"'&]/.test(trimmed)) {
+    return { ok: false, reason: '⚠️ 特殊記号（< > " \' &）は使用できません' };
+  }
+
+  const norm = normalizeForNgCheck(trimmed);
+  for (const w of NG_WORDS_LIST) {
+    const normNg = normalizeForNgCheck(w);
+    if (normNg && (norm.includes(normNg) || trimmed.toLowerCase().includes(w.toLowerCase()))) {
+      return { ok: false, reason: '🚫 不適切な言葉が含まれているため、その名前は登録できません！' };
+    }
+  }
+  return { ok: true, cleanName: trimmed };
+}
+
+function sanitizeDisplayPlayerName(rawName) {
+  const res = validatePlayerName(rawName);
+  return res.ok ? res.cleanName : 'プレイヤー';
+}
+
+/* --- ☁️ Firebase クラウド全国ランキング同期 --- */
+const firebaseConfig = {
+  apiKey: "AIzaSyARuxvi3ItUmko7iiOKVz90GA5ZqjBwtFo",
+  authDomain: "biologica-2eb9c.firebaseapp.com",
+  projectId: "biologica-2eb9c",
+  storageBucket: "biologica-2eb9c.firebasestorage.app",
+  messagingSenderId: "309650736547",
+  appId: "1:309650736547:web:925adda67c7b0badf10616"
+};
+
+let db = null;
+try {
+  if (typeof firebase !== 'undefined') {
+    if (firebase.apps.length === 0) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    db = firebase.firestore();
+  }
+} catch (e) {}
+
+let cloudRankCache = [];
+let rankTabMode = 'current'; // 'current' | 'max'
+let rankChallengeBet = 10;
+
+function getCasinoRankTitle(chips) {
+  if (chips >= 5000) return '🌌 伝説のカジノ覇王';
+  if (chips >= 1500) return '👑 カジノ・キング';
+  if (chips >= 500)  return '💎 VIPハイローラー';
+  if (chips >= 200)  return '🔥 凄腕ギャンブラー';
+  if (chips > 0)     return '🌱 カジノチャレンジャー';
+  return '📝 バイオ出稼ぎ研修生';
+}
+
+let syncRankTimer = null;
+function syncMyScoreToCloud() {
+  if (!db || !state.playerId || !state.playerName) return;
+  // 🔧 管理者専用モード（テストアカウント）中はランキングへの送信・反映を100%完全遮断！
+  if (state.isTestAccount) return;
+  const check = validatePlayerName(state.playerName);
+  if (!check.ok) return;
+
+  if (syncRankTimer) clearTimeout(syncRankTimer);
+  syncRankTimer = setTimeout(() => {
+    if (state.isTestAccount) return;
+    const myEntry = {
+      id: state.playerId,
+      name: check.cleanName,
+      chips: Number(state.chips) || 0,
+      maxChips: Number(state.maxChips) || 0,
+      wins: Number(state.totalWins) || 0,
+      isTestAccount: false,
+      updatedAt: Date.now()
+    };
+    try {
+      // 1. 既存の『バイオ・ロジカ』Firebaseセキュリティルールで100%権限が通る players/MATCH_CASINO_RANKINGS ハブに保存（MATCH_開始＆isSystemDoc:trueのためバイオ・ロジカ側には一切表示されない）
+      db.collection('players').doc('MATCH_CASINO_RANKINGS').set({
+        isSystemDoc: true,
+        entries: {
+          [state.playerId]: myEntry
+        },
+        updatedAt: Date.now()
+      }, { merge: true }).catch(() => {});
+
+      // 2. casino_rankings コレクションにも並行保存
+      db.collection('casino_rankings').doc(state.playerId).set(myEntry, { merge: true }).catch(() => {});
+    } catch (e) {}
+  }, 800);
+}
+
+/* --- 🔊 Web Audio API サウンドシンセサイザー --- */
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function playSE(type) {
+  if (!state.soundOn) return;
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+
+    if (type === 'click') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(660, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.06);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.06);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.06);
+    } else if (type === 'dice') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(320 + Math.random() * 280, now);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.045);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.045);
+    } else if (type === 'coin' || type === 'win') {
+      const notes = type === 'win' ? [523.25, 659.25, 783.99, 1046.5] : [987.77, 1318.51];
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+        gain.gain.setValueAtTime(0.2, now + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.008, now + i * 0.08 + 0.22);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.08);
+        osc.stop(now + i * 0.08 + 0.22);
+      });
+    } else if (type === 'lose') {
+      [300, 240].forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now + i * 0.14);
+        gain.gain.setValueAtTime(0.14, now + i * 0.14);
+        gain.gain.linearRampToValueAtTime(0.01, now + i * 0.14 + 0.18);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.14);
+        osc.stop(now + i * 0.14 + 0.18);
+      });
+    } else if (type === 'tick') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.07, now);
+      gain.gain.linearRampToValueAtTime(0.005, now + 0.025);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.025);
+    }
+  } catch (e) {}
+}
+
+function toggleSound() {
+  state.soundOn = !state.soundOn;
+  document.getElementById('soundToggleBtn').textContent = state.soundOn ? '🔊' : '🔇';
+  saveState();
+  if (state.soundOn) playSE('click');
+}
+
+/* --- 💾 セーブ＆ロード・ログインボーナス・バイオ・ロジカ帰還チェック --- */
+function getTodayStr() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function saveState() {
+  if (state.isTestAccount && state.infiniteChips) {
+    state.chips = 999999;
+    state.p2Chips = 999999;
+  }
+  if (state.chips < 0) state.chips = 0;
+  if (state.p2Chips < 0) state.p2Chips = 0;
+  if (state.chips > state.maxChips) state.maxChips = state.chips;
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (e) {}
+  updateHeaderUI();
+  syncMyScoreToCloud();
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      state = { ...state, ...parsed };
+    }
+  } catch (e) {}
+
+  if (!state.playerId) {
+    state.playerId = 'cl_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+  }
+
+  // 保存されている名前が万一NGワードに該当していたらリセット
+  if (state.playerName && !validatePlayerName(state.playerName).ok) {
+    state.playerName = '';
+  }
+
+  // URLパラメータまたは出稼ぎセッションからのチップ帰還チェック
+  checkStudyReturnReward();
+
+  const today = getTodayStr();
+
+  // ゲーム開始時：初回プレイ または まだプレイヤー名が決まっていない場合は名前決定モーダルを開く！
+  if (!state.firstGiftClaimed || !state.playerName) {
+    openInitialNameSetupModal(!state.firstGiftClaimed);
+  } else if (state.lastLoginDate !== today) {
+    state.chips += 50;
+    state.lastLoginDate = today;
+    saveState();
+    showRewardModal(
+      '🎁',
+      'デイリーログインボーナス！',
+      `今日も遊んでくれてありがとう、<strong>${sanitizeDisplayPlayerName(state.playerName)}</strong> さん！<br>毎日のログインボーナス<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 +50 チップ</span><br>を獲得しました！`,
+      '🪙 50チップを受け取る！'
+    );
+  } else {
+    updateHeaderUI();
+    syncMyScoreToCloud();
+  }
+}
+
+let isFirstStartupNameSetup = false;
+function openInitialNameSetupModal(isFirstGift) {
+  isFirstStartupNameSetup = !!isFirstGift;
+  document.getElementById('nameModalEmoji').textContent = isFirstGift ? '🎉' : '✏️';
+  document.getElementById('nameModalTitle').textContent = isFirstGift ? 'カジノ・ロジカへようこそ！' : 'プレイヤー名を決めよう！';
+  document.getElementById('nameModalBonusNotice').style.display = isFirstGift ? 'inline' : 'none';
+  document.getElementById('nameErrorMsg').textContent = '';
+
+  const inp = document.getElementById('playerNameInputBox');
+  inp.value = state.playerName || '';
+  document.getElementById('nameEntryModal').classList.add('active');
+}
+
+function openNameChangeModal() {
+  playSE('click');
+  isFirstStartupNameSetup = false;
+  document.getElementById('nameModalEmoji').textContent = '✏️';
+  document.getElementById('nameModalTitle').textContent = 'プレイヤー名の変更';
+  document.getElementById('nameModalBonusNotice').style.display = 'none';
+  document.getElementById('nameErrorMsg').textContent = '';
+  document.getElementById('playerNameInputBox').value = state.playerName || '';
+  document.getElementById('nameEntryModal').classList.add('active');
+}
+
+function confirmPlayerNameSubmit() {
+  const inp = document.getElementById('playerNameInputBox');
+  const errEl = document.getElementById('nameErrorMsg');
+  const rawVal = (inp.value || '').trim();
+  const savedPass = localStorage.getItem('biologica_admin_pass') || CASINO_ADMIN_PASS_DEFAULT;
+
+  // 👑 名前入力欄に合言葉（DEBUG_MAX または bio2026）を入力した場合は管理者モード起動！
+  if (rawVal.toUpperCase() === 'DEBUG_MAX' || rawVal === savedPass) {
+    errEl.textContent = '';
+    if (!state.playerName) state.playerName = 'プレイヤー';
+    state.firstGiftClaimed = true;
+    state.lastLoginDate = getTodayStr();
+    document.getElementById('nameEntryModal').classList.remove('active');
+    enterAdminTestMode();
+    return;
+  }
+
+  const check = validatePlayerName(rawVal);
+
+  if (!check.ok) {
+    playSE('lose');
+    errEl.textContent = check.reason;
+    return;
+  }
+
+  errEl.textContent = '';
+  state.playerName = check.cleanName;
+  const today = getTodayStr();
+
+  if (isFirstStartupNameSetup || !state.firstGiftClaimed) {
+    state.chips = 100;
+    state.maxChips = Math.max(state.maxChips || 100, 100);
+    state.firstGiftClaimed = true;
+    state.lastLoginDate = today;
+    saveState();
+    document.getElementById('nameEntryModal').classList.remove('active');
+    showRewardModal(
+      '🎉',
+      `ようこそ、${state.playerName} さん！`,
+      `プレイヤー名を <strong>「${state.playerName}」</strong> に登録しました！<br>初回スタートボーナスとして<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 100 チップ</span><br>をプレゼントします！`,
+      '✨ 100チップを受け取ってはじめる！'
+    );
+  } else {
+    saveState();
+    document.getElementById('nameEntryModal').classList.remove('active');
+    playSE('win');
+    showToast(`✨ プレイヤー名を「${state.playerName}」に設定しました！`);
+    if (document.getElementById('screen-ranking').classList.contains('active')) {
+      renderRankingList();
+    }
+  }
+}
+
+/* --- 🧬 バイオ・ロジカ出稼ぎ連動ロジック --- */
+function getBioLogicaTotalCorrect() {
+  try {
+    const raw = localStorage.getItem('biologica_save_v50') || localStorage.getItem('biologica_save_v40');
+    if (!raw) return null;
+    const bioState = JSON.parse(raw);
+    if (!bioState || !bioState.stats || !bioState.stats.subjCorrect) return 0;
+    return Object.values(bioState.stats.subjCorrect).reduce((a, b) => a + (Number(b) || 0), 0);
+  } catch (e) {
+    return null;
+  }
+}
+
+function checkStudyReturnReward() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const earnedParam = parseInt(params.get('earned') || '0', 10);
+
+    const rawSession = localStorage.getItem(WORK_SESSION_KEY);
+    let earnedFromSession = 0;
+
+    if (rawSession) {
+      const sess = JSON.parse(rawSession);
+      if (sess && sess.active) {
+        if (Number(sess.earnedChips) > 0) {
+          earnedFromSession = Number(sess.earnedChips);
+        } else {
+          // バイオ・ロジカ側の正解数差分からも自動計算
+          const nowCorrect = getBioLogicaTotalCorrect();
+          if (nowCorrect !== null && typeof sess.startCorrect === 'number') {
+            const diff = Math.max(0, nowCorrect - sess.startCorrect);
+            earnedFromSession = Math.floor(diff / 3) * 10;
+          }
+        }
+        localStorage.removeItem(WORK_SESSION_KEY);
+      }
+    }
+
+    const totalEarned = Math.max(earnedParam, earnedFromSession);
+    if (totalEarned > 0) {
+      state.chips += totalEarned;
+      state.studyEarnedTotal = (state.studyEarnedTotal || 0) + totalEarned;
+      saveState();
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      setTimeout(() => {
+        showRewardModal(
+          '📝',
+          '勉強バイト報酬獲得！',
+          `『バイオ・ロジカ』での学習お疲れ様でした！<br>正解報酬として<br><span style="font-size:1.7rem; color:#4ade80; font-weight:900;">🪙 +${totalEarned} チップ</span><br>を獲得して復活しました！`,
+          '🎰 カジノへ戻る！'
+        );
+      }, 200);
+    }
+  } catch (e) {}
+}
+
+function handleStudyEarnClick() {
+  playSE('click');
+  if (state.chips > 0) {
+    showToast('🔒 まだチップが残っています！「勉強でチップ稼ぎ」は0チップ（破産）になった人専用の救済所です！');
+    return;
+  }
+  // 0チップのときだけバイオ・ロジカへ出稼ぎセッションを開始してジャンプ！
+  const currentCorrect = getBioLogicaTotalCorrect() || 0;
+  const sessionData = {
+    active: true,
+    startCorrect: currentCorrect,
+    earnedChips: 0,
+    startedAt: Date.now()
+  };
+  try {
+    localStorage.setItem(WORK_SESSION_KEY, JSON.stringify(sessionData));
+  } catch (e) {}
+
+  window.location.href = '../バイオ・ロジカ/大事/index.html?from=casino';
+}
+
+/* --- 🖥️ UI更新＆画面遷移 --- */
+function updateHeaderUI() {
+  const safeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
+  const hName = document.getElementById('headerPlayerName');
+  if (hName) hName.textContent = state.isTestAccount ? `👑${safeName}(管理者)` : safeName;
+
+  document.getElementById('p1ChipText').textContent = (state.isTestAccount && state.infiniteChips) ? '♾️ 999,999' : state.chips.toLocaleString();
+  document.getElementById('p2ChipText').textContent = state.p2Chips.toLocaleString();
+  document.getElementById('p2ChipBadge').style.display = state.playMode === 'local' ? 'inline-flex' : 'none';
+
+  const exitAdminBtn = document.getElementById('exitAdminModeBtn');
+  if (exitAdminBtn) exitAdminBtn.style.display = state.isTestAccount ? 'inline-flex' : 'none';
+  const adminPanel = document.getElementById('adminControlPanelCard');
+  if (adminPanel) adminPanel.style.display = state.isTestAccount ? 'block' : 'none';
+  const adminInfBtn = document.getElementById('adminInfToggleBtn');
+  if (adminInfBtn) adminInfBtn.textContent = state.infiniteChips ? '♾️ チップ無限固定: ON' : '🔓 チップ無限固定: OFF';
+
+  // 各ゲーム内のプレイヤー名ラベルにも自分の名前を反映
+  const ccPl = document.getElementById('ccPlayerLabel');
+  if (ccPl) ccPl.textContent = `🧑 子 (${safeName})`;
+  const ytP1 = document.getElementById('ytColP1');
+  if (ytP1) ytP1.textContent = `🧑 ${safeName}`;
+  const bjPl = document.getElementById('bjPlayerTitle');
+  if (bjPl) bjPl.textContent = `🧑 ${safeName}`;
+
+  // タイトル画面の「勉強でチップ稼ぎ」ボタン状態（0チップの人だけ解放！）
+  const studyBtn = document.getElementById('titleStudyBtn');
+  const studyIcon = document.getElementById('titleStudyIcon');
+  const studyTitle = document.getElementById('titleStudyTitle');
+  const studyDesc = document.getElementById('titleStudyDesc');
+  const studyArrow = document.getElementById('titleStudyArrow');
+
+  if (state.chips <= 0) {
+    studyBtn.className = 'yokai-btn yokai-btn-study-active';
+    studyIcon.textContent = '📝';
+    studyTitle.textContent = '勉強でチップ稼ぎ (解放中！)';
+    studyDesc.textContent = '0チップ破産救済！バイオ・ロジカで3問解くごとに+10チップ！';
+    studyArrow.textContent = '▶';
+  } else {
+    studyBtn.className = 'yokai-btn yokai-btn-study-locked';
+    studyIcon.textContent = '🔒';
+    studyTitle.textContent = '勉強でチップ稼ぎ (0チップ専用)';
+    studyDesc.textContent = `現在 ${state.chips} チップ所持中（0チップになった時だけ解放）`;
+    studyArrow.textContent = '🔒';
+  }
+
+  // メニュー戦績更新
+  const mc = document.getElementById('menuCurrentChips');
+  if (mc) mc.textContent = state.chips.toLocaleString();
+  const mm = document.getElementById('menuMaxChips');
+  if (mm) mm.textContent = state.maxChips.toLocaleString();
+  const mw = document.getElementById('menuTotalWins');
+  if (mw) mw.textContent = state.totalWins.toLocaleString();
+  const ms = document.getElementById('menuStudyChips');
+  if (ms) ms.textContent = (state.studyEarnedTotal || 0).toLocaleString();
+
+  const bioBox = document.getElementById('bioLinkStatusBox');
+  if (bioBox) {
+    const bioCorrect = getBioLogicaTotalCorrect();
+    if (bioCorrect !== null) {
+      bioBox.innerHTML = `🟢 『バイオ・ロジカ』セーブデータ連動確認済（累計正解数: ${bioCorrect} 問）`;
+    } else {
+      bioBox.innerHTML = `🟢 『バイオ・ロジカ』連動準備OK（0チップ時にボタンから直接ジャンプできます）`;
+    }
+  }
+}
+
+/* --- 🏆 ランキング画面 ＆ ランカー賭け勝負ロジック --- */
+function openRankingScreen() {
+  navigateTo('screen-ranking');
+  rankChallengeBet = Math.min(Math.max(1, rankChallengeBet), Math.max(1, state.chips));
+  document.getElementById('rankBetAmountText').textContent = rankChallengeBet;
+  refreshRankingData(false);
+}
+
+function switchRankingTab(tab) {
+  playSE('click');
+  rankTabMode = tab;
+  document.getElementById('rankTabCurrent').classList.toggle('active', tab === 'current');
+  document.getElementById('rankTabMax').classList.toggle('active', tab === 'max');
+  renderRankingList();
+}
+
+function setRankChallengeBet(val) {
+  playSE('click');
+  if (val === 'max') rankChallengeBet = Math.max(1, state.chips);
+  else rankChallengeBet = Math.min(Math.max(1, state.chips), val);
+  document.getElementById('rankBetAmountText').textContent = rankChallengeBet;
+}
+
+async function refreshRankingData(showNotice = false) {
+  if (showNotice) playSE('click');
+  syncMyScoreToCloud();
+
+  if (db) {
+    const mergedMap = new Map();
+    // 1. players/MATCH_CASINO_RANKINGS ハブから取得（Firebaseの追加設定不要で100%通る経路）
+    try {
+      const hubSnap = await Promise.race([
+        db.collection('players').doc('MATCH_CASINO_RANKINGS').get(),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2200))
+      ]);
+      if (hubSnap && hubSnap.exists && hubSnap.data() && hubSnap.data().entries) {
+        Object.values(hubSnap.data().entries).forEach(d => {
+          if (d && !d.isTestAccount && d.name && validatePlayerName(d.name).ok) {
+            mergedMap.set(d.id, {
+              id: d.id,
+              name: sanitizeDisplayPlayerName(d.name),
+              chips: Number(d.chips) || 0,
+              maxChips: Number(d.maxChips) || Number(d.chips) || 0,
+              wins: Number(d.wins) || 0,
+              isNpc: false
+            });
+          }
+        });
+      }
+    } catch (e) {}
+
+    // 2. casino_rankings コレクションからも並行取得
+    try {
+      const snap = await Promise.race([
+        db.collection('casino_rankings').limit(40).get(),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 1800))
+      ]);
+      snap.forEach(doc => {
+        const d = doc.data();
+        if (d && !d.isTestAccount && d.name && validatePlayerName(d.name).ok) {
+          mergedMap.set(d.id || doc.id, {
+            id: d.id || doc.id,
+            name: sanitizeDisplayPlayerName(d.name),
+            chips: Number(d.chips) || 0,
+            maxChips: Number(d.maxChips) || Number(d.chips) || 0,
+            wins: Number(d.wins) || 0,
+            isNpc: false
+          });
+        }
+      });
+    } catch (e) {}
+
+    cloudRankCache = Array.from(mergedMap.values());
+    if (showNotice) showToast('🏆 最新のランキングデータを更新しました！');
+  }
+  renderRankingList();
+}
+
+function getMergedRankingEntries() {
+  const map = new Map();
+
+  // クラウド実プレイヤーのみ（AI/NPCは一切入れず、不適切ネームも自動除外）
+  cloudRankCache.forEach(r => {
+    if (!r || !r.id || String(r.id).startsWith('npc_')) return;
+    // 管理者専用モード中は、自分のテストデータで上書きしない
+    if (state.isTestAccount && r.id === state.playerId) return;
+    map.set(r.id, { ...r });
+  });
+
+  // 自分自身の最新データ（※管理者専用モード中はランキングに一切載せない！）
+  if (!state.isTestAccount) {
+    const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
+    map.set(state.playerId || 'me', {
+      id: state.playerId || 'me',
+      name: mySafeName,
+      chips: state.chips,
+      maxChips: state.maxChips,
+      wins: state.totalWins,
+      isMe: true
+    });
+  }
+
+  const arr = Array.from(map.values());
+  arr.sort((a, b) => {
+    const valA = rankTabMode === 'max' ? (a.maxChips || 0) : (a.chips || 0);
+    const valB = rankTabMode === 'max' ? (b.maxChips || 0) : (b.chips || 0);
+    return valB - valA || (b.wins || 0) - (a.wins || 0);
+  });
+  return arr;
+}
+
+function renderRankingList() {
+  const list = getMergedRankingEntries();
+  const myId = state.playerId || 'me';
+  const myIdx = list.findIndex(item => item.id === myId || item.isMe);
+  const myRank = state.isTestAccount ? '対象外(管理者)' : (myIdx >= 0 ? `第 ${myIdx + 1} 位` : '第 - 位');
+
+  const adminBanner = document.getElementById('adminRankingNoticeBanner');
+  if (adminBanner) adminBanner.style.display = state.isTestAccount ? 'block' : 'none';
+
+  const safeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
+  document.getElementById('myRankNameText').textContent = state.isTestAccount ? `${safeName} (🔧管理者)` : safeName;
+  document.getElementById('myRankPosBadge').textContent = myRank;
+  document.getElementById('myRankChipsText').textContent = state.chips.toLocaleString();
+  document.getElementById('myRankMaxText').textContent = state.maxChips.toLocaleString();
+  document.getElementById('myRankTitleBadge').textContent = state.isTestAccount ? '👑 管理者テストモード (ランキング非反映)' : getCasinoRankTitle(state.chips);
+
+  const container = document.getElementById('rankingListContainer');
+  container.innerHTML = '';
+
+  list.forEach((entry, idx) => {
+    const rankNum = idx + 1;
+    const isMe = entry.id === myId || entry.isMe;
+    const dispChips = rankTabMode === 'max' ? (entry.maxChips || 0) : (entry.chips || 0);
+    const rankIcon = rankNum === 1 ? '🥇' : (rankNum === 2 ? '🥈' : (rankNum === 3 ? '🥉' : `${rankNum}`));
+    const rankClass = rankNum <= 3 ? `rank-${rankNum}` : '';
+
+    const row = document.createElement('div');
+    row.className = `ranking-row-card ${rankClass} ${isMe ? 'is-me' : ''}`;
+
+    const challengeBtnHtml = isMe
+      ? `<span style="font-size:0.76rem; font-weight:900; color:#fef08a; background:rgba(250,204,21,0.2); border:1.5px solid #facc15; padding:4px 10px; border-radius:999px;">🌟 あなた</span>`
+      : `<button class="chip-bet-btn c-max" style="padding:6px 10px; font-size:0.74rem;" onclick="challengeRanker('${entry.id}')">⚔️ 賭けて勝負</button>`;
+
+    row.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="rank-badge-circle">${rankIcon}</div>
+        <div>
+          <div style="font-weight:900; font-size:0.96rem; color:${isMe ? '#fef08a' : '#ffffff'};">
+            ${entry.name}
+          </div>
+          <div style="font-size:0.74rem; color:#94a3b8; font-weight:800;">
+            ${getCasinoRankTitle(dispChips)} ｜ 通算 ${entry.wins || 0}勝
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+        <div style="text-align:right;">
+          <div style="font-weight:900; font-size:1.05rem; color:#fef08a;">🪙 ${dispChips.toLocaleString()}</div>
+          <div style="font-size:0.68rem; color:#94a3b8;">${rankTabMode === 'max' ? '最高記録' : '所持チップ'}</div>
+        </div>
+        ${challengeBtnHtml}
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function challengeRanker(targetId) {
+  if (state.chips <= 0) {
+    checkBankruptNotice();
+    return;
+  }
+  const list = getMergedRankingEntries();
+  const target = list.find(e => e.id === targetId);
+  if (!target) return;
+
+  const bet = Math.min(state.chips, Math.max(1, rankChallengeBet));
+  const myRoll = (1 + Math.floor(Math.random() * 6)) + (1 + Math.floor(Math.random() * 6));
+  const rivalRoll = (1 + Math.floor(Math.random() * 6)) + (1 + Math.floor(Math.random() * 6));
+
+  if (myRoll > rivalRoll) {
+    state.chips += bet;
+    state.totalWins++;
+    if (target.isNpc) target.chips = Math.max(10, target.chips - bet);
+    saveState();
+    renderRankingList();
+    showRewardModal(
+      '⚔️',
+      `ランカー勝負に勝利！`,
+      `<strong>${target.name}</strong> とのダイス賭け対決！<br>あなた: <strong>🎲 ${myRoll}</strong> vs 相手: <strong>🎲 ${rivalRoll}</strong><br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${bet} チップ</span> 奪取して順位アップ！`,
+      '🏆 よっしゃ！'
+    );
+  } else if (myRoll < rivalRoll) {
+    state.chips -= bet;
+    if (target.isNpc) target.chips += bet;
+    saveState();
+    renderRankingList();
+    if (state.chips <= 0) {
+      checkBankruptNotice();
+    } else {
+      showRewardModal(
+        '💀',
+        `ランカー勝負に敗北…`,
+        `<strong>${target.name}</strong> とのダイス賭け対決…<br>あなた: <strong>🎲 ${myRoll}</strong> vs 相手: <strong>🎲 ${rivalRoll}</strong><br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 -${bet} チップ</span> 奪われました…`,
+        '🔥 リベンジする'
+      );
+    }
+  } else {
+    playSE('click');
+    showToast(`🤝 ${target.name}と引き分け（🎲${myRoll} vs 🎲${rivalRoll}）！チップ変動なし`);
+  }
+}
+
+function navigateTo(screenId) {
+  playSE('click');
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(screenId);
+  if (target) target.classList.add('active');
+  updateHeaderUI();
+}
+
+function openCasinoCategoryScreen() {
+  if (state.chips <= 0) {
+    showToast('⚠️ チップが0枚です！「📝 勉強でチップ稼ぎ」からバイオ・ロジカへ行ってチップを稼いでこよう！');
+  }
+  navigateTo('screen-category');
+}
+
+function showRewardModal(icon, title, descHtml, btnText) {
+  playSE('win');
+  document.getElementById('rewardModalIcon').textContent = icon;
+  document.getElementById('rewardModalTitle').textContent = title;
+  document.getElementById('rewardModalDesc').innerHTML = descHtml;
+  document.getElementById('rewardModalBtn').textContent = btnText || 'OK';
+  document.getElementById('rewardModal').classList.add('active');
+}
+
+function closeRewardModal() {
+  playSE('coin');
+  document.getElementById('rewardModal').classList.remove('active');
+  updateHeaderUI();
+}
+
+function showToast(msg) {
+  const box = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast-msg';
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.25s';
+    setTimeout(() => el.remove(), 250);
+  }, 2800);
+}
+
+/* --- ⚔️ 対戦モード（AI / その場でフレンド2P / 通信ルーム） --- */
+let peer = null;
+let conn = null;
+let myRoomCode = '';
+
+function setPlayMode(mode) {
+  playSE('click');
+  state.playMode = mode;
+  document.getElementById('modeTabAi').classList.toggle('active', mode === 'ai');
+  document.getElementById('modeTabLocal').classList.toggle('active', mode === 'local');
+  document.getElementById('modeTabOnline').classList.toggle('active', mode === 'online');
+  document.getElementById('onlineRoomPanel').style.display = mode === 'online' ? 'block' : 'none';
+  saveState();
+}
+
+function createOnlineRoom() {
+  playSE('click');
+  myRoomCode = String(Math.floor(1000 + Math.random() * 9000));
+  document.getElementById('myRoomCodeText').textContent = myRoomCode;
+  document.getElementById('onlineStatusMsg').textContent = `🏠 ルーム「${myRoomCode}」を作成中... 友達に番号を教えてください`;
+  try {
+    if (peer) peer.destroy();
+    peer = new Peer('casinologica-room-' + myRoomCode);
+    peer.on('open', () => {
+      document.getElementById('onlineStatusMsg').textContent = `🟢 ルーム「${myRoomCode}」待機中！友達の参加を待っています...`;
+    });
+    peer.on('connection', c => {
+      conn = c;
+      setupPeerConn();
+    });
+    peer.on('error', () => {
+      document.getElementById('onlineStatusMsg').textContent = `⚠️ 通信サーバー接続エラー（同じスマホでの「👥 フレンド対戦」はいつでも遊べます）`;
+    });
+  } catch (e) {}
+}
+
+function joinOnlineRoom() {
+  playSE('click');
+  const code = (document.getElementById('joinRoomInput').value || '').trim();
+  if (code.length !== 4) {
+    showToast('⚠️ 4桁のルーム番号を入力してください');
+    return;
+  }
+  document.getElementById('onlineStatusMsg').textContent = `🚪 ルーム「${code}」へ接続中...`;
+  try {
+    if (peer) peer.destroy();
+    peer = new Peer();
+    peer.on('open', () => {
+      conn = peer.connect('casinologica-room-' + code);
+      setupPeerConn();
+    });
+  } catch (e) {}
+}
+
+function setupPeerConn() {
+  if (!conn) return;
+  conn.on('open', () => {
+    playSE('win');
+    document.getElementById('onlineStatusMsg').textContent = `🎉 フレンドと通信接続完了！ゲームを選んで対戦できます！`;
+    showToast('🌐 フレンドと通信ルームで繋がりました！');
+  });
+  conn.on('data', data => {
+    if (data && data.type === 'toast') {
+      showToast('👥 フレンド: ' + data.msg);
+    }
+  });
+}
+
+function openGame(gameKey) {
+  if (state.chips <= 0) {
+    showToast('💸 チップが0枚です！タイトル画面の「📝 勉強でチップ稼ぎ」で稼いできてください！');
+    return;
+  }
+  const modeLabel = state.playMode === 'ai' ? '🤖 AI対戦' : (state.playMode === 'local' ? '👥 フレンド2P戦' : '🌐 通信フレンド戦');
+  if (gameKey === 'chinchiro') {
+    document.getElementById('ccModeBadge').textContent = modeLabel;
+    document.getElementById('ccDealerLabel').textContent = state.playMode === 'ai' ? '👹 親 (AIディーラー)' : '👥 親 (フレンド 2P)';
+    resetChinchiroUI();
+    navigateTo('screen-game-chinchiro');
+  } else if (gameKey === 'yacht') {
+    document.getElementById('ytModeBadge').textContent = modeLabel;
+    initYachtMatch();
+    navigateTo('screen-game-yacht');
+  } else if (gameKey === 'blackjack') {
+    document.getElementById('bjModeBadge').textContent = modeLabel;
+    resetBlackjackUI();
+    navigateTo('screen-game-blackjack');
+  } else if (gameKey === 'poker') {
+    document.getElementById('pkModeBadge').textContent = modeLabel;
+    resetPokerUI();
+    navigateTo('screen-game-poker');
+  } else if (gameKey === 'roulette') {
+    initRouletteUI();
+    navigateTo('screen-game-roulette');
+  } else if (gameKey === 'bigsix') {
+    initBigSixUI();
+    navigateTo('screen-game-bigsix');
+  }
+}
+
+function checkBankruptNotice() {
+  if (state.chips <= 0) {
+    state.chips = 0;
+    saveState();
+    setTimeout(() => {
+      showRewardModal(
+        '💸',
+        'チップが0枚になりました…！',
+        '手持ちのチップをすべて使い切りました！<br>タイトル画面の<strong style="color:#f87171;">「📝 勉強でチップ稼ぎ」</strong>が解放されました！<br>『バイオ・ロジカ』で問題を解いてチップを稼ぎ直そう！',
+        '🏠 タイトル画面へ戻る'
+      );
+      navigateTo('screen-title');
+    }, 600);
+  }
+}
+
+/* ============================================================================
+   🥣 ゲーム1：チンチロ (Chinchiro) ロジック
+============================================================================ */
+let ccState = {
+  bet: 10,
+  phase: 'idle', // 'idle' | 'player_turn' | 'rolling'
+  dealerRoll: null,
+  rollsLeft: 3
+};
+
+function adjustCcBet(val) {
+  if (ccState.phase !== 'idle') return;
+  playSE('click');
+  if (val === 'reset') ccState.bet = Math.min(10, state.chips);
+  else if (val === 'max') ccState.bet = state.chips;
+  else ccState.bet = Math.min(state.chips, ccState.bet + val);
+  if (ccState.bet < 1 && state.chips > 0) ccState.bet = 1;
+  document.getElementById('ccBetText').textContent = ccState.bet;
+}
+
+function resetChinchiroUI() {
+  ccState.phase = 'idle';
+  ccState.bet = Math.min(Math.max(1, ccState.bet), Math.max(1, state.chips));
+  document.getElementById('ccBetText').textContent = ccState.bet;
+  document.getElementById('ccDealerResultText').textContent = '待機中...';
+  document.getElementById('ccPlayerResultText').textContent = '待機中...';
+  document.getElementById('ccBannerMsg').textContent = '賭けチップを決めて「勝負開始！」を押そう！';
+  document.getElementById('ccStartBtn').style.display = 'inline-block';
+  document.getElementById('ccRollBtn').style.display = 'none';
+}
+
+function evaluateChinchiro(d1, d2, d3, isShonben = false) {
+  if (isShonben) {
+    return { rankType: 'shonben', name: '💦 しょんべん（場外）', power: -10, mult: -1, instant: true };
+  }
+  const s = [d1, d2, d3].sort((a, b) => a - b);
+  // ピンゾロ (1-1-1)
+  if (s[0] === 1 && s[1] === 1 && s[2] === 1) {
+    return { rankType: 'pinzoro', name: '🔥 ピンゾロ (5倍)！', power: 100, mult: 5, instant: true };
+  }
+  // アラシ (2〜6のゾロ目)
+  if (s[0] === s[1] && s[1] === s[2]) {
+    return { rankType: 'arashi', name: `⚡ ${s[0]}のアラシ (3倍)！`, power: 80 + s[0], mult: 3, instant: true };
+  }
+  // シゴロ (4-5-6)
+  if (s[0] === 4 && s[1] === 5 && s[2] === 6) {
+    return { rankType: 'shigoro', name: '✨ シゴロ (2倍)！', power: 70, mult: 2, instant: true };
+  }
+  // ヒフミ (1-2-3)
+  if (s[0] === 1 && s[1] === 2 && s[2] === 3) {
+    return { rankType: 'hifumi', name: '💀 ヒフミ (2倍払い)…', power: -20, mult: -2, instant: true };
+  }
+  // 通常の目（ペア＋1個）
+  let point = 0;
+  if (s[0] === s[1]) point = s[2];
+  else if (s[1] === s[2]) point = s[0];
+  else if (s[0] === s[2]) point = s[1];
+
+  if (point > 0) {
+    return { rankType: 'point', name: `🎲 【 ${point} 】の目`, power: point, mult: 1, instant: true };
+  }
+  return { rankType: 'menashi', name: '💨 目なし', power: 0, mult: -1, instant: false };
+}
+
+function animateBowlDice(finalDice, callback) {
+  const els = [document.getElementById('ccDie0'), document.getElementById('ccDie1'), document.getElementById('ccDie2')];
+  els.forEach(el => el.classList.add('rolling'));
+  let ticks = 0;
+  const timer = setInterval(() => {
+    playSE('dice');
+    els.forEach(el => {
+      el.setAttribute('data-val', String(1 + Math.floor(Math.random() * 6)));
+    });
+    ticks++;
+    if (ticks >= 8) {
+      clearInterval(timer);
+      els.forEach((el, idx) => {
+        el.classList.remove('rolling');
+        el.setAttribute('data-val', String(finalDice[idx]));
+      });
+      if (callback) callback();
+    }
+  }, 65);
+}
+
+function startChinchiroRound() {
+  if (state.chips <= 0) { checkBankruptNotice(); return; }
+  ccState.bet = Math.min(ccState.bet, state.chips);
+  document.getElementById('ccBetText').textContent = ccState.bet;
+  document.getElementById('ccStartBtn').style.display = 'none';
+  document.getElementById('ccDealerResultText').textContent = 'サイコロ準備中...';
+  document.getElementById('ccPlayerResultText').textContent = '親の結果待ち...';
+
+  // フレンド2P対戦時は親（2P）も自分でボタンを押して振る！
+  if (state.playMode === 'local') {
+    ccState.phase = 'dealer_manual';
+    ccState.rollsLeft = 3;
+    const rollBtn = document.getElementById('ccRollBtn');
+    rollBtn.style.display = 'inline-block';
+    rollBtn.textContent = `🥣 親(2P)が振る！ (残り3回)`;
+    document.getElementById('ccBannerMsg').textContent = `👥 親（フレンド 2P）の番です！サイコロを振ってください！`;
+    return;
+  }
+
+  ccState.phase = 'rolling';
+
+  // AI対戦時は親（AI）が最大3回自動で振る
+  let dealerTries = 0;
+  function dealerStep() {
+    dealerTries++;
+    document.getElementById('ccBannerMsg').textContent = `親(AI)がサイコロを振っています... (${dealerTries}投目)`;
+    const d = [1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)];
+    const shonben = Math.random() < 0.015;
+    animateBowlDice(d, () => {
+      const res = evaluateChinchiro(d[0], d[1], d[2], shonben);
+      document.getElementById('ccDealerResultText').textContent = `${res.name} (${d.join('-')})`;
+      if (!res.instant && dealerTries < 3) {
+        setTimeout(dealerStep, 600);
+      } else {
+        ccState.dealerRoll = res;
+        ccState.rollsLeft = 3;
+        ccState.phase = 'player_turn';
+        const rollBtn = document.getElementById('ccRollBtn');
+        rollBtn.style.display = 'inline-block';
+        rollBtn.textContent = `🥣 子(あなた)が振る！ (残り${ccState.rollsLeft}回)`;
+        document.getElementById('ccBannerMsg').textContent = `親は「${res.name}」！あなたの番です！`;
+      }
+    });
+  }
+  dealerStep();
+}
+
+function playerRollChinchiro() {
+  if (ccState.phase === 'dealer_manual') {
+    ccState.phase = 'rolling';
+    ccState.rollsLeft--;
+    document.getElementById('ccRollBtn').style.display = 'none';
+    const d = [1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)];
+    const shonben = Math.random() < 0.015;
+    animateBowlDice(d, () => {
+      const res = evaluateChinchiro(d[0], d[1], d[2], shonben);
+      document.getElementById('ccDealerResultText').textContent = `${res.name} (${d.join('-')})`;
+      if (!res.instant && ccState.rollsLeft > 0) {
+        ccState.phase = 'dealer_manual';
+        const rollBtn = document.getElementById('ccRollBtn');
+        rollBtn.style.display = 'inline-block';
+        rollBtn.textContent = `🥣 親(2P)もう1回振る！ (残り${ccState.rollsLeft}回)`;
+        document.getElementById('ccBannerMsg').textContent = `親(2P)目なし！あと ${ccState.rollsLeft} 回振れます！`;
+      } else {
+        ccState.dealerRoll = res;
+        ccState.rollsLeft = 3;
+        ccState.phase = 'player_turn';
+        const rollBtn = document.getElementById('ccRollBtn');
+        rollBtn.style.display = 'inline-block';
+        rollBtn.textContent = `🥣 子(1P)が振る！ (残り3回)`;
+        document.getElementById('ccBannerMsg').textContent = `親(2P)は「${res.name}」！次は子(1P)の番です！`;
+      }
+    });
+    return;
+  }
+
+  if (ccState.phase !== 'player_turn') return;
+  ccState.phase = 'rolling';
+  ccState.rollsLeft--;
+  document.getElementById('ccRollBtn').style.display = 'none';
+
+  const d = [1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)];
+  const shonben = Math.random() < 0.015;
+  animateBowlDice(d, () => {
+    const res = evaluateChinchiro(d[0], d[1], d[2], shonben);
+    document.getElementById('ccPlayerResultText').textContent = `${res.name} (${d.join('-')})`;
+
+    if (!res.instant && ccState.rollsLeft > 0) {
+      ccState.phase = 'player_turn';
+      const rollBtn = document.getElementById('ccRollBtn');
+      rollBtn.style.display = 'inline-block';
+      rollBtn.textContent = `🥣 もう1回振る！ (残り${ccState.rollsLeft}回)`;
+      document.getElementById('ccBannerMsg').textContent = `目なし！あと ${ccState.rollsLeft} 回振れます！`;
+    } else {
+      finishChinchiroRound(ccState.dealerRoll, res);
+    }
+  });
+}
+
+function finishChinchiroRound(dealer, player) {
+  ccState.phase = 'idle';
+  document.getElementById('ccStartBtn').style.display = 'inline-block';
+  document.getElementById('ccStartBtn').textContent = '🎲 次の勝負へ！';
+
+  let delta = 0;
+  let outcomeMsg = '';
+
+  if (player.power > dealer.power) {
+    // プレイヤーの勝ち！
+    const winMult = player.mult > 0 ? player.mult : (dealer.mult < 0 ? Math.abs(dealer.mult) : 1);
+    delta = ccState.bet * winMult;
+    state.chips += delta;
+    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - delta);
+    state.totalWins++;
+    playSE('win');
+    outcomeMsg = `🎉 あなたの勝ち！ (${player.name}) ➔ +${delta} チップ獲得！`;
+  } else if (player.power < dealer.power) {
+    // プレイヤーの負け
+    const loseMult = player.mult < 0 ? Math.abs(player.mult) : (dealer.mult > 0 ? dealer.mult : 1);
+    delta = Math.min(state.chips, ccState.bet * loseMult);
+    state.chips -= delta;
+    if (state.playMode === 'local') state.p2Chips += delta;
+    playSE('lose');
+    outcomeMsg = `💀 親の勝ち… (${dealer.name}) ➔ -${delta} チップ`;
+  } else {
+    // 引き分け
+    playSE('click');
+    outcomeMsg = `🤝 引き分け（分け）！チップ移動なし`;
+  }
+
+  document.getElementById('ccBannerMsg').textContent = outcomeMsg;
+  saveState();
+  if (conn && conn.open) conn.send({ type: 'toast', msg: `チンチロ結果: ${outcomeMsg}` });
+  checkBankruptNotice();
+}
+
+/* ============================================================================
+   ⛵ ゲーム2：ヨット (Yacht - 1戦点差マッチ) ロジック
+============================================================================ */
+const YACHT_CATEGORIES = [
+  { id: 'ones', name: '1️⃣ エース (1の合計)', section: 'upper' },
+  { id: 'twos', name: '2️⃣ デュース (2の合計)', section: 'upper' },
+  { id: 'threes', name: '3️⃣ トレイ (3の合計)', section: 'upper' },
+  { id: 'fours', name: '4️⃣ フォー (4の合計)', section: 'upper' },
+  { id: 'fives', name: '5️⃣ ファイブ (5の合計)', section: 'upper' },
+  { id: 'sixes', name: '6️⃣ シックス (6の合計)', section: 'upper' },
+  { id: 'choice', name: '🎯 チョイス (全5個の合計)', section: 'lower' },
+  { id: 'four_dice', name: '🍀 フォーダイス (同目4個〜)', section: 'lower' },
+  { id: 'full_house', name: '🏠 フルハウス (3個＋2個)', section: 'lower' },
+  { id: 's_straight', name: '📏 S.ストレート (4連続:15点)', section: 'lower' },
+  { id: 'b_straight', name: '📐 B.ストレート (5連続:30点)', section: 'lower' },
+  { id: 'yacht', name: '👑 ヨット (5個すべて同じ:50点)', section: 'lower' }
+];
+
+let ytState = {
+  rate: 1, // 1点差あたりのチップ
+  round: 1,
+  currentTurn: 'p1', // 'p1' | 'p2'
+  rollsLeft: 3,
+  hasRolledThisTurn: false,
+  dice: [1, 2, 3, 4, 5],
+  kept: [false, false, false, false, false],
+  scores: { p1: {}, p2: {} },
+  matchOver: false
+};
+
+function setYachtRate(r) {
+  playSE('click');
+  ytState.rate = r;
+  document.getElementById('ytRateText').textContent = r;
+  showToast(`⛵ 点差レートを「1点差 = ${r}チップ」に設定しました`);
+}
+
+function initYachtMatch() {
+  ytState.round = 1;
+  ytState.currentTurn = 'p1';
+  ytState.rollsLeft = 3;
+  ytState.hasRolledThisTurn = false;
+  ytState.dice = [1, 2, 3, 4, 5];
+  ytState.kept = [false, false, false, false, false];
+  ytState.scores = { p1: {}, p2: {} };
+  ytState.matchOver = false;
+  document.getElementById('ytColP2').textContent = state.playMode === 'ai' ? '🤖 AI' : '👥 フレンド(2P)';
+  renderYachtUI();
+}
+
+function calcYachtCategoryScore(catId, dice) {
+  const counts = [0, 0, 0, 0, 0, 0, 0];
+  let sum = 0;
+  dice.forEach(d => { counts[d]++; sum += d; });
+
+  if (catId === 'ones') return counts[1] * 1;
+  if (catId === 'twos') return counts[2] * 2;
+  if (catId === 'threes') return counts[3] * 3;
+  if (catId === 'fours') return counts[4] * 4;
+  if (catId === 'fives') return counts[5] * 5;
+  if (catId === 'sixes') return counts[6] * 6;
+  if (catId === 'choice') return sum;
+  if (catId === 'four_dice') {
+    return counts.some(c => c >= 4) ? sum : 0;
+  }
+  if (catId === 'full_house') {
+    const has3 = counts.includes(3);
+    const has2 = counts.includes(2);
+    const has5 = counts.includes(5);
+    return (has3 && has2) || has5 ? sum : 0;
+  }
+  if (catId === 's_straight') {
+    const u = [...new Set(dice)].sort((a, b) => a - b).join('');
+    if (u.includes('1234') || u.includes('2345') || u.includes('3456')) return 15;
+    return 0;
+  }
+  if (catId === 'b_straight') {
+    const u = [...new Set(dice)].sort((a, b) => a - b).join('');
+    if (u === '12345' || u === '23456') return 30;
+    return 0;
+  }
+  if (catId === 'yacht') {
+    return counts.includes(5) ? 50 : 0;
+  }
+  return 0;
+}
+
+function getPlayerTotalScore(playerKey) {
+  const sc = ytState.scores[playerKey];
+  let upper = 0;
+  let lower = 0;
+  YACHT_CATEGORIES.forEach(c => {
+    if (sc[c.id] !== undefined) {
+      if (c.section === 'upper') upper += sc[c.id];
+      else lower += sc[c.id];
+    }
+  });
+  const bonus = upper >= 63 ? 35 : 0;
+  return { upper, bonus, total: upper + bonus + lower };
+}
+
+function rollYachtDice() {
+  if (ytState.matchOver || ytState.rollsLeft <= 0) return;
+  if (ytState.currentTurn === 'p2' && state.playMode === 'ai') return;
+
+  ytState.rollsLeft--;
+  ytState.hasRolledThisTurn = true;
+  playSE('dice');
+
+  for (let i = 0; i < 5; i++) {
+    if (!ytState.kept[i]) {
+      ytState.dice[i] = 1 + Math.floor(Math.random() * 6);
+    }
+  }
+  renderYachtUI();
+}
+
+function toggleYachtKeep(idx) {
+  if (!ytState.hasRolledThisTurn || ytState.matchOver) return;
+  if (ytState.currentTurn === 'p2' && state.playMode === 'ai') return;
+  playSE('click');
+  ytState.kept[idx] = !ytState.kept[idx];
+  renderYachtUI();
+}
+
+function selectYachtCategory(catId) {
+  if (!ytState.hasRolledThisTurn || ytState.matchOver) {
+    showToast('🎲 まずサイコロを振ってください！');
+    return;
+  }
+  const p = ytState.currentTurn;
+  if (p === 'p2' && state.playMode === 'ai') return;
+  if (ytState.scores[p][catId] !== undefined) return;
+
+  const val = calcYachtCategoryScore(catId, ytState.dice);
+  ytState.scores[p][catId] = val;
+  playSE(val >= 25 ? 'win' : 'coin');
+  advanceYachtTurn();
+}
+
+function advanceYachtTurn() {
+  ytState.rollsLeft = 3;
+  ytState.hasRolledThisTurn = false;
+  ytState.kept = [false, false, false, false, false];
+
+  if (ytState.currentTurn === 'p1') {
+    ytState.currentTurn = 'p2';
+    renderYachtUI();
+    if (state.playMode === 'ai') {
+      setTimeout(runAiYachtTurn, 550);
+    }
+  } else {
+    ytState.currentTurn = 'p1';
+    ytState.round++;
+    if (ytState.round > YACHT_CATEGORIES.length) {
+      finishYachtMatch();
+    } else {
+      renderYachtUI();
+    }
+  }
+}
+
+function runAiYachtTurn() {
+  if (ytState.matchOver) return;
+  // AI 1回目のロール
+  for (let i = 0; i < 5; i++) ytState.dice[i] = 1 + Math.floor(Math.random() * 6);
+  ytState.hasRolledThisTurn = true;
+  ytState.rollsLeft = 2;
+  playSE('dice');
+  renderYachtUI();
+
+  // 最も多い目をキープして2回目ロール
+  setTimeout(() => {
+    const counts = [0, 0, 0, 0, 0, 0, 0];
+    ytState.dice.forEach(d => counts[d]++);
+    let bestFace = 6;
+    let maxCount = 0;
+    for (let f = 6; f >= 1; f--) {
+      if (counts[f] > maxCount) { maxCount = counts[f]; bestFace = f; }
+    }
+    ytState.kept = ytState.dice.map(d => d === bestFace);
+    for (let i = 0; i < 5; i++) {
+      if (!ytState.kept[i]) ytState.dice[i] = 1 + Math.floor(Math.random() * 6);
+    }
+    ytState.rollsLeft = 1;
+    playSE('dice');
+    renderYachtUI();
+
+    // 最もスコア効率の高い空き役を選択
+    setTimeout(() => {
+      const openCats = YACHT_CATEGORIES.filter(c => ytState.scores.p2[c.id] === undefined);
+      let chosenCat = openCats[0].id;
+      let bestWeighted = -999;
+      openCats.forEach(c => {
+        const sc = calcYachtCategoryScore(c.id, ytState.dice);
+        let weight = sc;
+        if (c.id === 'yacht' && sc === 0) weight = -25;
+        if (weight > bestWeighted) {
+          bestWeighted = weight;
+          chosenCat = c.id;
+        }
+      });
+      ytState.scores.p2[chosenCat] = calcYachtCategoryScore(chosenCat, ytState.dice);
+      playSE('click');
+      advanceYachtTurn();
+    }, 650);
+  }, 600);
+}
+
+function finishYachtMatch() {
+  ytState.matchOver = true;
+  renderYachtUI();
+
+  const p1Tot = getPlayerTotalScore('p1').total;
+  const p2Tot = getPlayerTotalScore('p2').total;
+  const diff = Math.abs(p1Tot - p2Tot);
+  const chipDelta = diff * ytState.rate;
+
+  if (p1Tot > p2Tot) {
+    state.chips += chipDelta;
+    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - chipDelta);
+    state.totalWins++;
+    saveState();
+    showRewardModal(
+      '⛵',
+      'ヨット 点差マッチ勝利！',
+      `あなた: <strong>${p1Tot}点</strong> vs 相手: <strong>${p2Tot}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${chipDelta} チップ</span> 獲得！`,
+      '🎉 最高！'
+    );
+  } else if (p1Tot < p2Tot) {
+    const lost = Math.min(state.chips, chipDelta);
+    state.chips -= lost;
+    if (state.playMode === 'local') state.p2Chips += lost;
+    saveState();
+    if (state.chips <= 0) {
+      checkBankruptNotice();
+    } else {
+      showRewardModal(
+        '⛵',
+        'ヨット 点差マッチ敗北…',
+        `あなた: <strong>${p1Tot}点</strong> vs 相手: <strong>${p2Tot}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 -${lost} チップ</span> 失いました…`,
+        '🔄 リベンジする'
+      );
+    }
+  } else {
+    showRewardModal('🤝', '同点ドロー！', `${p1Tot}点 対 ${p2Tot}点 で完全引き分け！チップ移動はありません。`, 'OK');
+  }
+}
+
+function renderYachtUI() {
+  // ターン表示
+  const banner = document.getElementById('ytTurnBanner');
+  const rollBtn = document.getElementById('ytRollBtn');
+  if (ytState.matchOver) {
+    banner.textContent = '🏁 全12ラウンド終了！「🔄 新規1戦」で再戦できます';
+    rollBtn.disabled = true;
+    rollBtn.textContent = '試合終了';
+  } else {
+    const who = ytState.currentTurn === 'p1' ? '🧑 あなたの番' : (state.playMode === 'ai' ? '🤖 AI思考中...' : '👥 フレンド(2P)の番');
+    banner.textContent = `${who} (ラウンド ${ytState.round}/12)`;
+    rollBtn.disabled = (ytState.rollsLeft <= 0) || (ytState.currentTurn === 'p2' && state.playMode === 'ai');
+    rollBtn.textContent = `🎲 サイコロを振る (残り${ytState.rollsLeft}回)`;
+  }
+
+  // ダイストレイ描画
+  const tray = document.getElementById('ytDiceTray');
+  tray.innerHTML = '';
+  ytState.dice.forEach((val, idx) => {
+    const slot = document.createElement('div');
+    slot.className = 'yacht-dice-slot';
+    const isKept = ytState.kept[idx];
+    slot.innerHTML = `
+      <div class="dice-cube ${isKept ? 'kept' : ''}" data-val="${val}" onclick="toggleYachtKeep(${idx})">
+        <span class="pip pip-1"></span><span class="pip pip-2"></span><span class="pip pip-3"></span>
+        <span class="pip pip-4"></span><span class="pip pip-5"></span><span class="pip pip-6"></span>
+        <span class="pip pip-7"></span><span class="pip pip-8"></span><span class="pip pip-9"></span>
+      </div>
+      <span class="keep-badge ${isKept ? 'active' : ''}">${isKept ? `🔒 【${val}】KEEP` : `【${val}】タップ固定`}</span>
+    `;
+    tray.appendChild(slot);
+  });
+
+  // スコアシート描画
+  const tbody = document.getElementById('ytScoreBody');
+  tbody.innerHTML = '';
+
+  YACHT_CATEGORIES.forEach((cat, idx) => {
+    const tr = document.createElement('tr');
+    const p1Val = ytState.scores.p1[cat.id];
+    const p2Val = ytState.scores.p2[cat.id];
+
+    const canP1Select = !ytState.matchOver && ytState.currentTurn === 'p1' && ytState.hasRolledThisTurn && p1Val === undefined;
+    const canP2Select = !ytState.matchOver && ytState.currentTurn === 'p2' && state.playMode !== 'ai' && ytState.hasRolledThisTurn && p2Val === undefined;
+
+    const previewScore = calcYachtCategoryScore(cat.id, ytState.dice);
+
+    const p1CellHtml = p1Val !== undefined
+      ? `<td class="yacht-cell-filled">${p1Val}</td>`
+      : (canP1Select
+          ? `<td class="yacht-cell-selectable" onclick="selectYachtCategory('${cat.id}')">+${previewScore} 決定</td>`
+          : `<td>-</td>`);
+
+    const p2CellHtml = p2Val !== undefined
+      ? `<td class="yacht-cell-filled">${p2Val}</td>`
+      : (canP2Select
+          ? `<td class="yacht-cell-selectable" onclick="selectYachtCategory('${cat.id}')">+${previewScore} 決定</td>`
+          : `<td>-</td>`);
+
+    tr.innerHTML = `<td class="cat-name">${cat.name}</td>${p1CellHtml}${p2CellHtml}`;
+    tbody.appendChild(tr);
+
+    // 上段6個の直後にボーナス行を挿入
+    if (idx === 5) {
+      const s1 = getPlayerTotalScore('p1');
+      const s2 = getPlayerTotalScore('p2');
+      const bRow = document.createElement('tr');
+      bRow.style.background = 'rgba(250, 204, 21, 0.14)';
+      bRow.innerHTML = `
+        <td class="cat-name" style="color:#fef08a;">⭐ 上段合計(63点〜で+35点)</td>
+        <td style="font-weight:900; color:#fef08a;">${s1.upper}/63 (+${s1.bonus})</td>
+        <td style="font-weight:900; color:#fef08a;">${s2.upper}/63 (+${s2.bonus})</td>
+      `;
+      tbody.appendChild(bRow);
+    }
+  });
+
+  // 総合計行
+  const t1 = getPlayerTotalScore('p1').total;
+  const t2 = getPlayerTotalScore('p2').total;
+  const totRow = document.createElement('tr');
+  totRow.style.background = '#1e293b';
+  totRow.style.fontSize = '0.96rem';
+  totRow.innerHTML = `
+    <td class="cat-name" style="color:#fef08a; font-weight:900;">👑 トータルスコア (点差: ${Math.abs(t1 - t2)}点)</td>
+    <td style="font-weight:900; color:#4ade80;">${t1} 点</td>
+    <td style="font-weight:900; color:#38bdf8;">${t2} 点</td>
+  `;
+  tbody.appendChild(totRow);
+}
+
+/* ============================================================================
+   🃏 トランプ共通デッキ＆カードHTML生成
+============================================================================ */
+const SUITS = [
+  { sym: '♠', color: 'black-suit' },
+  { sym: '♥', color: 'red-suit' },
+  { sym: '♦', color: 'red-suit' },
+  { sym: '♣', color: 'black-suit' }
+];
+const RANKS = [
+  { label: 'A', val: 14, bjVal: 11 },
+  { label: '2', val: 2, bjVal: 2 },
+  { label: '3', val: 3, bjVal: 3 },
+  { label: '4', val: 4, bjVal: 4 },
+  { label: '5', val: 5, bjVal: 5 },
+  { label: '6', val: 6, bjVal: 6 },
+  { label: '7', val: 7, bjVal: 7 },
+  { label: '8', val: 8, bjVal: 8 },
+  { label: '9', val: 9, bjVal: 9 },
+  { label: '10', val: 10, bjVal: 10 },
+  { label: 'J', val: 11, bjVal: 10 },
+  { label: 'Q', val: 12, bjVal: 10 },
+  { label: 'K', val: 13, bjVal: 10 }
+];
+
+function createShuffledDeck() {
+  const deck = [];
+  SUITS.forEach(s => {
+    RANKS.forEach(r => {
+      deck.push({ suit: s.sym, color: s.color, label: r.label, val: r.val, bjVal: r.bjVal });
+    });
+  });
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  return deck;
+}
+
+function createCardElement(card, faceDown = false, isHeld = false, onClick = null) {
+  const div = document.createElement('div');
+  if (faceDown) {
+    div.className = 'playing-card face-down';
+    return div;
+  }
+  div.className = `playing-card ${card.color} ${isHeld ? 'held' : ''}`;
+  div.innerHTML = `
+    ${isHeld ? '<div class="hold-tag">HOLD</div>' : ''}
+    <div class="card-corner-top">${card.label}<br>${card.suit}</div>
+    <div class="card-center-suit">${card.suit}</div>
+    <div class="card-corner-bot">${card.suit} ${card.label}</div>
+  `;
+  if (onClick) div.onclick = onClick;
+  return div;
+}
+
+/* ============================================================================
+   🃏 ゲーム3：ブラックジャック (Blackjack) ロジック
+============================================================================ */
+let bjState = {
+  bet: 10,
+  deck: [],
+  playerHand: [],
+  dealerHand: [],
+  phase: 'idle', // 'idle' | 'playing' | 'done'
+  hideDealerHole: true
+};
+
+function adjustBjBet(val) {
+  if (bjState.phase === 'playing') return;
+  playSE('click');
+  if (val === 'reset') bjState.bet = Math.min(10, state.chips);
+  else if (val === 'max') bjState.bet = state.chips;
+  else bjState.bet = Math.min(state.chips, bjState.bet + val);
+  if (bjState.bet < 1 && state.chips > 0) bjState.bet = 1;
+  document.getElementById('bjBetText').textContent = bjState.bet;
+}
+
+function calcBjTotal(hand) {
+  let sum = 0;
+  let aces = 0;
+  hand.forEach(c => {
+    sum += c.bjVal;
+    if (c.label === 'A') aces++;
+  });
+  while (sum > 21 && aces > 0) {
+    sum -= 10;
+    aces--;
+  }
+  return sum;
+}
+
+function resetBlackjackUI() {
+  bjState.phase = 'idle';
+  bjState.bet = Math.min(Math.max(1, bjState.bet), Math.max(1, state.chips));
+  document.getElementById('bjBetText').textContent = bjState.bet;
+  document.getElementById('bjDealerHand').innerHTML = '';
+  document.getElementById('bjPlayerHand').innerHTML = '';
+  document.getElementById('bjDealerTotal').textContent = '?';
+  document.getElementById('bjPlayerTotal').textContent = '0';
+  document.getElementById('bjStatusText').textContent = 'ベットを決めて「ディール（配る）」を押そう！';
+  document.getElementById('bjDealBtn').style.display = 'inline-block';
+  document.getElementById('bjHitBtn').style.display = 'none';
+  document.getElementById('bjStandBtn').style.display = 'none';
+  document.getElementById('bjDoubleBtn').style.display = 'none';
+}
+
+function startBlackjack() {
+  if (state.chips <= 0) { checkBankruptNotice(); return; }
+  playSE('click');
+  bjState.bet = Math.min(bjState.bet, state.chips);
+  document.getElementById('bjBetText').textContent = bjState.bet;
+
+  bjState.deck = createShuffledDeck();
+  bjState.playerHand = [bjState.deck.pop(), bjState.deck.pop()];
+  bjState.dealerHand = [bjState.deck.pop(), bjState.deck.pop()];
+  bjState.phase = 'playing';
+  bjState.hideDealerHole = true;
+
+  renderBlackjackHands();
+
+  const pTot = calcBjTotal(bjState.playerHand);
+  if (pTot === 21) {
+    // ナチュラルブラックジャック！
+    bjStand();
+    return;
+  }
+
+  document.getElementById('bjDealBtn').style.display = 'none';
+  document.getElementById('bjHitBtn').style.display = 'inline-block';
+  document.getElementById('bjStandBtn').style.display = 'inline-block';
+  document.getElementById('bjDoubleBtn').style.display = (state.chips >= bjState.bet * 2) ? 'inline-block' : 'none';
+  document.getElementById('bjStatusText').textContent = 'ヒット（引く）かスタンド（勝負）を選んでください';
+}
+
+function renderBlackjackHands() {
+  const dBox = document.getElementById('bjDealerHand');
+  const pBox = document.getElementById('bjPlayerHand');
+  dBox.innerHTML = '';
+  pBox.innerHTML = '';
+
+  bjState.dealerHand.forEach((c, idx) => {
+    const hide = bjState.hideDealerHole && idx === 1;
+    dBox.appendChild(createCardElement(c, hide));
+  });
+
+  bjState.playerHand.forEach(c => {
+    pBox.appendChild(createCardElement(c, false));
+  });
+
+  document.getElementById('bjPlayerTotal').textContent = calcBjTotal(bjState.playerHand);
+  document.getElementById('bjDealerTotal').textContent = bjState.hideDealerHole ? `${bjState.dealerHand[0].bjVal} + ?` : calcBjTotal(bjState.dealerHand);
+}
+
+function bjHit() {
+  if (bjState.phase !== 'playing') return;
+  playSE('click');
+  bjState.playerHand.push(bjState.deck.pop());
+  document.getElementById('bjDoubleBtn').style.display = 'none';
+  renderBlackjackHands();
+
+  const pTot = calcBjTotal(bjState.playerHand);
+  if (pTot > 21) {
+    finishBlackjackRound();
+  } else if (pTot === 21) {
+    bjStand();
+  }
+}
+
+function bjDoubleDown() {
+  if (bjState.phase !== 'playing') return;
+  playSE('coin');
+  bjState.bet = Math.min(state.chips, bjState.bet * 2);
+  document.getElementById('bjBetText').textContent = bjState.bet;
+  bjState.playerHand.push(bjState.deck.pop());
+  renderBlackjackHands();
+  if (calcBjTotal(bjState.playerHand) > 21) {
+    finishBlackjackRound();
+  } else {
+    bjStand();
+  }
+}
+
+function bjStand() {
+  if (bjState.phase !== 'playing') return;
+  bjState.hideDealerHole = false;
+  while (calcBjTotal(bjState.dealerHand) < 17) {
+    bjState.dealerHand.push(bjState.deck.pop());
+  }
+  renderBlackjackHands();
+  finishBlackjackRound();
+}
+
+function finishBlackjackRound() {
+  bjState.phase = 'done';
+  bjState.hideDealerHole = false;
+  renderBlackjackHands();
+
+  document.getElementById('bjDealBtn').style.display = 'inline-block';
+  document.getElementById('bjDealBtn').textContent = '🃏 次のディール';
+  document.getElementById('bjHitBtn').style.display = 'none';
+  document.getElementById('bjStandBtn').style.display = 'none';
+  document.getElementById('bjDoubleBtn').style.display = 'none';
+
+  const pTot = calcBjTotal(bjState.playerHand);
+  const dTot = calcBjTotal(bjState.dealerHand);
+  const isNaturalBJ = pTot === 21 && bjState.playerHand.length === 2;
+  const isDealerNaturalBJ = dTot === 21 && bjState.dealerHand.length === 2;
+
+  let msg = '';
+  if (pTot > 21) {
+    state.chips -= bjState.bet;
+    if (state.playMode === 'local') state.p2Chips += bjState.bet;
+    playSE('lose');
+    msg = `💥 バースト (${pTot})！ -${bjState.bet} チップ`;
+  } else if (isNaturalBJ && !isDealerNaturalBJ) {
+    const winAmt = Math.ceil(bjState.bet * 1.5);
+    state.chips += winAmt;
+    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - winAmt);
+    state.totalWins++;
+    playSE('win');
+    msg = `👑 ブラックジャック (1.5倍勝ち)！ +${winAmt} チップ獲得！`;
+  } else if (dTot > 21 || pTot > dTot) {
+    state.chips += bjState.bet;
+    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - bjState.bet);
+    state.totalWins++;
+    playSE('win');
+    msg = `🎉 あなたの勝ち (${pTot} vs ${dTot})！ +${bjState.bet} チップ獲得！`;
+  } else if (pTot < dTot) {
+    state.chips -= bjState.bet;
+    if (state.playMode === 'local') state.p2Chips += bjState.bet;
+    playSE('lose');
+    msg = `💀 ディーラーの勝ち (${pTot} vs ${dTot})… -${bjState.bet} チップ`;
+  } else {
+    playSE('click');
+    msg = `🤝 プッシュ（${pTot} 引き分け）！チップ移動なし`;
+  }
+
+  document.getElementById('bjStatusText').textContent = msg;
+  saveState();
+  checkBankruptNotice();
+}
+
+/* ============================================================================
+   👑 ゲーム4：ポーカー (5枚ドローポーカー対戦) ロジック
+============================================================================ */
+let pkState = {
+  bet: 10,
+  deck: [],
+  playerHand: [],
+  opponentHand: [],
+  held: [false, false, false, false, false],
+  phase: 'idle',
+  hideOpponent: true
+};
+
+function adjustPkBet(val) {
+  if (pkState.phase === 'draw') return;
+  playSE('click');
+  if (val === 'reset') pkState.bet = Math.min(10, state.chips);
+  else if (val === 'max') pkState.bet = state.chips;
+  else pkState.bet = Math.min(state.chips, pkState.bet + val);
+  if (pkState.bet < 1 && state.chips > 0) pkState.bet = 1;
+  document.getElementById('pkBetText').textContent = pkState.bet;
+}
+
+function evaluatePokerHand(hand) {
+  const vals = hand.map(c => c.val).sort((a, b) => b - a);
+  const suits = hand.map(c => c.suit);
+  const isFlush = suits.every(s => s === suits[0]);
+
+  const uniq = [...new Set(vals)];
+  let isStraight = false;
+  let straightHigh = vals[0];
+  if (uniq.length === 5) {
+    if (vals[0] - vals[4] === 4) isStraight = true;
+    // A-2-3-4-5 ローストレート
+    if (vals[0] === 14 && vals[1] === 5 && vals[4] === 2) {
+      isStraight = true;
+      straightHigh = 5;
+    }
+  }
+
+  const countMap = {};
+  vals.forEach(v => { countMap[v] = (countMap[v] || 0) + 1; });
+  const pairs = Object.entries(countMap)
+    .map(([v, c]) => ({ val: Number(v), count: c }))
+    .sort((a, b) => b.count - a.count || b.val - a.val);
+
+  const tieBreaker = pairs.reduce((acc, p, idx) => acc + p.val * Math.pow(15, 4 - idx), 0);
+
+  if (isFlush && isStraight && straightHigh === 14) {
+    return { rank: 9, name: '👑 ロイヤルフラッシュ', mult: 50, score: 9e7 + tieBreaker };
+  }
+  if (isFlush && isStraight) {
+    return { rank: 8, name: '🌈 ストレートフラッシュ', mult: 20, score: 8e7 + straightHigh };
+  }
+  if (pairs[0].count === 4) {
+    return { rank: 7, name: '💎 フォーカード', mult: 10, score: 7e7 + tieBreaker };
+  }
+  if (pairs[0].count === 3 && pairs[1].count === 2) {
+    return { rank: 6, name: '🏠 フルハウス', mult: 5, score: 6e7 + tieBreaker };
+  }
+  if (isFlush) {
+    return { rank: 5, name: '✨ フラッシュ', mult: 4, score: 5e7 + tieBreaker };
+  }
+  if (isStraight) {
+    return { rank: 4, name: '📏 ストレート', mult: 3, score: 4e7 + straightHigh };
+  }
+  if (pairs[0].count === 3) {
+    return { rank: 3, name: '🍀 スリーカード', mult: 2, score: 3e7 + tieBreaker };
+  }
+  if (pairs[0].count === 2 && pairs[1].count === 2) {
+    return { rank: 2, name: '✌️ ツーペア', mult: 1.5, score: 2e7 + tieBreaker };
+  }
+  if (pairs[0].count === 2) {
+    return { rank: 1, name: '👍 ワンペア', mult: 1, score: 1e7 + tieBreaker };
+  }
+  return { rank: 0, name: '🃏 ハイカード', mult: 1, score: tieBreaker };
+}
+
+function resetPokerUI() {
+  pkState.phase = 'idle';
+  pkState.bet = Math.min(Math.max(1, pkState.bet), Math.max(1, state.chips));
+  document.getElementById('pkBetText').textContent = pkState.bet;
+  document.getElementById('pkOpponentHand').innerHTML = '';
+  document.getElementById('pkPlayerHand').innerHTML = '';
+  document.getElementById('pkOpponentRank').textContent = '???';
+  document.getElementById('pkPlayerRank').textContent = '-';
+  document.getElementById('pkDealBtn').style.display = 'inline-block';
+  document.getElementById('pkDrawBtn').style.display = 'none';
+  document.getElementById('pkRaiseBtn').style.display = 'none';
+  document.getElementById('pkStatusText').textContent = '「カードを配る」でポーカー開始！';
+}
+
+function startPoker() {
+  if (state.chips <= 0) { checkBankruptNotice(); return; }
+  playSE('click');
+  pkState.bet = Math.min(pkState.bet, state.chips);
+  document.getElementById('pkBetText').textContent = pkState.bet;
+
+  pkState.deck = createShuffledDeck();
+  pkState.playerHand = [pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop()];
+  pkState.opponentHand = [pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop()];
+  pkState.held = [false, false, false, false, false];
+  pkState.hideOpponent = true;
+  pkState.phase = 'draw';
+
+  // ペアになっているカードを自動HOLDアシスト
+  const counts = {};
+  pkState.playerHand.forEach(c => { counts[c.val] = (counts[c.val] || 0) + 1; });
+  pkState.held = pkState.playerHand.map(c => counts[c.val] >= 2);
+
+  renderPokerHands();
+  document.getElementById('pkDealBtn').style.display = 'none';
+  document.getElementById('pkDrawBtn').style.display = 'inline-block';
+  document.getElementById('pkRaiseBtn').style.display = (state.chips >= pkState.bet * 2) ? 'inline-block' : 'none';
+  document.getElementById('pkStatusText').textContent = '残したいカードをHOLDして「カード交換＆勝負！」を押そう！';
+}
+
+function renderPokerHands() {
+  const oBox = document.getElementById('pkOpponentHand');
+  const pBox = document.getElementById('pkPlayerHand');
+  oBox.innerHTML = '';
+  pBox.innerHTML = '';
+
+  pkState.opponentHand.forEach(c => {
+    oBox.appendChild(createCardElement(c, pkState.hideOpponent));
+  });
+
+  pkState.playerHand.forEach((c, idx) => {
+    const canToggle = pkState.phase === 'draw';
+    pBox.appendChild(createCardElement(c, false, canToggle && pkState.held[idx], () => {
+      if (!canToggle) return;
+      playSE('click');
+      pkState.held[idx] = !pkState.held[idx];
+      renderPokerHands();
+    }));
+  });
+
+  const pEval = evaluatePokerHand(pkState.playerHand);
+  document.getElementById('pkPlayerRank').textContent = pEval.name;
+
+  if (pkState.hideOpponent) {
+    document.getElementById('pkOpponentRank').textContent = '???';
+  } else {
+    const oEval = evaluatePokerHand(pkState.opponentHand);
+    document.getElementById('pkOpponentRank').textContent = oEval.name;
+  }
+}
+
+function pokerRaiseAndDraw() {
+  if (pkState.phase !== 'draw') return;
+  pkState.bet = Math.min(state.chips, pkState.bet * 2);
+  document.getElementById('pkBetText').textContent = pkState.bet;
+  pokerDrawAndShowdown();
+}
+
+function pokerDrawAndShowdown() {
+  if (pkState.phase !== 'draw') return;
+  playSE('coin');
+
+  // プレイヤーの非HOLDカードを交換
+  for (let i = 0; i < 5; i++) {
+    if (!pkState.held[i]) pkState.playerHand[i] = pkState.deck.pop();
+  }
+
+  // AI相手の思考交換（ペアや高カードをHOLDして残りを交換）
+  const oppCounts = {};
+  pkState.opponentHand.forEach(c => { oppCounts[c.val] = (oppCounts[c.val] || 0) + 1; });
+  for (let i = 0; i < 5; i++) {
+    const c = pkState.opponentHand[i];
+    if (oppCounts[c.val] < 2 && c.val < 13) {
+      pkState.opponentHand[i] = pkState.deck.pop();
+    }
+  }
+
+  pkState.phase = 'done';
+  pkState.hideOpponent = false;
+  renderPokerHands();
+
+  document.getElementById('pkDealBtn').style.display = 'inline-block';
+  document.getElementById('pkDealBtn').textContent = '🃏 次の勝負へ';
+  document.getElementById('pkDrawBtn').style.display = 'none';
+  document.getElementById('pkRaiseBtn').style.display = 'none';
+
+  const pEval = evaluatePokerHand(pkState.playerHand);
+  const oEval = evaluatePokerHand(pkState.opponentHand);
+
+  if (pEval.score > oEval.score) {
+    const gain = Math.round(pkState.bet * pEval.mult);
+    state.chips += gain;
+    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - gain);
+    state.totalWins++;
+    playSE('win');
+    document.getElementById('pkStatusText').textContent = `🎉 あなたの勝ち！ (${pEval.name} vs ${oEval.name}) ➔ +${gain} チップ獲得！`;
+  } else if (pEval.score < oEval.score) {
+    state.chips -= pkState.bet;
+    if (state.playMode === 'local') state.p2Chips += pkState.bet;
+    playSE('lose');
+    document.getElementById('pkStatusText').textContent = `💀 相手の勝ち… (${pEval.name} vs ${oEval.name}) ➔ -${pkState.bet} チップ`;
+  } else {
+    playSE('click');
+    document.getElementById('pkStatusText').textContent = `🤝 完全引き分け！チップ移動なし`;
+  }
+
+  saveState();
+  checkBankruptNotice();
+}
+
+/* ============================================================================
+   🎯 ゲーム5：ルーレット (Roulette) ロジック
+============================================================================ */
+const ROULETTE_WHEEL_ORDER = [
+  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
+  5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
+];
+const RED_NUMS = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
+
+let rlState = {
+  bets: {}, // key -> chip amount
+  angle: 0,
+  spinning: false,
+  lastNum: null
+};
+
+const RL_OUTSIDE_DEFS = [
+  { key: 'RED', label: '🔴 赤 (RED) ×2', mult: 2 },
+  { key: 'BLACK', label: '⚫ 黒 (BLACK) ×2', mult: 2 },
+  { key: 'EVEN', label: '偶数 (EVEN) ×2', mult: 2 },
+  { key: 'ODD', label: '奇数 (ODD) ×2', mult: 2 },
+  { key: 'LOW', label: '1〜18 (前半) ×2', mult: 2 },
+  { key: 'HIGH', label: '19〜36 (後半) ×2', mult: 2 },
+  { key: 'DOZ1', label: '1st 12 (1〜12) ×3', mult: 3 },
+  { key: 'DOZ2', label: '2nd 12 (13〜24) ×3', mult: 3 },
+  { key: 'DOZ3', label: '3rd 12 (25〜36) ×3', mult: 3 }
+];
+
+function initRouletteUI() {
+  rlState.bets = {};
+  rlState.spinning = false;
+  document.getElementById('rlBetStage').style.display = 'block';
+  document.getElementById('rlWheelStage').style.display = 'none';
+  renderRouletteBoard();
+  drawRouletteWheel(rlState.angle, rlState.lastNum);
+}
+
+function backToRouletteBetStage() {
+  if (rlState.spinning) return;
+  playSE('click');
+  document.getElementById('rlWheelStage').style.display = 'none';
+  document.getElementById('rlBetStage').style.display = 'block';
+  renderRouletteBoard();
+}
+
+function getRouletteBetLabel(key) {
+  const outDef = RL_OUTSIDE_DEFS.find(d => d.key === key);
+  if (outDef) return outDef.label.replace(/\s×\d+$/, '');
+  if (key.startsWith('NUM_')) {
+    const n = Number(key.replace('NUM_', ''));
+    const emoji = n === 0 ? '🟢' : (RED_NUMS.has(n) ? '🔴' : '⚫');
+    return `${emoji} 数字【${n}】`;
+  }
+  return key;
+}
+
+function isRouletteBetHit(key, winNum) {
+  const isRed = RED_NUMS.has(winNum);
+  const isBlack = winNum !== 0 && !isRed;
+  if (key === 'RED') return isRed;
+  if (key === 'BLACK') return isBlack;
+  if (key === 'EVEN') return winNum !== 0 && winNum % 2 === 0;
+  if (key === 'ODD') return winNum % 2 === 1;
+  if (key === 'LOW') return winNum >= 1 && winNum <= 18;
+  if (key === 'HIGH') return winNum >= 19 && winNum <= 36;
+  if (key === 'DOZ1') return winNum >= 1 && winNum <= 12;
+  if (key === 'DOZ2') return winNum >= 13 && winNum <= 24;
+  if (key === 'DOZ3') return winNum >= 25 && winNum <= 36;
+  if (key === 'NUM_' + winNum) return true;
+  return false;
+}
+
+function renderRouletteSelectedBetsSidebar(winNum = null) {
+  const box = document.getElementById('rlSelectedBetsList');
+  if (!box) return;
+  box.innerHTML = '';
+  Object.entries(rlState.bets).forEach(([key, amt]) => {
+    const hit = winNum !== null && isRouletteBetHit(key, winNum);
+    const pill = document.createElement('span');
+    pill.style.cssText = hit
+      ? 'background:#facc15; color:#422006; border:2px solid #fff; border-radius:999px; padding:3px 9px; box-shadow:0 0 10px rgba(250,204,21,0.9);'
+      : 'background:#1e293b; color:#e2e8f0; border:1.5px solid #64748b; border-radius:999px; padding:3px 9px;';
+    pill.textContent = `${getRouletteBetLabel(key)}: ${amt}🪙${hit ? ' 🎯的中!' : ''}`;
+    box.appendChild(pill);
+  });
+}
+
+function getRouletteTotalBet() {
+  return Object.values(rlState.bets).reduce((a, b) => a + b, 0);
+}
+
+function placeRouletteBet(key) {
+  if (rlState.spinning) return;
+  const unit = parseInt(document.getElementById('rlChipUnitSelect').value, 10) || 10;
+  const curTotal = getRouletteTotalBet();
+  if (curTotal + unit > state.chips) {
+    showToast('⚠️ 所持チップを超えるベットはできません！');
+    return;
+  }
+  playSE('click');
+  rlState.bets[key] = (rlState.bets[key] || 0) + unit;
+  renderRouletteBoard();
+}
+
+function clearRouletteBets() {
+  if (rlState.spinning) return;
+  playSE('click');
+  rlState.bets = {};
+  renderRouletteBoard();
+}
+
+function renderRouletteBoard() {
+  document.getElementById('rlTotalBetText').textContent = getRouletteTotalBet();
+
+  const outGrid = document.getElementById('rlOutsideGrid');
+  outGrid.innerHTML = '';
+  RL_OUTSIDE_DEFS.forEach(d => {
+    const amt = rlState.bets[d.key] || 0;
+    const cell = document.createElement('div');
+    cell.className = 'r-bet-cell r-out';
+    cell.onclick = () => placeRouletteBet(d.key);
+    cell.innerHTML = `${d.label}${amt > 0 ? `<span class="placed-chip-badge">${amt}</span>` : ''}`;
+    outGrid.appendChild(cell);
+  });
+
+  const numGrid = document.getElementById('rlNumbersGrid');
+  numGrid.innerHTML = '';
+  for (let n = 0; n <= 36; n++) {
+    const key = 'NUM_' + n;
+    const amt = rlState.bets[key] || 0;
+    const cell = document.createElement('div');
+    const colClass = n === 0 ? 'r-green' : (RED_NUMS.has(n) ? 'r-red' : 'r-black');
+    cell.className = `r-bet-cell ${colClass}`;
+    cell.onclick = () => placeRouletteBet(key);
+    cell.innerHTML = `${n}${amt > 0 ? `<span class="placed-chip-badge">${amt}</span>` : ''}`;
+    numGrid.appendChild(cell);
+  }
+}
+
+function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
+  const canvas = document.getElementById('rouletteCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const r = cx - 14;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 外枠ゴールドリム
+  ctx.beginPath();
+  ctx.arc(cx, cy, r + 6, 0, Math.PI * 2);
+  ctx.fillStyle = '#78350f';
+  ctx.fill();
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  const count = ROULETTE_WHEEL_ORDER.length;
+  const arc = (Math.PI * 2) / count;
+
+  for (let i = 0; i < count; i++) {
+    const num = ROULETTE_WHEEL_ORDER[i];
+    const a0 = angle + i * arc - Math.PI / 2;
+    const a1 = a0 + arc;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, a0, a1);
+    ctx.closePath();
+    ctx.fillStyle = num === 0 ? '#059669' : (RED_NUMS.has(num) ? '#dc2626' : '#111827');
+    ctx.fill();
+    ctx.strokeStyle = num === highlightNum ? '#fef08a' : 'rgba(255,255,255,0.45)';
+    ctx.lineWidth = num === highlightNum ? 3.5 : 1.1;
+    ctx.stroke();
+
+    // 大きく見やすい数字ラベル
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(a0 + arc / 2);
+    ctx.fillStyle = num === highlightNum ? '#fef08a' : '#ffffff';
+    ctx.font = '900 13px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(String(num), r - 10, 4.5);
+    ctx.restore();
+  }
+
+  // 内側の装飾サークル
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.62, 0, Math.PI * 2);
+  ctx.fillStyle = '#064e3b';
+  ctx.fill();
+  ctx.strokeStyle = '#d97706';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // 中央ゴールドタレット
+  ctx.beginPath();
+  ctx.arc(cx, cy, 44, 0, Math.PI * 2);
+  ctx.fillStyle = '#b45309';
+  ctx.fill();
+  ctx.strokeStyle = '#fef08a';
+  ctx.lineWidth = 3.5;
+  ctx.stroke();
+
+  // 中央に当選番号をドカンと表示
+  if (highlightNum !== null) {
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(highlightNum), cx, cy + 8);
+  } else {
+    ctx.fillStyle = '#fef08a';
+    ctx.font = '900 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('SPIN', cx, cy + 4);
+  }
+
+  // 白いルーレットボール（上部ポインター位置へ収束）
+  const ballAngle = -Math.PI / 2 - (1 - progress) * Math.PI * 10;
+  const ballRadius = r - 28 - progress * 14;
+  const bx = cx + Math.cos(ballAngle) * ballRadius;
+  const by = cy + Math.sin(ballAngle) * ballRadius;
+  ctx.beginPath();
+  ctx.arc(bx, by, 7, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // 上部ポインター針
+  ctx.beginPath();
+  ctx.moveTo(cx, 22);
+  ctx.lineTo(cx - 11, 3);
+  ctx.lineTo(cx + 11, 3);
+  ctx.closePath();
+  ctx.fillStyle = '#facc15';
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function spinRoulette() {
+  if (rlState.spinning) return;
+  const totalBet = getRouletteTotalBet();
+  if (totalBet <= 0) {
+    showToast('🎯 先にルーレット盤へチップを置いてください！');
+    return;
+  }
+  rlState.spinning = true;
+  state.chips -= totalBet;
+  saveState();
+
+  // 画面を「特大ルーレット画面」へ切り替え、端っこに選択したベット一覧を表示！
+  document.getElementById('rlBetStage').style.display = 'none';
+  document.getElementById('rlWheelStage').style.display = 'block';
+  document.getElementById('rlBackToBetBtn').style.display = 'none';
+  document.getElementById('rlResultBubble').textContent = '🎡 ルーレット回転中...！';
+  renderRouletteSelectedBetsSidebar(null);
+
+  const winIdx = Math.floor(Math.random() * ROULETTE_WHEEL_ORDER.length);
+  const winNum = ROULETTE_WHEEL_ORDER[winIdx];
+  const arc = (Math.PI * 2) / ROULETTE_WHEEL_ORDER.length;
+  const targetAngle = (Math.PI * 2 * 5) - (winIdx * arc + arc / 2);
+
+  const startAngle = rlState.angle % (Math.PI * 2);
+  const startTime = performance.now();
+  const duration = 2800;
+  let lastTickStep = -1;
+
+  function step(now) {
+    const t = Math.min(1, (now - startTime) / duration);
+    const ease = 1 - Math.pow(1 - t, 3);
+    rlState.angle = startAngle + (targetAngle - startAngle) * ease;
+    drawRouletteWheel(rlState.angle, t >= 1 ? winNum : null, ease);
+
+    const tickStep = Math.floor(rlState.angle / arc);
+    if (tickStep !== lastTickStep) {
+      lastTickStep = tickStep;
+      playSE('tick');
+    }
+
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      rlState.spinning = false;
+      rlState.lastNum = winNum;
+      settleRoulette(winNum, totalBet);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function settleRoulette(winNum, totalBet) {
+  let payout = 0;
+  const isRed = RED_NUMS.has(winNum);
+  const isBlack = winNum !== 0 && !isRed;
+
+  Object.entries(rlState.bets).forEach(([key, amt]) => {
+    if (key === 'RED' && isRed) payout += amt * 2;
+    else if (key === 'BLACK' && isBlack) payout += amt * 2;
+    else if (key === 'EVEN' && winNum !== 0 && winNum % 2 === 0) payout += amt * 2;
+    else if (key === 'ODD' && winNum % 2 === 1) payout += amt * 2;
+    else if (key === 'LOW' && winNum >= 1 && winNum <= 18) payout += amt * 2;
+    else if (key === 'HIGH' && winNum >= 19 && winNum <= 36) payout += amt * 2;
+    else if (key === 'DOZ1' && winNum >= 1 && winNum <= 12) payout += amt * 3;
+    else if (key === 'DOZ2' && winNum >= 13 && winNum <= 24) payout += amt * 3;
+    else if (key === 'DOZ3' && winNum >= 25 && winNum <= 36) payout += amt * 3;
+    else if (key === 'NUM_' + winNum) payout += amt * 36;
+  });
+
+  renderRouletteSelectedBetsSidebar(winNum);
+
+  const colEmoji = winNum === 0 ? '🟢' : (isRed ? '🔴' : '⚫');
+  if (payout > 0) {
+    state.chips += payout;
+    state.totalWins++;
+    playSE('win');
+    document.getElementById('rlResultBubble').textContent = `${colEmoji} 【 ${winNum} 】的中！ +${payout} 🪙 獲得！`;
+  } else {
+    playSE('lose');
+    document.getElementById('rlResultBubble').textContent = `${colEmoji} 【 ${winNum} 】ハズレ… (-${totalBet} 🪙)`;
+  }
+
+  document.getElementById('rlBackToBetBtn').style.display = 'inline-block';
+  rlState.bets = {};
+  saveState();
+  checkBankruptNotice();
+}
+
+/* ============================================================================
+   🎡 ゲーム6：ビッグシックス (Big Six / マネーホイール) ロジック
+   ① 🎯 1〜10数字＆高倍率モード（1〜10の番号を選んで、その中に書いてある5〜9倍等の倍率分もらえる！）
+   ② 🏛️ カジノ標準モード（1, 2, 5, 10, 20, 40倍の54区画）
+============================================================================ */
+const BIGSIX_SEGMENTS = [
+  1, 2, 1, 5, 1, 2, 1, 10, 1, 2, 1, 5, 1, 2, 1, 20, 1, 2,
+  1, 5, 1, 2, 1, 10, 1, 2, 1, 40,
+  1, 2, 1, 5, 1, 2, 1, 10, 1, 2, 1, 5, 1, 2, 1, 20, 1, 2,
+  1, 5, 1, 2, 1, 10, 1, 40
+];
+
+const BIGSIX_STYLES = {
+  1:  { color: '#3b82f6', label: '1倍', desc: '24マス (高確率)' },
+  2:  { color: '#10b981', label: '2倍', desc: '15マス' },
+  5:  { color: '#a855f7', label: '5倍', desc: '6マス' },
+  10: { color: '#f97316', label: '10倍', desc: '4マス' },
+  20: { color: '#ef4444', label: '20倍', desc: '2マス (激熱)' },
+  40: { color: '#eab308', label: '40倍👑', desc: '2マス (JACKPOT)' }
+};
+
+const BS_1TO10_COLORS = [
+  '#ef4444', '#f97316', '#eab308', '#10b981', '#06b6d4',
+  '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e'
+];
+
+let bsState = {
+  ruleMode: 'num1to10', // 'num1to10' | 'classic'
+  num1to10Mults: [5, 7, 6, 8, 9, 5, 8, 6, 7, 9], // 1〜10番の中に書かれている倍率(5〜9倍)
+  bets: {},
+  angle: 0,
+  spinning: false,
+  winSegIdx: null
+};
+
+function setBigSixRuleMode(mode) {
+  if (bsState.spinning) return;
+  playSE('click');
+  bsState.ruleMode = mode;
+  document.getElementById('bsTab1to10').classList.toggle('active', mode === 'num1to10');
+  document.getElementById('bsTabClassic').classList.toggle('active', mode === 'classic');
+  document.getElementById('bsShuffleMultBtn').style.display = mode === 'num1to10' ? 'inline-block' : 'none';
+  initBigSixUI();
+}
+
+function shuffleBigSix1to10Multipliers() {
+  if (bsState.spinning) return;
+  playSE('dice');
+  // 1〜10の各枠の中に5〜9倍の倍率をランダムに割り振る
+  const pool = [5, 5, 6, 6, 7, 7, 8, 8, 9, 9];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  bsState.num1to10Mults = pool;
+  renderBigSixBoard();
+  drawBigSixWheel(bsState.angle);
+  showToast('🎲 1〜10番の中に書かれた倍率（×5〜×9倍）をシャッフルしました！');
+}
+
+function initBigSixUI() {
+  bsState.bets = {};
+  bsState.spinning = false;
+  document.getElementById('bsShuffleMultBtn').style.display = bsState.ruleMode === 'num1to10' ? 'inline-block' : 'none';
+  document.getElementById('bsResultText').textContent = bsState.ruleMode === 'num1to10'
+    ? '1〜10の数字を選んでベット！当たればその中に書いてある倍数分（×5〜×9倍）もらえる！'
+    : '当たりそうな数字（1, 2, 5, 10, 20, 40）にベットしてホイールを回そう！';
+  renderBigSixBoard();
+  drawBigSixWheel(bsState.angle);
+}
+
+function getBigSixTotalBet() {
+  return Object.values(bsState.bets).reduce((a, b) => a + b, 0);
+}
+
+function placeBigSixBet(num) {
+  if (bsState.spinning) return;
+  const unit = parseInt(document.getElementById('bsChipUnit').value, 10) || 10;
+  if (getBigSixTotalBet() + unit > state.chips) {
+    showToast('⚠️ 所持チップを超えるベットはできません！');
+    return;
+  }
+  playSE('click');
+  bsState.bets[num] = (bsState.bets[num] || 0) + unit;
+  renderBigSixBoard();
+}
+
+function clearBigSixBets() {
+  if (bsState.spinning) return;
+  playSE('click');
+  bsState.bets = {};
+  renderBigSixBoard();
+}
+
+function renderBigSixBoard() {
+  document.getElementById('bsTotalBetText').textContent = getBigSixTotalBet();
+  const grid = document.getElementById('bsBetGrid');
+  grid.innerHTML = '';
+
+  if (bsState.ruleMode === 'num1to10') {
+    grid.style.gridTemplateColumns = 'repeat(5, 1fr)';
+    for (let num = 1; num <= 10; num++) {
+      const mult = bsState.num1to10Mults[num - 1];
+      const col = BS_1TO10_COLORS[num - 1];
+      const amt = bsState.bets[num] || 0;
+      const card = document.createElement('div');
+      card.className = 'bigsix-card';
+      card.style.borderColor = col;
+      card.style.padding = '8px 4px';
+      card.onclick = () => placeBigSixBet(num);
+      card.innerHTML = `
+        ${amt > 0 ? `<span class="placed-chip-badge">${amt}🪙</span>` : ''}
+        <div style="font-size:1.25rem; font-weight:900; color:#fff;">${num}番</div>
+        <div style="font-size:0.88rem; font-weight:900; color:#fef08a; background:rgba(0,0,0,0.35); border-radius:8px; padding:2px 4px; margin-top:3px;">×${mult}倍</div>
+      `;
+      grid.appendChild(card);
+    }
+  } else {
+    grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    [1, 2, 5, 10, 20, 40].forEach(num => {
+      const st = BIGSIX_STYLES[num];
+      const amt = bsState.bets[num] || 0;
+      const card = document.createElement('div');
+      card.className = 'bigsix-card';
+      card.style.borderColor = st.color;
+      card.onclick = () => placeBigSixBet(num);
+      card.innerHTML = `
+        ${amt > 0 ? `<span class="placed-chip-badge">${amt} 🪙</span>` : ''}
+        <div style="font-size:1.45rem; font-weight:900; color:${st.color};">【 ${num} 】</div>
+        <div style="font-size:0.8rem; font-weight:900; color:#fef08a;">配当 ×${num}倍</div>
+        <div style="font-size:0.68rem; color:#94a3b8;">${st.desc}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+}
+
+function drawBigSixWheel(angle, highlightIdx = null) {
+  const canvas = document.getElementById('bigSixCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const r = cx - 14;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (bsState.ruleMode === 'num1to10') {
+    const count = 10;
+    const arc = (Math.PI * 2) / count;
+    for (let i = 0; i < count; i++) {
+      const num = i + 1;
+      const mult = bsState.num1to10Mults[i];
+      const a0 = angle + i * arc - Math.PI / 2;
+      const a1 = a0 + arc;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, a0, a1);
+      ctx.closePath();
+      ctx.fillStyle = BS_1TO10_COLORS[i];
+      ctx.fill();
+      ctx.strokeStyle = i === highlightIdx ? '#fef08a' : '#0f172a';
+      ctx.lineWidth = i === highlightIdx ? 4 : 2;
+      ctx.stroke();
+
+      // 外側に「1〜10の番号」、内側に「書いてある倍率(×5〜×9)」を大きく描画！
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(a0 + arc / 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 17px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(`${num}`, r - 14, -2);
+      ctx.fillStyle = '#fef08a';
+      ctx.font = '900 13px sans-serif';
+      ctx.fillText(`(×${mult}倍)`, r - 10, 14);
+      ctx.restore();
+    }
+  } else {
+    const count = BIGSIX_SEGMENTS.length;
+    const arc = (Math.PI * 2) / count;
+    for (let i = 0; i < count; i++) {
+      const num = BIGSIX_SEGMENTS[i];
+      const a0 = angle + i * arc - Math.PI / 2;
+      const a1 = a0 + arc;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, a0, a1);
+      ctx.closePath();
+      ctx.fillStyle = BIGSIX_STYLES[num].color;
+      ctx.fill();
+      ctx.strokeStyle = i === highlightIdx ? '#ffffff' : 'rgba(15,23,42,0.75)';
+      ctx.lineWidth = i === highlightIdx ? 2.5 : 1;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(a0 + arc / 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(String(num), r - 8, 3.5);
+      ctx.restore();
+    }
+  }
+
+  // 外枠ゴールドリング
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // 中央エンブレム
+  ctx.beginPath();
+  ctx.arc(cx, cy, 42, 0, Math.PI * 2);
+  ctx.fillStyle = '#0f172a';
+  ctx.fill();
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 3.5;
+  ctx.stroke();
+
+  ctx.fillStyle = '#fef08a';
+  ctx.font = '900 12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('BIG SIX', cx, cy + 4);
+
+  // 上部ストッパー針
+  ctx.beginPath();
+  ctx.moveTo(cx, 20);
+  ctx.lineTo(cx - 11, 2);
+  ctx.lineTo(cx + 11, 2);
+  ctx.closePath();
+  ctx.fillStyle = '#ef4444';
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function spinBigSix() {
+  if (bsState.spinning) return;
+  const totalBet = getBigSixTotalBet();
+  if (totalBet <= 0) {
+    showToast('🎡 先に下の番号パネルをタップしてベットしてください！');
+    return;
+  }
+  bsState.spinning = true;
+  state.chips -= totalBet;
+  saveState();
+
+  const segCount = bsState.ruleMode === 'num1to10' ? 10 : BIGSIX_SEGMENTS.length;
+  const winIdx = Math.floor(Math.random() * segCount);
+  const arc = (Math.PI * 2) / segCount;
+  const targetAngle = (Math.PI * 2 * 6) - (winIdx * arc + arc / 2);
+
+  const startAngle = bsState.angle % (Math.PI * 2);
+  const startTime = performance.now();
+  const duration = 2900;
+  let lastTick = -1;
+
+  function step(now) {
+    const t = Math.min(1, (now - startTime) / duration);
+    const ease = 1 - Math.pow(1 - t, 3.2);
+    bsState.angle = startAngle + (targetAngle - startAngle) * ease;
+    drawBigSixWheel(bsState.angle, t >= 1 ? winIdx : null);
+
+    const tick = Math.floor(bsState.angle / arc);
+    if (tick !== lastTick) {
+      lastTick = tick;
+      playSE('tick');
+    }
+
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      bsState.spinning = false;
+      settleBigSix(winIdx, totalBet);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function settleBigSix(winIdx, totalBet) {
+  if (bsState.ruleMode === 'num1to10') {
+    const winNum = winIdx + 1;
+    const mult = bsState.num1to10Mults[winIdx];
+    const betOnWin = bsState.bets[winNum] || 0;
+    if (betOnWin > 0) {
+      const reward = betOnWin * mult;
+      state.chips += reward;
+      state.totalWins++;
+      playSE('win');
+      document.getElementById('bsResultText').textContent = `🎉 【 ${winNum}番 (×${mult}倍) 】に停止！大当たり ➔ +${reward} 🪙 獲得！`;
+    } else {
+      playSE('lose');
+      document.getElementById('bsResultText').textContent = `💨 【 ${winNum}番 (×${mult}倍) 】に停止… ハズレ (-${totalBet} 🪙)`;
+    }
+  } else {
+    const winNum = BIGSIX_SEGMENTS[winIdx];
+    const betOnWin = bsState.bets[winNum] || 0;
+    if (betOnWin > 0) {
+      const reward = betOnWin + betOnWin * winNum;
+      state.chips += reward;
+      state.totalWins++;
+      playSE('win');
+      document.getElementById('bsResultText').textContent = `🎉 【 ${winNum} 】に停止！ (${winNum}倍的中) ➔ +${reward} 🪙 獲得！`;
+    } else {
+      playSE('lose');
+      document.getElementById('bsResultText').textContent = `💨 【 ${winNum} 】に停止… ハズレ (-${totalBet} 🪙)`;
+    }
+  }
+
+  bsState.bets = {};
+  saveState();
+  renderBigSixBoard();
+  checkBankruptNotice();
+}
+
+/* ============================================================================
+   ⚙️ データリセット・背景エフェクト
+============================================================================ */
+function resetP2Chips() {
+  playSE('coin');
+  state.p2Chips = 100;
+  saveState();
+  showToast('👥 フレンド(2P)のチップを100枚にリセットしました！');
+}
+
+function resetAllCasinoData() {
+  if (!confirm('カジノ・ロジカのセーブデータを初期化して最初から（100チップ配布から）やり直しますか？')) return;
+  localStorage.removeItem(SAVE_KEY);
+  localStorage.removeItem(WORK_SESSION_KEY);
+  location.reload();
+}
+
+/* 背景キラキラCanvasアニメーション */
+function initBgCanvas() {
+  const canvas = document.getElementById('bgCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w = canvas.width = window.innerWidth;
+  let h = canvas.height = window.innerHeight;
+  window.addEventListener('resize', () => {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  });
+
+  const stars = Array.from({ length: 32 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    r: 1.5 + Math.random() * 2.8,
+    vy: 0.25 + Math.random() * 0.5,
+    alpha: 0.2 + Math.random() * 0.55
+  }));
+
+  function loop() {
+    ctx.clearRect(0, 0, w, h);
+    stars.forEach(s => {
+      s.y -= s.vy;
+      if (s.y < -10) { s.y = h + 10; s.x = Math.random() * w; }
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(250, 204, 21, ${s.alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initBgCanvas();
+  loadState();
+});
+</script>
+</body>
+</html>
