@@ -6312,7 +6312,8 @@ const BIO_SLOT_SYMBOLS = [
     name: '卵(タマゴ)',
     mult3: 3,
     mult2: 1.5,
-    weight: 34,
+    weight: 36,
+    freeWeight: 26,
     bg: '#422006',
     color: '#fef08a',
     border: '#facc15'
@@ -6324,6 +6325,7 @@ const BIO_SLOT_SYMBOLS = [
     mult3: 5,
     mult2: 0,
     weight: 26,
+    freeWeight: 22,
     bg: '#082f49',
     color: '#bae6fd',
     border: '#38bdf8'
@@ -6335,6 +6337,7 @@ const BIO_SLOT_SYMBOLS = [
     mult3: 10,
     mult2: 0,
     weight: 20,
+    freeWeight: 24,
     bg: '#064e3b',
     color: '#a7f3d0',
     border: '#34d399'
@@ -6345,7 +6348,8 @@ const BIO_SLOT_SYMBOLS = [
     name: 'LR(BAR枠)',
     mult3: 30,
     mult2: 3,
-    weight: 13,
+    weight: 12,
+    freeWeight: 19,
     bg: '#3b0764',
     color: '#f3e8ff',
     border: '#c084fc'
@@ -6356,7 +6360,8 @@ const BIO_SLOT_SYMBOLS = [
     name: '二重らせんDNA',
     mult3: 100,
     mult2: 5,
-    weight: 7,
+    weight: 6,
+    freeWeight: 9,
     bg: '#581c87',
     color: '#fef08a',
     border: '#f472b6'
@@ -6469,15 +6474,13 @@ function adjustSlotBet(val) {
   document.getElementById('slotBetText').textContent = slotState.bet;
 }
 
-function pickWeightedSlotSymbolIndex(isFreeBoost = false) {
-  const weights = BIO_SLOT_SYMBOLS.map(s => {
-    if (!isFreeBoost) return s.weight;
-    if (s.id === 'dna') return s.weight + 6;
-    if (s.id === 'lr') return s.weight + 8;
-    if (s.id === 'petri') return s.weight + 5;
-    return s.weight;
+function pickWeightedSlotSymbolIndex(isFreeBoost = false, excludeIdx = -1) {
+  const weights = BIO_SLOT_SYMBOLS.map((s, idx) => {
+    if (idx === excludeIdx) return 0;
+    return isFreeBoost ? (s.freeWeight || s.weight) : s.weight;
   });
   const totalW = weights.reduce((acc, w) => acc + w, 0);
+  if (totalW <= 0) return 0;
   let r = Math.random() * totalW;
   for (let i = 0; i < weights.length; i++) {
     r -= weights[i];
@@ -6791,6 +6794,7 @@ function startSlotSpin() {
 
   for (let i = 0; i < 3; i++) {
     slotState.spinning[i] = true;
+    slotState.reels[i] = Math.floor(Math.random() * BIO_SLOT_SYMBOLS.length);
     const stopBtn = document.getElementById('slotStopBtn' + i);
     if (stopBtn) stopBtn.disabled = false;
 
@@ -6817,22 +6821,39 @@ function stopSlotReel(reelIdx) {
 
   const isFree = slotState.currentSpinIsFree;
 
-  // 目押しタイミングの手応えを活かしつつ、リーチ時は揃いやすくなるアシスト抽選（FREE SPIN中は高確率ブースト！）
-  let finalIdx = slotState.reels[reelIdx];
+  // 厳密な重み付き確率テーブル（通常時：🧬DNA 3つ揃い＝約1/172、🌈LR 3つ揃い＝約1/79 ／ FREE SPIN中：高確率優遇）
+  let finalIdx = 0;
   const stoppedIndices = [0, 1, 2].filter(idx => !slotState.spinning[idx] && idx !== reelIdx);
-  if (stoppedIndices.length === 1 && Math.random() < (isFree ? 0.54 : 0.38)) {
-    finalIdx = slotState.reels[stoppedIndices[0]];
-  } else if (stoppedIndices.length === 2 && slotState.reels[stoppedIndices[0]] === slotState.reels[stoppedIndices[1]]) {
-    const reachSym = BIO_SLOT_SYMBOLS[slotState.reels[stoppedIndices[0]]];
-    const hitChance = isFree
-      ? (reachSym.id === 'dna' ? 0.22 : (reachSym.id === 'lr' ? 0.36 : 0.58))
-      : (reachSym.id === 'dna' ? 0.16 : (reachSym.id === 'lr' ? 0.24 : 0.42));
-    if (Math.random() < hitChance) {
-      finalIdx = slotState.reels[stoppedIndices[0]];
-    } else if (finalIdx === slotState.reels[stoppedIndices[0]] && Math.random() < (isFree ? 0.3 : 0.5)) {
-      finalIdx = pickWeightedSlotSymbolIndex(isFree);
+
+  if (stoppedIndices.length === 0) {
+    // 1個目の停止：重み付きテーブルで厳密抽選（通常時 DNA=6%, LR=12% ...）
+    finalIdx = pickWeightedSlotSymbolIndex(isFree);
+  } else if (stoppedIndices.length === 1) {
+    // 2個目の停止：1個目の絵柄に応じたリーチ発生率で抽選（外れたら1個目以外から抽選）
+    const firstIdx = slotState.reels[stoppedIndices[0]];
+    const firstSym = BIO_SLOT_SYMBOLS[firstIdx];
+    const reachChance = isFree
+      ? (firstSym.id === 'dna' ? 0.45 : (firstSym.id === 'lr' ? 0.42 : 0.48))
+      : (firstSym.id === 'dna' ? 0.42 : (firstSym.id === 'lr' ? 0.35 : 0.34));
+    if (Math.random() < reachChance) {
+      finalIdx = firstIdx;
+    } else {
+      finalIdx = pickWeightedSlotSymbolIndex(isFree, firstIdx);
     }
-  } else if (Math.random() < 0.35) {
+  } else if (stoppedIndices.length === 2 && slotState.reels[stoppedIndices[0]] === slotState.reels[stoppedIndices[1]]) {
+    // 3個目の停止（リーチ状態）：絵柄ごとの厳密当選率で3つ揃い判定
+    const reachIdx = slotState.reels[stoppedIndices[0]];
+    const reachSym = BIO_SLOT_SYMBOLS[reachIdx];
+    const hitChance = isFree
+      ? (reachSym.id === 'dna' ? 0.25 : (reachSym.id === 'lr' ? 0.35 : (reachSym.id === 'petri' ? 0.48 : (reachSym.id === 'atp' ? 0.55 : 0.58))))
+      : (reachSym.id === 'dna' ? 0.23 : (reachSym.id === 'lr' ? 0.30 : (reachSym.id === 'petri' ? 0.35 : (reachSym.id === 'atp' ? 0.42 : 0.45))));
+    if (Math.random() < hitChance) {
+      finalIdx = reachIdx;
+    } else {
+      finalIdx = pickWeightedSlotSymbolIndex(isFree, reachIdx);
+    }
+  } else {
+    // 3個目の停止（非リーチ状態）：重み付きテーブルで抽選（2個揃いボーナス等が発生）
     finalIdx = pickWeightedSlotSymbolIndex(isFree);
   }
 
