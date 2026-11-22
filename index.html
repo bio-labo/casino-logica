@@ -1257,19 +1257,71 @@ html, body {
         </button>
       </div>
 
-      <!-- 通信ルーム設定パネル（🌐通信ルーム選択時のみ表示） -->
-      <div id="onlineRoomPanel" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed rgba(56,189,248,0.4);">
-        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;">
-          <div style="font-size:0.8rem; font-weight:900; color:#bae6fd;">
-            ルーム番号: <span id="myRoomCodeText" style="color:#fef08a; font-size:1rem;">未作成</span>
+      <!-- 通信ルーム設定パネル（🌐通信ルーム選択時のみ表示：バイオ・ロジカ方式 Firebase Firestore ルーム同期！） -->
+      <div id="onlineRoomPanel" style="display:none; margin-top:10px; padding-top:12px; border-top:1.5px dashed rgba(56,189,248,0.5);">
+        <!-- ① 未入室時：部屋を作る / 4桁コードで入る / 募集中ルーム一覧 -->
+        <div id="onlineRoomEntryView">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px; margin-bottom:10px;">
+            <!-- ホストとして部屋を新しく作る -->
+            <div style="background:rgba(15,23,42,0.92); border:2px solid #facc15; border-radius:16px; padding:12px;">
+              <div style="font-size:0.84rem; font-weight:900; color:#fef08a; margin-bottom:4px;">🏠 新しく部屋を作る（ホスト）</div>
+              <div style="font-size:0.72rem; color:#cbd5e1; margin-bottom:8px;">4桁のルーム番号を発行して友達を招待します</div>
+              <button class="action-btn" style="width:100%; padding:8px 12px; font-size:0.9rem;" onclick="createOnlineRoom()">✨ 新しい部屋を作成！</button>
+            </div>
+
+            <!-- ゲストとして番号入力で入る -->
+            <div style="background:rgba(15,23,42,0.92); border:2px solid #38bdf8; border-radius:16px; padding:12px;">
+              <div style="font-size:0.84rem; font-weight:900; color:#7dd3fc; margin-bottom:4px;">🚪 友達の部屋に入る（ゲスト）</div>
+              <div style="font-size:0.72rem; color:#cbd5e1; margin-bottom:8px;">友達から聞いた4桁のルーム番号を入力</div>
+              <div style="display:flex; gap:6px;">
+                <input id="joinRoomInput" type="text" inputmode="numeric" maxlength="4" placeholder="4桁番号" style="flex:1; min-width:80px; padding:8px; border-radius:12px; border:2px solid #38bdf8; background:#020617; color:#fef08a; font-weight:900; font-size:1.05rem; text-align:center; letter-spacing:0.12em;">
+                <button class="action-btn btn-blue" style="padding:8px 14px; font-size:0.9rem;" onclick="joinOnlineRoom()">参加</button>
+              </div>
+            </div>
           </div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <button class="back-btn" style="background:#facc15; border-color:#854d0e;" onclick="createOnlineRoom()">🏠 部屋を作る</button>
-            <input id="joinRoomInput" type="text" maxlength="4" placeholder="4桁番号" style="width:84px; padding:6px 8px; border-radius:10px; border:2px solid #38bdf8; background:#0f172a; color:#fff; font-weight:900; text-align:center;">
-            <button class="back-btn" style="background:#38bdf8; color:#fff; border-color:#0284c7;" onclick="joinOnlineRoom()">🚪 参加</button>
+
+          <!-- 📡 現在募集中の公開ルーム一覧（ワンタップ入室対応！） -->
+          <div style="background:rgba(2,6,23,0.75); border:1.5px solid #475569; border-radius:14px; padding:8px 12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:0.76rem; font-weight:900; color:#a7f3d0;">📡 現在募集中の部屋（タップで即入室OK！）</span>
+              <button class="back-btn" style="font-size:0.7rem; padding:2px 8px; background:#1e293b; color:#bae6fd; border-color:#38bdf8;" onclick="refreshOpenCasinoRooms()">🔄 一覧更新</button>
+            </div>
+            <div id="openCasinoRoomsList" style="display:flex; flex-wrap:wrap; gap:6px; font-size:0.76rem; color:#94a3b8;">
+              募集中の部屋を検索中...
+            </div>
           </div>
         </div>
-        <div id="onlineStatusMsg" style="font-size:0.75rem; color:#94a3b8; margin-top:6px;">※友達と同じ4桁コードで接続すると、サイコロや勝敗がリアルタイム同期されます。</div>
+
+        <!-- ② 入室中ロビーカード（部屋を作った後 / 入った後に表示） -->
+        <div id="onlineRoomActiveLobby" style="display:none; background:linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,27,75,0.96)); border:2.5px solid #4ade80; border-radius:18px; padding:12px 14px;">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="background:#facc15; color:#422006; font-weight:900; font-size:0.76rem; padding:3px 9px; border-radius:999px;" id="onlineRoleBadge">🏠 ホスト</span>
+              <span style="font-size:0.88rem; font-weight:900; color:#bae6fd;">ルーム番号:</span>
+              <span id="myRoomCodeText" style="font-size:1.35rem; font-weight:900; color:#fef08a; letter-spacing:0.1em; background:#020617; padding:2px 12px; border-radius:10px; border:2px solid #facc15;">----</span>
+            </div>
+            <button class="back-btn" style="background:#fee2e2; color:#991b1b; border-color:#f87171; font-size:0.74rem; padding:4px 10px;" onclick="leaveOnlineRoom()">🚪 部屋を出る</button>
+          </div>
+
+          <!-- プレイヤー1(ホスト) vs プレイヤー2(ゲスト) 接続カード -->
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px; background:rgba(2,6,23,0.7); border-radius:14px; padding:10px; margin-bottom:8px;">
+            <div style="text-align:center;">
+              <div style="font-size:0.7rem; color:#94a3b8; font-weight:800;">🏠 ホスト (親/1P)</div>
+              <div id="lobbyHostName" style="font-size:0.95rem; font-weight:900; color:#fef08a;">待機中</div>
+              <div id="lobbyHostChips" style="font-size:0.76rem; color:#4ade80; font-weight:800;">🪙 -</div>
+            </div>
+            <div style="font-size:1.1rem; font-weight:900; color:#f472b6;">VS</div>
+            <div style="text-align:center;">
+              <div style="font-size:0.7rem; color:#94a3b8; font-weight:800;">🚪 ゲスト (子/2P)</div>
+              <div id="lobbyGuestName" style="font-size:0.95rem; font-weight:900; color:#7dd3fc;">参加者待ち...</div>
+              <div id="lobbyGuestChips" style="font-size:0.76rem; color:#4ade80; font-weight:800;">🪙 -</div>
+            </div>
+          </div>
+
+          <div id="onlineStatusMsg" style="font-size:0.8rem; font-weight:900; color:#fef08a; text-align:center;">
+            🟢 友達の入室を待っています...
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2744,7 +2796,7 @@ function updateHeaderUI() {
 
   document.getElementById('p1ChipText').textContent = (state.isTestAccount && state.infiniteChips) ? '♾️ 999,999' : state.chips.toLocaleString();
   document.getElementById('p2ChipText').textContent = state.p2Chips.toLocaleString();
-  document.getElementById('p2ChipBadge').style.display = state.playMode === 'local' ? 'inline-flex' : 'none';
+  document.getElementById('p2ChipBadge').style.display = (state.playMode === 'local' || (state.playMode === 'online' && onlineRoomState.active)) ? 'inline-flex' : 'none';
 
   const exitAdminBtn = document.getElementById('exitAdminModeBtn');
   if (exitAdminBtn) exitAdminBtn.style.display = state.isTestAccount ? 'inline-flex' : 'none';
@@ -2753,11 +2805,19 @@ function updateHeaderUI() {
   const adminInfBtn = document.getElementById('adminInfToggleBtn');
   if (adminInfBtn) adminInfBtn.textContent = state.infiniteChips ? '♾️ チップ無限固定: ON' : '🔓 チップ無限固定: OFF';
 
-  // 各ゲーム内のプレイヤー名ラベルにも自分の名前を反映
+  // 各ゲーム内のプレイヤー名ラベルにも自分の名前を反映（通信ルーム時はホスト＝親/1P、ゲスト＝子/2Pとして表示）
   const ccPl = document.getElementById('ccPlayerLabel');
-  if (ccPl) ccPl.textContent = `🧑 子 (${safeName})`;
+  if (ccPl) {
+    ccPl.textContent = (state.playMode === 'online' && onlineRoomState.active)
+      ? `🚪 子 (${onlineRoomState.guestName || 'ゲスト'})`
+      : `🧑 子 (${safeName})`;
+  }
   const ytP1 = document.getElementById('ytColP1');
-  if (ytP1) ytP1.textContent = `🧑 ${safeName}`;
+  if (ytP1) {
+    ytP1.textContent = (state.playMode === 'online' && onlineRoomState.active)
+      ? `🏠 ${onlineRoomState.hostName || 'ホスト'}`
+      : `🧑 ${safeName}`;
+  }
   const bjPl = document.getElementById('bjPlayerTitle');
   if (bjPl) bjPl.textContent = `🧑 ${safeName}`;
 
@@ -3072,10 +3132,46 @@ function showToast(msg) {
   }, 2800);
 }
 
-/* --- ⚔️ 対戦モード（AI / その場でフレンド2P / 通信ルーム） --- */
+/* --- ⚔️ 対戦モード（AI / その場でフレンド2P / 通信ルーム：バイオ・ロジカ方式 Firebase Firestore ルーム同期！） --- */
 let peer = null;
 let conn = null;
 let myRoomCode = '';
+
+let onlineRoomState = {
+  active: false,
+  code: '',
+  role: '', // 'host' | 'guest'
+  docId: '',
+  unsub: null,
+  bc: null,
+  lastData: null,
+  hostId: '',
+  hostName: '',
+  hostChips: 100,
+  guestId: '',
+  guestName: '',
+  guestChips: 100,
+  status: 'idle', // 'idle' | 'waiting' | 'connected'
+  activeGame: '',
+  processedRoundId: '',
+  lastToastId: ''
+};
+
+try {
+  if (typeof BroadcastChannel !== 'undefined') {
+    onlineRoomState.bc = new BroadcastChannel('casino_logica_room_sync_v1');
+    onlineRoomState.bc.onmessage = ev => {
+      if (ev && ev.data && ev.data.code === onlineRoomState.code && onlineRoomState.active) {
+        handleOnlineRoomDocUpdate(ev.data.payload);
+      }
+    };
+  }
+} catch (e) {}
+
+function getRoomDocRef(code) {
+  if (!db || !code) return null;
+  return db.collection('players').doc('MATCH_CASINO_ROOM_' + code);
+}
 
 function setPlayMode(mode) {
   playSE('click');
@@ -3084,76 +3180,439 @@ function setPlayMode(mode) {
   document.getElementById('modeTabLocal').classList.toggle('active', mode === 'local');
   document.getElementById('modeTabOnline').classList.toggle('active', mode === 'online');
   document.getElementById('onlineRoomPanel').style.display = mode === 'online' ? 'block' : 'none';
+  if (mode === 'online') {
+    refreshOpenCasinoRooms();
+  }
   saveState();
 }
 
-function createOnlineRoom() {
-  playSE('click');
-  myRoomCode = String(Math.floor(1000 + Math.random() * 9000));
-  document.getElementById('myRoomCodeText').textContent = myRoomCode;
-  document.getElementById('onlineStatusMsg').textContent = `🏠 ルーム「${myRoomCode}」を作成中... 友達に番号を教えてください`;
+async function refreshOpenCasinoRooms() {
+  const box = document.getElementById('openCasinoRoomsList');
+  if (!box) return;
+  if (!db) {
+    box.innerHTML = '<span>※同じ端末・別タブ同士、または4桁番号入力で接続できます</span>';
+    return;
+  }
   try {
-    if (peer) peer.destroy();
-    peer = new Peer('casinologica-room-' + myRoomCode);
-    peer.on('open', () => {
-      document.getElementById('onlineStatusMsg').textContent = `🟢 ルーム「${myRoomCode}」待機中！友達の参加を待っています...`;
+    const hubSnap = await Promise.race([
+      db.collection('players').doc('MATCH_CASINO_ROOMS_INDEX').get(),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2000))
+    ]);
+    const now = Date.now();
+    const rooms = [];
+    if (hubSnap && hubSnap.exists && hubSnap.data() && hubSnap.data().rooms) {
+      Object.values(hubSnap.data().rooms).forEach(r => {
+        if (r && r.code && r.status === 'waiting' && (now - (r.updatedAt || 0) < 1000 * 60 * 20)) {
+          rooms.push(r);
+        }
+      });
+    }
+    if (rooms.length === 0) {
+      box.innerHTML = '<span style="color:#94a3b8;">現在待機中の部屋はありません。「✨ 新しい部屋を作成！」で作ってみよう！</span>';
+      return;
+    }
+    rooms.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+    box.innerHTML = '';
+    rooms.slice(0, 6).forEach(r => {
+      const btn = document.createElement('button');
+      btn.className = 'back-btn';
+      btn.style.cssText = 'background:#0284c7; color:#fff; border-color:#38bdf8; font-size:0.76rem; padding:4px 10px;';
+      btn.textContent = `🏠 部屋【${r.code}】ホスト: ${sanitizeDisplayPlayerName(r.hostName)} (🪙${r.hostChips || 100})`;
+      btn.onclick = () => {
+        document.getElementById('joinRoomInput').value = r.code;
+        joinOnlineRoom(r.code);
+      };
+      box.appendChild(btn);
     });
-    peer.on('connection', c => {
-      conn = c;
-      setupPeerConn();
-    });
-    peer.on('error', () => {
-      document.getElementById('onlineStatusMsg').textContent = `⚠️ 通信サーバー接続エラー（同じスマホでの「👥 フレンド対戦」はいつでも遊べます）`;
-    });
+  } catch (e) {
+    box.innerHTML = '<span style="color:#94a3b8;">4桁のルーム番号を入力して参加できます</span>';
+  }
+}
+
+async function registerRoomToIndex(code, status, hostName, hostChips) {
+  if (!db || !code) return;
+  try {
+    await db.collection('players').doc('MATCH_CASINO_ROOMS_INDEX').set({
+      isSystemDoc: true,
+      rooms: {
+        [code]: {
+          code,
+          status,
+          hostName: sanitizeDisplayPlayerName(hostName || 'ホスト'),
+          hostChips: Number(hostChips) || 100,
+          updatedAt: Date.now()
+        }
+      },
+      updatedAt: Date.now()
+    }, { merge: true });
   } catch (e) {}
 }
 
-function joinOnlineRoom() {
+async function createOnlineRoom() {
   playSE('click');
-  const code = (document.getElementById('joinRoomInput').value || '').trim();
+  if (onlineRoomState.unsub) {
+    try { onlineRoomState.unsub(); } catch (e) {}
+    onlineRoomState.unsub = null;
+  }
+
+  const code = String(Math.floor(1000 + Math.random() * 9000));
+  myRoomCode = code;
+  const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ホスト');
+
+  onlineRoomState = {
+    ...onlineRoomState,
+    active: true,
+    code,
+    role: 'host',
+    docId: 'MATCH_CASINO_ROOM_' + code,
+    hostId: state.playerId,
+    hostName: mySafeName,
+    hostChips: state.chips,
+    guestId: '',
+    guestName: '',
+    guestChips: 100,
+    status: 'waiting',
+    activeGame: '',
+    processedRoundId: ''
+  };
+
+  document.getElementById('onlineRoomEntryView').style.display = 'none';
+  document.getElementById('onlineRoomActiveLobby').style.display = 'block';
+  document.getElementById('onlineRoleBadge').textContent = '🏠 ホスト (親/1P)';
+  document.getElementById('myRoomCodeText').textContent = code;
+  document.getElementById('lobbyHostName').textContent = mySafeName;
+  document.getElementById('lobbyHostChips').textContent = `🪙 ${state.chips}`;
+  document.getElementById('lobbyGuestName').textContent = '参加者待ち...';
+  document.getElementById('lobbyGuestChips').textContent = '🪙 -';
+  document.getElementById('onlineStatusMsg').textContent = `🟢 部屋【${code}】を作成しました！友達がこの番号で入るのを待っています...`;
+
+  const initialPayload = {
+    isSystemDoc: true,
+    roomCode: code,
+    status: 'waiting',
+    hostId: state.playerId,
+    hostName: mySafeName,
+    hostChips: state.chips,
+    guestId: '',
+    guestName: '',
+    guestChips: 0,
+    activeGame: '',
+    chinchiro: null,
+    yacht: null,
+    blackjack: null,
+    poker: null,
+    toastEvent: null,
+    updatedAt: Date.now()
+  };
+
+  onlineRoomState.lastData = initialPayload;
+
+  if (db) {
+    try {
+      const ref = getRoomDocRef(code);
+      await ref.set(initialPayload);
+      registerRoomToIndex(code, 'waiting', mySafeName, state.chips);
+      onlineRoomState.unsub = ref.onSnapshot(snap => {
+        if (snap && snap.exists) {
+          handleOnlineRoomDocUpdate(snap.data());
+        }
+      });
+    } catch (e) {}
+  }
+
+  try {
+    if (onlineRoomState.bc) {
+      onlineRoomState.bc.postMessage({ code, payload: initialPayload });
+    }
+  } catch (e) {}
+
+  showToast(`🏠 通信ルーム【${code}】を作成しました！`);
+}
+
+async function joinOnlineRoom(forcedCode) {
+  playSE('click');
+  const rawCode = forcedCode || (document.getElementById('joinRoomInput').value || '').trim();
+  const code = rawCode.replace(/[^0-9]/g, '');
   if (code.length !== 4) {
     showToast('⚠️ 4桁のルーム番号を入力してください');
     return;
   }
-  document.getElementById('onlineStatusMsg').textContent = `🚪 ルーム「${code}」へ接続中...`;
+
+  if (onlineRoomState.unsub) {
+    try { onlineRoomState.unsub(); } catch (e) {}
+    onlineRoomState.unsub = null;
+  }
+
+  myRoomCode = code;
+  const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
+
+  document.getElementById('onlineRoomEntryView').style.display = 'none';
+  document.getElementById('onlineRoomActiveLobby').style.display = 'block';
+  document.getElementById('onlineRoleBadge').textContent = '🚪 ゲスト (子/2P)';
+  document.getElementById('myRoomCodeText').textContent = code;
+  document.getElementById('lobbyGuestName').textContent = mySafeName;
+  document.getElementById('lobbyGuestChips').textContent = `🪙 ${state.chips}`;
+  document.getElementById('onlineStatusMsg').textContent = `🚪 部屋【${code}】へ入室しています...`;
+
+  onlineRoomState = {
+    ...onlineRoomState,
+    active: true,
+    code,
+    role: 'guest',
+    docId: 'MATCH_CASINO_ROOM_' + code,
+    guestId: state.playerId,
+    guestName: mySafeName,
+    guestChips: state.chips,
+    status: 'connected',
+    processedRoundId: ''
+  };
+
+  if (db) {
+    try {
+      const ref = getRoomDocRef(code);
+      const snap = await Promise.race([
+        ref.get(),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2500))
+      ]);
+
+      if (!snap || !snap.exists || snap.data().status === 'closed') {
+        showToast(`⚠️ 部屋【${code}】が見つかりません。番号を確認してください！`);
+        leaveOnlineRoom(true);
+        return;
+      }
+
+      const d = snap.data();
+      // 同一端末の別タブ検証でも確実に入れるよう、ゲスト情報を書き込み
+      const joinUpdate = {
+        isSystemDoc: true,
+        status: 'connected',
+        guestId: state.playerId + '_g',
+        guestName: mySafeName,
+        guestChips: state.chips,
+        updatedAt: Date.now()
+      };
+      await ref.set(joinUpdate, { merge: true });
+      registerRoomToIndex(code, 'connected', d.hostName || 'ホスト', d.hostChips || 100);
+
+      onlineRoomState.unsub = ref.onSnapshot(s => {
+        if (s && s.exists) {
+          handleOnlineRoomDocUpdate(s.data());
+        }
+      });
+    } catch (e) {}
+  }
+
   try {
-    if (peer) peer.destroy();
-    peer = new Peer();
-    peer.on('open', () => {
-      conn = peer.connect('casinologica-room-' + code);
-      setupPeerConn();
-    });
+    if (onlineRoomState.bc) {
+      onlineRoomState.bc.postMessage({
+        code,
+        payload: {
+          ...(onlineRoomState.lastData || {}),
+          roomCode: code,
+          status: 'connected',
+          guestId: state.playerId + '_g',
+          guestName: mySafeName,
+          guestChips: state.chips,
+          updatedAt: Date.now()
+        }
+      });
+    }
+  } catch (e) {}
+
+  playSE('win');
+  showToast(`🎉 部屋【${code}】に入室しました！`);
+}
+
+async function leaveOnlineRoom(silent = false) {
+  if (!silent) playSE('click');
+  const code = onlineRoomState.code;
+  const role = onlineRoomState.role;
+  if (onlineRoomState.unsub) {
+    try { onlineRoomState.unsub(); } catch (e) {}
+    onlineRoomState.unsub = null;
+  }
+  if (db && code) {
+    try {
+      const ref = getRoomDocRef(code);
+      if (role === 'host') {
+        await ref.set({ isSystemDoc: true, status: 'closed', updatedAt: Date.now() }, { merge: true });
+        registerRoomToIndex(code, 'closed', onlineRoomState.hostName, state.chips);
+      } else {
+        await ref.set({ isSystemDoc: true, status: 'waiting', guestId: '', guestName: '', updatedAt: Date.now() }, { merge: true });
+      }
+    } catch (e) {}
+  }
+  onlineRoomState.active = false;
+  onlineRoomState.code = '';
+  onlineRoomState.role = '';
+  onlineRoomState.status = 'idle';
+  document.getElementById('onlineRoomEntryView').style.display = 'block';
+  document.getElementById('onlineRoomActiveLobby').style.display = 'none';
+  refreshOpenCasinoRooms();
+  if (!silent) showToast('🚪 通信ルームから退室しました');
+}
+
+async function pushOnlineRoomPatch(patch) {
+  if (!onlineRoomState.active || !onlineRoomState.code) return;
+  const merged = {
+    ...(onlineRoomState.lastData || {}),
+    ...patch,
+    isSystemDoc: true,
+    roomCode: onlineRoomState.code,
+    updatedAt: Date.now()
+  };
+  onlineRoomState.lastData = merged;
+
+  if (db) {
+    try {
+      await getRoomDocRef(onlineRoomState.code).set(patch, { merge: true });
+    } catch (e) {}
+  }
+  try {
+    if (onlineRoomState.bc) {
+      onlineRoomState.bc.postMessage({ code: onlineRoomState.code, payload: merged });
+    }
   } catch (e) {}
 }
 
-function setupPeerConn() {
-  if (!conn) return;
-  conn.on('open', () => {
-    playSE('win');
-    document.getElementById('onlineStatusMsg').textContent = `🎉 フレンドと通信接続完了！ゲームを選んで対戦できます！`;
-    showToast('🌐 フレンドと通信ルームで繋がりました！');
-  });
-  conn.on('data', data => {
-    if (data && data.type === 'toast') {
-      showToast('👥 フレンド: ' + data.msg);
+function sendOnlineToast(msg) {
+  if (state.playMode !== 'online' || !onlineRoomState.active) return;
+  pushOnlineRoomPatch({
+    toastEvent: {
+      id: Math.random().toString(36).slice(2, 9),
+      senderRole: onlineRoomState.role,
+      senderName: sanitizeDisplayPlayerName(state.playerName || 'プレイヤー'),
+      msg,
+      at: Date.now()
     }
   });
 }
 
-function openGame(gameKey) {
+function handleOnlineRoomDocUpdate(data) {
+  if (!data || !onlineRoomState.active) return;
+  onlineRoomState.lastData = data;
+
+  if (data.status === 'closed' && onlineRoomState.role === 'guest') {
+    showToast('⚠️ ホストが部屋を閉じました');
+    leaveOnlineRoom(true);
+    return;
+  }
+
+  const prevStatus = onlineRoomState.status;
+  onlineRoomState.status = data.status || 'waiting';
+  onlineRoomState.hostName = sanitizeDisplayPlayerName(data.hostName || 'ホスト');
+  onlineRoomState.hostChips = Number(data.hostChips) || 100;
+  onlineRoomState.guestName = data.guestName ? sanitizeDisplayPlayerName(data.guestName) : '';
+  onlineRoomState.guestChips = Number(data.guestChips) || 100;
+
+  // ロビーUI更新
+  document.getElementById('lobbyHostName').textContent = onlineRoomState.hostName;
+  document.getElementById('lobbyHostChips').textContent = `🪙 ${onlineRoomState.hostChips.toLocaleString()}`;
+  document.getElementById('lobbyGuestName').textContent = onlineRoomState.guestName || '参加者待ち...';
+  document.getElementById('lobbyGuestChips').textContent = onlineRoomState.guestName ? `🪙 ${onlineRoomState.guestChips.toLocaleString()}` : '🪙 -';
+
+  // 相手チップをヘッダーの2Pバッジにもリアルタイム表示
+  state.p2Chips = onlineRoomState.role === 'host' ? onlineRoomState.guestChips : onlineRoomState.hostChips;
+  updateHeaderUI();
+
+  if (onlineRoomState.guestName) {
+    if (prevStatus !== 'connected') {
+      playSE('win');
+      showToast(`🎉 ${onlineRoomState.role === 'host' ? onlineRoomState.guestName : onlineRoomState.hostName} と通信ルームで繋がりました！`);
+    }
+    document.getElementById('onlineStatusMsg').innerHTML = `🟢 <strong>${onlineRoomState.hostName}</strong> ⚔️ <strong>${onlineRoomState.guestName}</strong> 接続完了！下のゲームを選ぶと一緒に始まります！`;
+  } else {
+    document.getElementById('onlineStatusMsg').textContent = `🟢 部屋【${onlineRoomState.code}】待機中！友達の入室を待っています...`;
+  }
+
+  // トースト通知同期
+  if (data.toastEvent && data.toastEvent.id !== onlineRoomState.lastToastId) {
+    onlineRoomState.lastToastId = data.toastEvent.id;
+    if (data.toastEvent.senderRole !== onlineRoomState.role) {
+      showToast(`🌐 ${data.toastEvent.senderName}: ${data.toastEvent.msg}`);
+    }
+  }
+
+  // いずれかがゲーム画面を開いたら相手も自動で同じゲーム画面へ誘導！
+  if (data.activeGame && data.activeGame !== onlineRoomState.activeGame) {
+    onlineRoomState.activeGame = data.activeGame;
+    const screenMap = {
+      chinchiro: 'screen-game-chinchiro',
+      yacht: 'screen-game-yacht',
+      blackjack: 'screen-game-blackjack',
+      poker: 'screen-game-poker',
+      roulette: 'screen-game-roulette',
+      bigsix: 'screen-game-bigsix'
+    };
+    const targetScreen = screenMap[data.activeGame];
+    if (targetScreen && !document.getElementById(targetScreen).classList.contains('active')) {
+      openGame(data.activeGame, true);
+      showToast(`🌐 ルームで「${data.activeGame}」が開始されました！`);
+    }
+  }
+
+  // 🥣 チンチロのリアルタイム同期反映
+  if (data.chinchiro && document.getElementById('screen-game-chinchiro').classList.contains('active')) {
+    syncChinchiroFromOnline(data.chinchiro);
+  }
+
+  // ⛵ ヨットのリアルタイム同期反映
+  if (data.yacht && document.getElementById('screen-game-yacht').classList.contains('active')) {
+    syncYachtFromOnline(data.yacht);
+  }
+}
+
+function isOnlineRoomReady() {
+  return state.playMode === 'online' && onlineRoomState.active && !!onlineRoomState.guestName;
+}
+
+function getOpponentDisplayName() {
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    return onlineRoomState.role === 'host'
+      ? (onlineRoomState.guestName || 'ゲスト(2P)')
+      : (onlineRoomState.hostName || 'ホスト(1P)');
+  }
+  if (state.playMode === 'local') return 'フレンド(2P)';
+  return 'AI';
+}
+
+function openGame(gameKey, fromRemoteSync = false) {
   if (state.chips <= 0) {
     showToast('💸 チップが0枚です！タイトル画面の「📝 勉強でチップ稼ぎ」で稼いできてください！');
     return;
   }
-  const modeLabel = state.playMode === 'ai' ? '🤖 AI対戦' : (state.playMode === 'local' ? '👥 フレンド2P戦' : '🌐 通信フレンド戦');
+  if (state.playMode === 'online') {
+    if (!onlineRoomState.active) {
+      showToast('🌐 先に「✨ 新しい部屋を作成！」または4桁番号で部屋に入ってください！');
+      return;
+    }
+    onlineRoomState.activeGame = gameKey;
+    if (!fromRemoteSync) {
+      pushOnlineRoomPatch({
+        activeGame: gameKey,
+        hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
+        guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
+      });
+    }
+  }
+
+  const modeLabel = state.playMode === 'ai'
+    ? '🤖 AI対戦'
+    : (state.playMode === 'local' ? '👥 フレンド2P戦' : `🌐 通信ルーム【${onlineRoomState.code}】`);
+
   if (gameKey === 'chinchiro') {
     document.getElementById('ccModeBadge').textContent = modeLabel;
-    document.getElementById('ccDealerLabel').textContent = state.playMode === 'ai' ? '👹 親 (AIディーラー)' : '👥 親 (フレンド 2P)';
+    if (state.playMode === 'online') {
+      document.getElementById('ccDealerLabel').textContent = `🏠 親 (${onlineRoomState.hostName || 'ホスト'})`;
+      document.getElementById('ccPlayerLabel').textContent = `🚪 子 (${onlineRoomState.guestName || 'ゲスト'})`;
+    } else {
+      document.getElementById('ccDealerLabel').textContent = state.playMode === 'ai' ? '👹 親 (AIディーラー)' : '👥 親 (フレンド 2P)';
+    }
     resetChinchiroUI();
     navigateTo('screen-game-chinchiro');
   } else if (gameKey === 'yacht') {
     document.getElementById('ytModeBadge').textContent = modeLabel;
-    initYachtMatch();
+    initYachtMatch(fromRemoteSync);
     navigateTo('screen-game-yacht');
   } else if (gameKey === 'blackjack') {
     document.getElementById('bjModeBadge').textContent = modeLabel;
@@ -3193,9 +3652,12 @@ function checkBankruptNotice() {
 ============================================================================ */
 let ccState = {
   bet: 10,
-  phase: 'idle', // 'idle' | 'player_turn' | 'rolling'
+  phase: 'idle', // 'idle' | 'dealer_manual' | 'player_turn' | 'rolling'
   dealerRoll: null,
-  rollsLeft: 3
+  playerRoll: null,
+  lastDice: [1, 1, 1],
+  rollsLeft: 3,
+  roundId: ''
 };
 
 function adjustCcBet(val) {
@@ -3206,6 +3668,15 @@ function adjustCcBet(val) {
   else ccState.bet = Math.min(state.chips, ccState.bet + val);
   if (ccState.bet < 1 && state.chips > 0) ccState.bet = 1;
   document.getElementById('ccBetText').textContent = ccState.bet;
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    pushOnlineRoomPatch({
+      chinchiro: {
+        ...(onlineRoomState.lastData && onlineRoomState.lastData.chinchiro ? onlineRoomState.lastData.chinchiro : {}),
+        bet: ccState.bet,
+        phase: 'idle'
+      }
+    });
+  }
 }
 
 function resetChinchiroUI() {
@@ -3214,9 +3685,89 @@ function resetChinchiroUI() {
   document.getElementById('ccBetText').textContent = ccState.bet;
   document.getElementById('ccDealerResultText').textContent = '待機中...';
   document.getElementById('ccPlayerResultText').textContent = '待機中...';
-  document.getElementById('ccBannerMsg').textContent = '賭けチップを決めて「勝負開始！」を押そう！';
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    document.getElementById('ccDealerLabel').textContent = `🏠 親 (${onlineRoomState.hostName || 'ホスト'})`;
+    document.getElementById('ccPlayerLabel').textContent = `🚪 子 (${onlineRoomState.guestName || 'ゲスト'})`;
+    document.getElementById('ccBannerMsg').textContent = `🌐 通信ルーム【${onlineRoomState.code}】：賭けチップを決めて「勝負開始！」を押そう！`;
+  } else {
+    document.getElementById('ccBannerMsg').textContent = '賭けチップを決めて「勝負開始！」を押そう！';
+  }
   document.getElementById('ccStartBtn').style.display = 'inline-block';
   document.getElementById('ccRollBtn').style.display = 'none';
+}
+
+function syncChinchiroFromOnline(cData) {
+  if (!cData) return;
+  if (cData.bet) {
+    ccState.bet = cData.bet;
+    document.getElementById('ccBetText').textContent = ccState.bet;
+  }
+  if (Array.isArray(cData.lastDice) && cData.lastDice.length === 3) {
+    ['ccDie0', 'ccDie1', 'ccDie2'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute('data-val', String(cData.lastDice[i]));
+    });
+  }
+
+  document.getElementById('ccDealerLabel').textContent = `🏠 親 (${onlineRoomState.hostName || 'ホスト'})`;
+  document.getElementById('ccPlayerLabel').textContent = `🚪 子 (${onlineRoomState.guestName || 'ゲスト'})`;
+
+  if (cData.dealerText) document.getElementById('ccDealerResultText').textContent = cData.dealerText;
+  if (cData.playerText) document.getElementById('ccPlayerResultText').textContent = cData.playerText;
+  if (cData.bannerMsg) document.getElementById('ccBannerMsg').textContent = cData.bannerMsg;
+
+  ccState.phase = cData.phase || 'idle';
+  ccState.rollsLeft = typeof cData.rollsLeft === 'number' ? cData.rollsLeft : 3;
+  ccState.dealerRoll = cData.dealerRoll || null;
+
+  const isHost = onlineRoomState.role === 'host';
+  const startBtn = document.getElementById('ccStartBtn');
+  const rollBtn = document.getElementById('ccRollBtn');
+
+  if (ccState.phase === 'dealer_manual') {
+    startBtn.style.display = 'none';
+    if (isHost) {
+      rollBtn.style.display = 'inline-block';
+      rollBtn.textContent = `🥣 親(あなた)が振る！ (残り${ccState.rollsLeft}回)`;
+    } else {
+      rollBtn.style.display = 'none';
+    }
+  } else if (ccState.phase === 'player_turn') {
+    startBtn.style.display = 'none';
+    if (!isHost) {
+      rollBtn.style.display = 'inline-block';
+      rollBtn.textContent = `🥣 子(あなた)が振る！ (残り${ccState.rollsLeft}回)`;
+    } else {
+      rollBtn.style.display = 'none';
+    }
+  } else if (ccState.phase === 'idle') {
+    startBtn.style.display = 'inline-block';
+    startBtn.textContent = '🎲 次の勝負へ！';
+    rollBtn.style.display = 'none';
+
+    // ラウンド決着時のチップ増減を1回だけ適用
+    if (cData.roundId && cData.settled && onlineRoomState.processedRoundId !== cData.roundId) {
+      onlineRoomState.processedRoundId = cData.roundId;
+      const hostDelta = Number(cData.hostDelta) || 0;
+      const myDelta = isHost ? hostDelta : -hostDelta;
+      if (myDelta > 0) {
+        state.chips += myDelta;
+        state.totalWins++;
+        playSE('win');
+      } else if (myDelta < 0) {
+        state.chips = Math.max(0, state.chips + myDelta);
+        playSE('lose');
+      } else {
+        playSE('click');
+      }
+      saveState();
+      pushOnlineRoomPatch({
+        hostChips: isHost ? state.chips : onlineRoomState.hostChips,
+        guestChips: !isHost ? state.chips : onlineRoomState.guestChips
+      });
+      checkBankruptNotice();
+    }
+  }
 }
 
 function evaluateChinchiro(d1, d2, d3, isShonben = false) {
@@ -3281,6 +3832,29 @@ function startChinchiroRound() {
   document.getElementById('ccDealerResultText').textContent = 'サイコロ準備中...';
   document.getElementById('ccPlayerResultText').textContent = '親の結果待ち...';
 
+  // 🌐 通信ルーム対戦時：ホストが「親」、ゲストが「子」としてリアルタイム同期！
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    const newRoundId = 'cc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    ccState.roundId = newRoundId;
+    ccState.phase = 'dealer_manual';
+    ccState.rollsLeft = 3;
+    pushOnlineRoomPatch({
+      chinchiro: {
+        roundId: newRoundId,
+        bet: ccState.bet,
+        phase: 'dealer_manual',
+        rollsLeft: 3,
+        dealerRoll: null,
+        dealerText: '親がサイコロ準備中...',
+        playerText: '親の結果待ち...',
+        bannerMsg: `🏠 親（${onlineRoomState.hostName || 'ホスト'}）の番です！サイコロを振ってください！`,
+        settled: false,
+        hostDelta: 0
+      }
+    });
+    return;
+  }
+
   // フレンド2P対戦時は親（2P）も自分でボタンを押して振る！
   if (state.playMode === 'local') {
     ccState.phase = 'dealer_manual';
@@ -3322,6 +3896,10 @@ function startChinchiroRound() {
 
 function playerRollChinchiro() {
   if (ccState.phase === 'dealer_manual') {
+    if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'host') {
+      showToast('🏠 現在は親（ホスト）がサイコロを振る番です！');
+      return;
+    }
     ccState.phase = 'rolling';
     ccState.rollsLeft--;
     document.getElementById('ccRollBtn').style.display = 'none';
@@ -3329,27 +3907,61 @@ function playerRollChinchiro() {
     const shonben = Math.random() < 0.015;
     animateBowlDice(d, () => {
       const res = evaluateChinchiro(d[0], d[1], d[2], shonben);
-      document.getElementById('ccDealerResultText').textContent = `${res.name} (${d.join('-')})`;
+      const dText = `${res.name} (${d.join('-')})`;
+      document.getElementById('ccDealerResultText').textContent = dText;
       if (!res.instant && ccState.rollsLeft > 0) {
         ccState.phase = 'dealer_manual';
         const rollBtn = document.getElementById('ccRollBtn');
         rollBtn.style.display = 'inline-block';
-        rollBtn.textContent = `🥣 親(2P)もう1回振る！ (残り${ccState.rollsLeft}回)`;
-        document.getElementById('ccBannerMsg').textContent = `親(2P)目なし！あと ${ccState.rollsLeft} 回振れます！`;
+        rollBtn.textContent = `🥣 親もう1回振る！ (残り${ccState.rollsLeft}回)`;
+        const bMsg = `親：目なし！あと ${ccState.rollsLeft} 回振れます！`;
+        document.getElementById('ccBannerMsg').textContent = bMsg;
+        if (state.playMode === 'online' && onlineRoomState.active) {
+          pushOnlineRoomPatch({
+            chinchiro: {
+              ...(onlineRoomState.lastData && onlineRoomState.lastData.chinchiro ? onlineRoomState.lastData.chinchiro : {}),
+              phase: 'dealer_manual',
+              rollsLeft: ccState.rollsLeft,
+              lastDice: d,
+              dealerText: dText,
+              bannerMsg: bMsg
+            }
+          });
+        }
       } else {
         ccState.dealerRoll = res;
         ccState.rollsLeft = 3;
         ccState.phase = 'player_turn';
-        const rollBtn = document.getElementById('ccRollBtn');
-        rollBtn.style.display = 'inline-block';
-        rollBtn.textContent = `🥣 子(1P)が振る！ (残り3回)`;
-        document.getElementById('ccBannerMsg').textContent = `親(2P)は「${res.name}」！次は子(1P)の番です！`;
+        const bMsg = `親は「${res.name}」！次は子（${state.playMode === 'online' ? (onlineRoomState.guestName || 'ゲスト') : '1P'}）の番です！`;
+        document.getElementById('ccBannerMsg').textContent = bMsg;
+        if (state.playMode === 'online' && onlineRoomState.active) {
+          pushOnlineRoomPatch({
+            chinchiro: {
+              ...(onlineRoomState.lastData && onlineRoomState.lastData.chinchiro ? onlineRoomState.lastData.chinchiro : {}),
+              phase: 'player_turn',
+              rollsLeft: 3,
+              lastDice: d,
+              dealerRoll: res,
+              dealerText: dText,
+              playerText: '子がサイコロを振っています...',
+              bannerMsg: bMsg
+            }
+          });
+        } else {
+          const rollBtn = document.getElementById('ccRollBtn');
+          rollBtn.style.display = 'inline-block';
+          rollBtn.textContent = `🥣 子(1P)が振る！ (残り3回)`;
+        }
       }
     });
     return;
   }
 
   if (ccState.phase !== 'player_turn') return;
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'guest') {
+    showToast('🚪 現在は子（ゲスト）がサイコロを振る番です！');
+    return;
+  }
   ccState.phase = 'rolling';
   ccState.rollsLeft--;
   document.getElementById('ccRollBtn').style.display = 'none';
@@ -3358,27 +3970,76 @@ function playerRollChinchiro() {
   const shonben = Math.random() < 0.015;
   animateBowlDice(d, () => {
     const res = evaluateChinchiro(d[0], d[1], d[2], shonben);
-    document.getElementById('ccPlayerResultText').textContent = `${res.name} (${d.join('-')})`;
+    const pText = `${res.name} (${d.join('-')})`;
+    document.getElementById('ccPlayerResultText').textContent = pText;
 
     if (!res.instant && ccState.rollsLeft > 0) {
       ccState.phase = 'player_turn';
       const rollBtn = document.getElementById('ccRollBtn');
       rollBtn.style.display = 'inline-block';
       rollBtn.textContent = `🥣 もう1回振る！ (残り${ccState.rollsLeft}回)`;
-      document.getElementById('ccBannerMsg').textContent = `目なし！あと ${ccState.rollsLeft} 回振れます！`;
+      const bMsg = `子：目なし！あと ${ccState.rollsLeft} 回振れます！`;
+      document.getElementById('ccBannerMsg').textContent = bMsg;
+      if (state.playMode === 'online' && onlineRoomState.active) {
+        pushOnlineRoomPatch({
+          chinchiro: {
+            ...(onlineRoomState.lastData && onlineRoomState.lastData.chinchiro ? onlineRoomState.lastData.chinchiro : {}),
+            phase: 'player_turn',
+            rollsLeft: ccState.rollsLeft,
+            lastDice: d,
+            playerText: pText,
+            bannerMsg: bMsg
+          }
+        });
+      }
     } else {
-      finishChinchiroRound(ccState.dealerRoll, res);
+      finishChinchiroRound(ccState.dealerRoll, res, d, pText);
     }
   });
 }
 
-function finishChinchiroRound(dealer, player) {
+function finishChinchiroRound(dealer, player, finalDice = null, pText = '') {
   ccState.phase = 'idle';
   document.getElementById('ccStartBtn').style.display = 'inline-block';
   document.getElementById('ccStartBtn').textContent = '🎲 次の勝負へ！';
 
   let delta = 0;
   let outcomeMsg = '';
+
+  // 🌐 通信ルーム対戦時：親(ホスト) vs 子(ゲスト) の勝敗を双方に即時同期！
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    const curCc = (onlineRoomState.lastData && onlineRoomState.lastData.chinchiro) || {};
+    const roundId = curCc.roundId || ('cc_' + Date.now());
+    let hostDelta = 0;
+    if (player.power > dealer.power) {
+      const winMult = player.mult > 0 ? player.mult : (dealer.mult < 0 ? Math.abs(dealer.mult) : 1);
+      delta = ccState.bet * winMult;
+      hostDelta = -delta; // 子(ゲスト)の勝ち、親(ホスト)の負け
+      outcomeMsg = `🎉 子（${onlineRoomState.guestName || 'ゲスト'}）の勝ち！ (${player.name}) ➔ 🪙${delta} チップ移動！`;
+    } else if (player.power < dealer.power) {
+      const loseMult = player.mult < 0 ? Math.abs(player.mult) : (dealer.mult > 0 ? dealer.mult : 1);
+      delta = ccState.bet * loseMult;
+      hostDelta = delta; // 親(ホスト)の勝ち、子(ゲスト)の負け
+      outcomeMsg = `🏠 親（${onlineRoomState.hostName || 'ホスト'}）の勝ち！ (${dealer.name}) ➔ 🪙${delta} チップ移動！`;
+    } else {
+      hostDelta = 0;
+      outcomeMsg = `🤝 引き分け（分け）！チップ移動なし`;
+    }
+
+    pushOnlineRoomPatch({
+      chinchiro: {
+        ...curCc,
+        roundId,
+        phase: 'idle',
+        lastDice: finalDice || [1, 1, 1],
+        playerText: pText || `${player.name}`,
+        bannerMsg: outcomeMsg,
+        settled: true,
+        hostDelta
+      }
+    });
+    return;
+  }
 
   if (player.power > dealer.power) {
     // プレイヤーの勝ち！
@@ -3405,7 +4066,6 @@ function finishChinchiroRound(dealer, player) {
 
   document.getElementById('ccBannerMsg').textContent = outcomeMsg;
   saveState();
-  if (conn && conn.open) conn.send({ type: 'toast', msg: `チンチロ結果: ${outcomeMsg}` });
   checkBankruptNotice();
 }
 
@@ -3428,9 +4088,10 @@ const YACHT_CATEGORIES = [
 ];
 
 let ytState = {
+  matchId: '',
   rate: 1, // 1点差あたりのチップ
   round: 1,
-  currentTurn: 'p1', // 'p1' | 'p2'
+  currentTurn: 'p1', // 'p1' (ホスト/1P) | 'p2' (ゲスト/2P/AI)
   rollsLeft: 3,
   hasRolledThisTurn: false,
   dice: [1, 2, 3, 4, 5],
@@ -3439,14 +4100,73 @@ let ytState = {
   matchOver: false
 };
 
+function isMyYachtTurn() {
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    if (onlineRoomState.role === 'host') return ytState.currentTurn === 'p1';
+    if (onlineRoomState.role === 'guest') return ytState.currentTurn === 'p2';
+  }
+  if (state.playMode === 'ai') return ytState.currentTurn === 'p1';
+  return true; // local 2P
+}
+
+function pushYachtStateToOnline() {
+  if (state.playMode !== 'online' || !onlineRoomState.active) return;
+  pushOnlineRoomPatch({
+    yacht: {
+      matchId: ytState.matchId || ('yt_' + Date.now()),
+      rate: ytState.rate,
+      round: ytState.round,
+      currentTurn: ytState.currentTurn,
+      rollsLeft: ytState.rollsLeft,
+      hasRolledThisTurn: ytState.hasRolledThisTurn,
+      dice: [...ytState.dice],
+      kept: [...ytState.kept],
+      scores: {
+        p1: { ...(ytState.scores.p1 || {}) },
+        p2: { ...(ytState.scores.p2 || {}) }
+      },
+      matchOver: ytState.matchOver
+    }
+  });
+}
+
+function syncYachtFromOnline(yData) {
+  if (!yData) return;
+  const wasMatchOver = ytState.matchOver;
+  ytState.matchId = yData.matchId || ytState.matchId;
+  ytState.rate = Number(yData.rate) || 1;
+  document.getElementById('ytRateText').textContent = ytState.rate;
+  ytState.round = Number(yData.round) || 1;
+  ytState.currentTurn = yData.currentTurn || 'p1';
+  ytState.rollsLeft = typeof yData.rollsLeft === 'number' ? yData.rollsLeft : 3;
+  ytState.hasRolledThisTurn = !!yData.hasRolledThisTurn;
+  if (Array.isArray(yData.dice) && yData.dice.length === 5) ytState.dice = [...yData.dice];
+  if (Array.isArray(yData.kept) && yData.kept.length === 5) ytState.kept = [...yData.kept];
+  if (yData.scores) {
+    ytState.scores = {
+      p1: { ...(yData.scores.p1 || {}) },
+      p2: { ...(yData.scores.p2 || {}) }
+    };
+  }
+  ytState.matchOver = !!yData.matchOver;
+  renderYachtUI();
+
+  if (ytState.matchOver && !wasMatchOver && onlineRoomState.processedRoundId !== ytState.matchId) {
+    onlineRoomState.processedRoundId = ytState.matchId;
+    settleYachtChipsAndModal();
+  }
+}
+
 function setYachtRate(r) {
   playSE('click');
   ytState.rate = r;
   document.getElementById('ytRateText').textContent = r;
   showToast(`⛵ 点差レートを「1点差 = ${r}チップ」に設定しました`);
+  pushYachtStateToOnline();
 }
 
-function initYachtMatch() {
+function initYachtMatch(fromRemoteSync = false) {
+  ytState.matchId = 'yt_' + Date.now();
   ytState.round = 1;
   ytState.currentTurn = 'p1';
   ytState.rollsLeft = 3;
@@ -3455,7 +4175,13 @@ function initYachtMatch() {
   ytState.kept = [false, false, false, false, false];
   ytState.scores = { p1: {}, p2: {} };
   ytState.matchOver = false;
-  document.getElementById('ytColP2').textContent = state.playMode === 'ai' ? '🤖 AI' : '👥 フレンド(2P)';
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    document.getElementById('ytColP1').textContent = `🏠 ${onlineRoomState.hostName || 'ホスト'}`;
+    document.getElementById('ytColP2').textContent = `🚪 ${onlineRoomState.guestName || 'ゲスト'}`;
+    if (!fromRemoteSync) pushYachtStateToOnline();
+  } else {
+    document.getElementById('ytColP2').textContent = state.playMode === 'ai' ? '🤖 AI' : '👥 フレンド(2P)';
+  }
   renderYachtUI();
 }
 
@@ -3512,7 +4238,10 @@ function getPlayerTotalScore(playerKey) {
 
 function rollYachtDice() {
   if (ytState.matchOver || ytState.rollsLeft <= 0) return;
-  if (ytState.currentTurn === 'p2' && state.playMode === 'ai') return;
+  if (!isMyYachtTurn()) {
+    showToast('⏳ 現在は相手のターンです！');
+    return;
+  }
 
   ytState.rollsLeft--;
   ytState.hasRolledThisTurn = true;
@@ -3524,14 +4253,16 @@ function rollYachtDice() {
     }
   }
   renderYachtUI();
+  pushYachtStateToOnline();
 }
 
 function toggleYachtKeep(idx) {
   if (!ytState.hasRolledThisTurn || ytState.matchOver) return;
-  if (ytState.currentTurn === 'p2' && state.playMode === 'ai') return;
+  if (!isMyYachtTurn()) return;
   playSE('click');
   ytState.kept[idx] = !ytState.kept[idx];
   renderYachtUI();
+  pushYachtStateToOnline();
 }
 
 function selectYachtCategory(catId) {
@@ -3539,8 +4270,11 @@ function selectYachtCategory(catId) {
     showToast('🎲 まずサイコロを振ってください！');
     return;
   }
+  if (!isMyYachtTurn()) {
+    showToast('⏳ 現在は相手のターンです！');
+    return;
+  }
   const p = ytState.currentTurn;
-  if (p === 'p2' && state.playMode === 'ai') return;
   if (ytState.scores[p][catId] !== undefined) return;
 
   const val = calcYachtCategoryScore(catId, ytState.dice);
@@ -3557,6 +4291,7 @@ function advanceYachtTurn() {
   if (ytState.currentTurn === 'p1') {
     ytState.currentTurn = 'p2';
     renderYachtUI();
+    pushYachtStateToOnline();
     if (state.playMode === 'ai') {
       setTimeout(runAiYachtTurn, 550);
     }
@@ -3567,6 +4302,7 @@ function advanceYachtTurn() {
       finishYachtMatch();
     } else {
       renderYachtUI();
+      pushYachtStateToOnline();
     }
   }
 }
@@ -3621,13 +4357,24 @@ function runAiYachtTurn() {
 function finishYachtMatch() {
   ytState.matchOver = true;
   renderYachtUI();
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    onlineRoomState.processedRoundId = ytState.matchId || ('yt_' + Date.now());
+    pushYachtStateToOnline();
+  }
+  settleYachtChipsAndModal();
+}
 
+function settleYachtChipsAndModal() {
   const p1Tot = getPlayerTotalScore('p1').total;
   const p2Tot = getPlayerTotalScore('p2').total;
   const diff = Math.abs(p1Tot - p2Tot);
   const chipDelta = diff * ytState.rate;
 
-  if (p1Tot > p2Tot) {
+  const isGuestInOnline = (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role === 'guest');
+  const myScore = isGuestInOnline ? p2Tot : p1Tot;
+  const rivalScore = isGuestInOnline ? p1Tot : p2Tot;
+
+  if (myScore > rivalScore) {
     state.chips += chipDelta;
     if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - chipDelta);
     state.totalWins++;
@@ -3635,10 +4382,10 @@ function finishYachtMatch() {
     showRewardModal(
       '⛵',
       'ヨット 点差マッチ勝利！',
-      `あなた: <strong>${p1Tot}点</strong> vs 相手: <strong>${p2Tot}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${chipDelta} チップ</span> 獲得！`,
+      `あなた: <strong>${myScore}点</strong> vs 相手: <strong>${rivalScore}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${chipDelta} チップ</span> 獲得！`,
       '🎉 最高！'
     );
-  } else if (p1Tot < p2Tot) {
+  } else if (myScore < rivalScore) {
     const lost = Math.min(state.chips, chipDelta);
     state.chips -= lost;
     if (state.playMode === 'local') state.p2Chips += lost;
@@ -3649,12 +4396,12 @@ function finishYachtMatch() {
       showRewardModal(
         '⛵',
         'ヨット 点差マッチ敗北…',
-        `あなた: <strong>${p1Tot}点</strong> vs 相手: <strong>${p2Tot}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 -${lost} チップ</span> 失いました…`,
+        `あなた: <strong>${myScore}点</strong> vs 相手: <strong>${rivalScore}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 -${lost} チップ</span> 失いました…`,
         '🔄 リベンジする'
       );
     }
   } else {
-    showRewardModal('🤝', '同点ドロー！', `${p1Tot}点 対 ${p2Tot}点 で完全引き分け！チップ移動はありません。`, 'OK');
+    showRewardModal('🤝', '同点ドロー！', `${myScore}点 対 ${rivalScore}点 で完全引き分け！チップ移動はありません。`, 'OK');
   }
 }
 
@@ -3662,14 +4409,27 @@ function renderYachtUI() {
   // ターン表示
   const banner = document.getElementById('ytTurnBanner');
   const rollBtn = document.getElementById('ytRollBtn');
+  const isOnline = (state.playMode === 'online' && onlineRoomState.active);
+  if (isOnline) {
+    document.getElementById('ytColP1').textContent = `🏠 ${onlineRoomState.hostName || 'ホスト'}`;
+    document.getElementById('ytColP2').textContent = `🚪 ${onlineRoomState.guestName || 'ゲスト'}`;
+  }
   if (ytState.matchOver) {
     banner.textContent = '🏁 全12ラウンド終了！「🔄 新規1戦」で再戦できます';
     rollBtn.disabled = true;
     rollBtn.textContent = '試合終了';
   } else {
-    const who = ytState.currentTurn === 'p1' ? '🧑 あなたの番' : (state.playMode === 'ai' ? '🤖 AI思考中...' : '👥 フレンド(2P)の番');
+    let who = '';
+    if (isOnline) {
+      const turnOwnerName = ytState.currentTurn === 'p1'
+        ? `🏠 ${onlineRoomState.hostName || 'ホスト'}`
+        : `🚪 ${onlineRoomState.guestName || 'ゲスト'}`;
+      who = isMyYachtTurn() ? `🎯 あなたの番 (${turnOwnerName})` : `⏳ 相手の番 (${turnOwnerName})`;
+    } else {
+      who = ytState.currentTurn === 'p1' ? '🧑 あなたの番' : (state.playMode === 'ai' ? '🤖 AI思考中...' : '👥 フレンド(2P)の番');
+    }
     banner.textContent = `${who} (ラウンド ${ytState.round}/12)`;
-    rollBtn.disabled = (ytState.rollsLeft <= 0) || (ytState.currentTurn === 'p2' && state.playMode === 'ai');
+    rollBtn.disabled = (ytState.rollsLeft <= 0) || !isMyYachtTurn();
     rollBtn.textContent = `🎲 サイコロを振る (残り${ytState.rollsLeft}回)`;
   }
 
@@ -3700,8 +4460,8 @@ function renderYachtUI() {
     const p1Val = ytState.scores.p1[cat.id];
     const p2Val = ytState.scores.p2[cat.id];
 
-    const canP1Select = !ytState.matchOver && ytState.currentTurn === 'p1' && ytState.hasRolledThisTurn && p1Val === undefined;
-    const canP2Select = !ytState.matchOver && ytState.currentTurn === 'p2' && state.playMode !== 'ai' && ytState.hasRolledThisTurn && p2Val === undefined;
+    const canP1Select = !ytState.matchOver && ytState.currentTurn === 'p1' && isMyYachtTurn() && ytState.hasRolledThisTurn && p1Val === undefined;
+    const canP2Select = !ytState.matchOver && ytState.currentTurn === 'p2' && isMyYachtTurn() && state.playMode !== 'ai' && ytState.hasRolledThisTurn && p2Val === undefined;
 
     const previewScore = calcYachtCategoryScore(cat.id, ytState.dice);
 
@@ -3989,6 +4749,13 @@ function finishBlackjackRound() {
 
   document.getElementById('bjStatusText').textContent = msg;
   saveState();
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    pushOnlineRoomPatch({
+      hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
+      guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
+    });
+    sendOnlineToast(`ブラックジャック: ${msg}`);
+  }
   checkBankruptNotice();
 }
 
@@ -4196,6 +4963,13 @@ function pokerDrawAndShowdown() {
   }
 
   saveState();
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    pushOnlineRoomPatch({
+      hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
+      guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
+    });
+    sendOnlineToast(`ポーカー結果: ${document.getElementById('pkStatusText').textContent}`);
+  }
   checkBankruptNotice();
 }
 
@@ -4526,6 +5300,13 @@ function settleRoulette(winNum, totalBet) {
   document.getElementById('rlBackToBetBtn').style.display = 'inline-block';
   rlState.bets = {};
   saveState();
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    pushOnlineRoomPatch({
+      hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
+      guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
+    });
+    sendOnlineToast(`ルーレット: ${document.getElementById('rlResultBubble').textContent}`);
+  }
   checkBankruptNotice();
 }
 
