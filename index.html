@@ -1970,6 +1970,7 @@ html, body {
         <button class="chip-bet-btn c-10" onclick="setAdminCustomChips(999999)">🪙 999,999チップにする</button>
         <button class="chip-bet-btn c-5" onclick="setAdminCustomChips(10000)">🪙 10,000チップにする</button>
         <button class="chip-bet-btn c-max" onclick="setAdminCustomChips(0)">💸 0チップにする(破産テスト)</button>
+        <button class="chip-bet-btn c-clear" onclick="adminWipeAllCloudRankings()">🧹 ランキング全件リセット(掃除)</button>
       </div>
     </div>
 
@@ -2244,6 +2245,74 @@ function setAdminCustomChips(amount) {
   showToast(`🪙 テスト所持チップを ${amount.toLocaleString()} 枚に設定しました`);
 }
 
+async function adminWipeAllCloudRankings() {
+  if (!state.isTestAccount) return;
+  if (!confirm('👑【管理者専用】クラウド上のランキングデータをすべて空（リセット）にしますか？\n（データ削除済みの古い残骸アカウントもすべて綺麗に消去されます）')) return;
+  playSE('click');
+  try {
+    if (db) {
+      await db.collection('players').doc('MATCH_CASINO_RANKINGS').set({
+        isSystemDoc: true,
+        entries: {},
+        updatedAt: Date.now()
+      });
+    }
+    cloudRankCache = [];
+    renderRankingList();
+    showToast('🧹 クラウド上のランキング残骸データをすべて消去しました！');
+  } catch (e) {
+    showToast('⚠️ ランキング初期化中に通信エラーが発生しました');
+  }
+}
+
+async function adminRemoveSingleRanker(targetId, targetName) {
+  if (!state.isTestAccount || !targetId) return;
+  if (!confirm(`👑【管理者専用】「${targetName || targetId}」をランキングから削除しますか？`)) return;
+  playSE('click');
+  await removePlayerFromCloudRanking(targetId);
+  cloudRankCache = cloudRankCache.filter(r => r && r.id !== targetId);
+  renderRankingList();
+  showToast(`🗑️ 「${targetName || targetId}」をランキングから除外しました`);
+}
+
+async function removePlayerFromCloudRanking(targetPlayerId) {
+  if (!db || !targetPlayerId) return;
+  try {
+    const deletePromises = [];
+    // 1. players/MATCH_CASINO_RANKINGS ハブからそのプレイヤーのエントリを完全削除（FieldValue.delete + deletedフラグの二重保証）
+    const fvDelete = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
+      ? firebase.firestore.FieldValue.delete()
+      : { isDeleted: true };
+
+    deletePromises.push(
+      db.collection('players').doc('MATCH_CASINO_RANKINGS').update({
+        [`entries.${targetPlayerId}`]: fvDelete,
+        updatedAt: Date.now()
+      }).catch(() =>
+        db.collection('players').doc('MATCH_CASINO_RANKINGS').set({
+          isSystemDoc: true,
+          entries: {
+            [targetPlayerId]: { id: targetPlayerId, isDeleted: true }
+          },
+          updatedAt: Date.now()
+        }, { merge: true })
+      )
+    );
+
+    // 2. casino_rankings コレクションからもドキュメント削除
+    deletePromises.push(
+      db.collection('casino_rankings').doc(targetPlayerId).delete().catch(() =>
+        db.collection('casino_rankings').doc(targetPlayerId).set({ id: targetPlayerId, isDeleted: true }, { merge: true })
+      )
+    );
+
+    await Promise.race([
+      Promise.allSettled(deletePromises),
+      new Promise(res => setTimeout(res, 1500))
+    ]);
+  } catch (e) {}
+}
+
 /* --- 🛡️ 不適切ネーム（NGワード・暴言・下ネタ・差別表現）厳格ブロックフィルター --- */
 const NG_WORDS_LIST = [
   '死ね', 'しね', 'シネ', 'shine', '殺す', 'ころす', 'コロス', '殺せ', '自殺',
@@ -2343,6 +2412,7 @@ function syncMyScoreToCloud() {
       maxChips: Number(state.maxChips) || 0,
       wins: Number(state.totalWins) || 0,
       isTestAccount: false,
+      isDeleted: false,
       updatedAt: Date.now()
     };
     try {
@@ -2762,6 +2832,8 @@ async function refreshRankingData(showNotice = false) {
 
   if (db) {
     const mergedMap = new Map();
+    const deletedIds = new Set();
+
     // 1. players/MATCH_CASINO_RANKINGS ハブから取得（Firebaseの追加設定不要で100%通る経路）
     try {
       const hubSnap = await Promise.race([
@@ -2769,10 +2841,15 @@ async function refreshRankingData(showNotice = false) {
         new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2200))
       ]);
       if (hubSnap && hubSnap.exists && hubSnap.data() && hubSnap.data().entries) {
-        Object.values(hubSnap.data().entries).forEach(d => {
-          if (d && !d.isTestAccount && d.name && validatePlayerName(d.name).ok) {
-            mergedMap.set(d.id, {
-              id: d.id,
+        Object.entries(hubSnap.data().entries).forEach(([keyId, d]) => {
+          const entryId = (d && d.id) || keyId;
+          if (!d || d.isDeleted) {
+            if (entryId) deletedIds.add(entryId);
+            return;
+          }
+          if (!d.isTestAccount && d.name && validatePlayerName(d.name).ok) {
+            mergedMap.set(entryId, {
+              id: entryId,
               name: sanitizeDisplayPlayerName(d.name),
               chips: Number(d.chips) || 0,
               maxChips: Number(d.maxChips) || Number(d.chips) || 0,
@@ -2784,7 +2861,7 @@ async function refreshRankingData(showNotice = false) {
       }
     } catch (e) {}
 
-    // 2. casino_rankings コレクションからも並行取得
+    // 2. casino_rankings コレクションからも並行取得（削除済みIDは除外）
     try {
       const snap = await Promise.race([
         db.collection('casino_rankings').limit(40).get(),
@@ -2792,9 +2869,14 @@ async function refreshRankingData(showNotice = false) {
       ]);
       snap.forEach(doc => {
         const d = doc.data();
-        if (d && !d.isTestAccount && d.name && validatePlayerName(d.name).ok) {
-          mergedMap.set(d.id || doc.id, {
-            id: d.id || doc.id,
+        const entryId = (d && d.id) || doc.id;
+        if (!d || d.isDeleted || deletedIds.has(entryId)) {
+          mergedMap.delete(entryId);
+          return;
+        }
+        if (!d.isTestAccount && d.name && validatePlayerName(d.name).ok) {
+          mergedMap.set(entryId, {
+            id: entryId,
             name: sanitizeDisplayPlayerName(d.name),
             chips: Number(d.chips) || 0,
             maxChips: Number(d.maxChips) || Number(d.chips) || 0,
@@ -2875,7 +2957,7 @@ function renderRankingList() {
 
     const challengeBtnHtml = isMe
       ? `<span style="font-size:0.76rem; font-weight:900; color:#fef08a; background:rgba(250,204,21,0.2); border:1.5px solid #facc15; padding:4px 10px; border-radius:999px;">🌟 あなた</span>`
-      : `<button class="chip-bet-btn c-max" style="padding:6px 10px; font-size:0.74rem;" onclick="challengeRanker('${entry.id}')">⚔️ 賭けて勝負</button>`;
+      : `<button class="chip-bet-btn c-max" style="padding:6px 10px; font-size:0.74rem;" onclick="challengeRanker('${entry.id}')">⚔️ 賭けて勝負</button>${state.isTestAccount ? `<button class="chip-bet-btn c-clear" style="padding:6px 8px; font-size:0.72rem;" onclick="adminRemoveSingleRanker('${entry.id}', '${entry.name.replace(/'/g, "\\'")}')">🗑️ 除外</button>` : ''}`;
 
     row.innerHTML = `
       <div style="display:flex; align-items:center; gap:10px;">
@@ -4775,9 +4857,27 @@ function resetP2Chips() {
   showToast('👥 フレンド(2P)のチップを100枚にリセットしました！');
 }
 
-function resetAllCasinoData() {
-  if (!confirm('カジノ・ロジカのセーブデータを初期化して最初から（100チップ配布から）やり直しますか？')) return;
+async function resetAllCasinoData() {
+  if (!confirm('カジノ・ロジカのセーブデータを初期化して最初から（100チップ配布から）やり直しますか？\n（※ランキングからも現在のデータは削除されます）')) return;
+  if (syncRankTimer) clearTimeout(syncRankTimer);
+
+  // 現在のアカウント（および管理者モード退避中の本番アカウント）をクラウドのランキングから完全削除
+  const idsToDelete = new Set();
+  if (state.playerId) idsToDelete.add(state.playerId);
+  try {
+    const rawBackup = localStorage.getItem(PROD_BACKUP_KEY);
+    if (rawBackup) {
+      const parsedBackup = JSON.parse(rawBackup);
+      if (parsedBackup && parsedBackup.playerId) idsToDelete.add(parsedBackup.playerId);
+    }
+  } catch (e) {}
+
+  for (const pid of idsToDelete) {
+    await removePlayerFromCloudRanking(pid);
+  }
+
   localStorage.removeItem(SAVE_KEY);
+  localStorage.removeItem(PROD_BACKUP_KEY);
   localStorage.removeItem(WORK_SESSION_KEY);
   location.reload();
 }
