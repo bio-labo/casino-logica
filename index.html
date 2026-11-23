@@ -1563,6 +1563,170 @@ html, body {
   .playing-card { width: 58px; height: 86px; }
   .chinchiro-bowl { width: 210px; height: 210px; }
 }
+
+/* ============================================================================
+   👥 2〜4人マルチプレイ ＆ スマホ最適化レスポンシブUI
+============================================================================ */
+.local-count-bar {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1.5px dashed rgba(56, 189, 248, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.local-count-pills {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.local-count-btn {
+  padding: 8px 6px;
+  border-radius: 12px;
+  border: 2px solid #475569;
+  background: #0f172a;
+  color: #cbd5e1;
+  font-weight: 900;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.local-count-btn.active {
+  background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+  color: #422006;
+  border-color: #ffffff;
+  box-shadow: 0 3px 0 #854d0e;
+}
+
+.multi-seats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.multi-seat-card {
+  background: rgba(15, 23, 42, 0.88);
+  border: 2px solid #475569;
+  border-radius: 14px;
+  padding: 8px 10px;
+  text-align: center;
+  transition: all 0.18s;
+  min-width: 0;
+}
+.multi-seat-card.active-turn {
+  border-color: #facc15;
+  background: rgba(30, 41, 59, 0.96);
+  box-shadow: 0 0 14px rgba(250, 204, 21, 0.5);
+}
+.multi-seat-card.busted-seat {
+  border-color: #ef4444;
+  opacity: 0.82;
+}
+.multi-seat-card.done-seat {
+  border-color: #22c55e;
+}
+
+.seat-name-row {
+  font-size: 0.76rem;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.seat-sub-row {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.seat-result-row {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #fef08a;
+  margin-top: 3px;
+  word-break: break-word;
+}
+
+.cards-hand-row.compact-cards {
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cards-hand-row.compact-cards .playing-card {
+  width: 38px;
+  height: 54px;
+  border-radius: 6px;
+  border-width: 1.5px;
+  padding: 2px;
+}
+.cards-hand-row.compact-cards .card-corner-top,
+.cards-hand-row.compact-cards .card-corner-bot {
+  font-size: 0.56rem;
+  line-height: 1;
+}
+.cards-hand-row.compact-cards .card-center-suit {
+  font-size: 0.95rem;
+}
+
+.multi-turn-bar {
+  background: rgba(15, 23, 42, 0.92);
+  border: 2px solid #38bdf8;
+  border-radius: 14px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.poker-privacy-cover {
+  background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+  border: 3px solid #facc15;
+  border-radius: 18px;
+  padding: 20px 14px;
+  text-align: center;
+  margin: 10px 0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.yacht-score-table.multi-4p th,
+.yacht-score-table.multi-4p td {
+  font-size: 0.7rem;
+  padding: 5px 2px;
+}
+.yacht-score-table.multi-4p .cat-name {
+  font-size: 0.7rem;
+  max-width: 96px;
+}
+
+@media (max-width: 520px) {
+  body { padding: 8px 6px 28px; }
+  .top-status-bar {
+    padding: 6px 10px;
+    gap: 6px;
+    border-radius: 20px;
+    flex-wrap: wrap;
+  }
+  .brand-mini { font-size: 0.85rem; }
+  .chip-pill { padding: 3px 10px; font-size: 0.82rem; }
+  .sub-nav-header { padding: 8px 10px; gap: 6px; }
+  .sub-nav-title { font-size: 0.95rem; flex-wrap: wrap; }
+  .back-btn { padding: 5px 10px; font-size: 0.76rem; }
+  .mode-tab-btn { padding: 8px 4px; font-size: 0.74rem; }
+  .casino-table-card { padding: 12px 9px; border-width: 4px; border-radius: 20px; }
+  .bet-control-bar { padding: 8px 10px; }
+  .action-btn { padding: 10px 14px; font-size: 0.9rem; }
+  .friend-card-item { padding: 10px 11px; }
+  .yokai-btn { padding: 12px 12px; }
+  .yokai-btn-title { font-size: 1rem; }
+}
 </style>
 </head>
 <body>
@@ -1745,9 +1909,15 @@ html, body {
     <div style="background:rgba(15,23,42,0.92); border:2.5px solid #38bdf8; border-radius:20px; padding:14px; margin-bottom:12px;">
       <div style="font-size:0.9rem; font-weight:900; color:#7dd3fc; margin-bottom:8px;">🔍 友達のコードを入力して申請を送る</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <input id="casinoFriendCodeInput" type="text" maxlength="12" placeholder="例: CL-7A3K" style="flex:1; min-width:160px; padding:10px 12px; border-radius:12px; border:2.5px solid #38bdf8; background:#020617; color:#ffffff; font-weight:900; font-size:1rem; text-transform:uppercase; outline:none;">
+        <input id="casinoFriendCodeInput" type="text" maxlength="12" placeholder="例: CL-7A3K (下4桁だけでもOK)" style="flex:1; min-width:160px; padding:10px 12px; border-radius:12px; border:2.5px solid #38bdf8; background:#020617; color:#ffffff; font-weight:900; font-size:1rem; text-transform:uppercase; outline:none;">
         <button class="action-btn btn-green" style="padding:10px 18px; font-size:0.92rem;" onclick="sendCasinoFriendRequest()">📩 申請を送る</button>
       </div>
+    </div>
+
+    <!-- 届いている対戦ルーム招待 -->
+    <div id="casinoIncomingRoomInvitesBox" style="display:none; background:rgba(6,78,59,0.88); border:2.5px solid #4ade80; border-radius:20px; padding:14px; margin-bottom:12px;">
+      <div style="font-size:0.92rem; font-weight:900; color:#a7f3d0; margin-bottom:8px;">🎮 届いている対戦ルーム招待</div>
+      <div id="casinoIncomingRoomInvitesList" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
     <!-- 届いているフレンド申請 -->
@@ -1840,14 +2010,27 @@ html, body {
           🤖 AIと対戦<br><span style="font-size:0.7rem; font-weight:700;">1人でチップ稼ぎ</span>
         </button>
         <button class="mode-tab-btn" id="modeTabLocal" onclick="setPlayMode('local')">
-          👥 フレンド対戦<br><span style="font-size:0.7rem; font-weight:700;">1台で交互に対戦</span>
+          👥 フレンド対戦<br><span style="font-size:0.68rem; font-weight:700;">1台で2〜4人</span>
         </button>
         <button class="mode-tab-btn" id="modeTabOnline" onclick="setPlayMode('online')">
-          🌐 通信ルーム<br><span style="font-size:0.7rem; font-weight:700;">コードで友達と</span>
+          🌐 通信ルーム<br><span style="font-size:0.68rem; font-weight:700;">最大4人同時！</span>
         </button>
       </div>
 
-      <!-- 通信ルーム設定パネル（🌐通信ルーム選択時のみ表示：バイオ・ロジカ方式 Firebase Firestore ルーム同期！） -->
+      <!-- 👥 1台でフレンド対戦（2〜4人選択バー） -->
+      <div id="localPlayerCountBar" class="local-count-bar" style="display:none;">
+        <div style="font-size:0.78rem; font-weight:900; color:#fde047; text-align:center;">
+          👥 1台で遊ぶ人数を選んでください（スロット以外は全員で遊べます！）
+        </div>
+        <div class="local-count-pills">
+          <button class="local-count-btn active" id="localCntBtn2" onclick="setLocalPlayerCount(2)">2人対戦</button>
+          <button class="local-count-btn" id="localCntBtn3" onclick="setLocalPlayerCount(3)">3人対戦</button>
+          <button class="local-count-btn" id="localCntBtn4" onclick="setLocalPlayerCount(4)">4人対戦</button>
+        </div>
+        <div id="localPlayersChipsSummary" style="display:flex; flex-wrap:wrap; justify-content:center; gap:6px; font-size:0.74rem; font-weight:900;"></div>
+      </div>
+
+      <!-- 通信ルーム設定パネル（🌐通信ルーム選択時のみ表示：最大4人同時プレイ！） -->
       <div id="onlineRoomPanel" style="display:none; margin-top:10px; padding-top:12px; border-top:1.5px dashed rgba(56,189,248,0.5);">
         <!-- ① 未入室時：部屋を作る / 4桁コードで入る / 募集中ルーム一覧 -->
         <div id="onlineRoomEntryView">
@@ -1855,14 +2038,14 @@ html, body {
             <!-- ホストとして部屋を新しく作る -->
             <div style="background:rgba(15,23,42,0.92); border:2px solid #facc15; border-radius:16px; padding:12px;">
               <div style="font-size:0.84rem; font-weight:900; color:#fef08a; margin-bottom:4px;">🏠 新しく部屋を作る（ホスト）</div>
-              <div style="font-size:0.72rem; color:#cbd5e1; margin-bottom:8px;">4桁のルーム番号を発行して友達を招待します</div>
+              <div style="font-size:0.72rem; color:#cbd5e1; margin-bottom:8px;">4桁のルーム番号を発行して最大4人まで招待できます</div>
               <button class="action-btn" style="width:100%; padding:8px 12px; font-size:0.9rem;" onclick="createOnlineRoom()">✨ 新しい部屋を作成！</button>
             </div>
 
             <!-- ゲストとして番号入力で入る -->
             <div style="background:rgba(15,23,42,0.92); border:2px solid #38bdf8; border-radius:16px; padding:12px;">
               <div style="font-size:0.84rem; font-weight:900; color:#7dd3fc; margin-bottom:4px;">🚪 友達の部屋に入る（ゲスト）</div>
-              <div style="font-size:0.72rem; color:#cbd5e1; margin-bottom:8px;">友達から聞いた4桁のルーム番号を入力</div>
+              <div style="font-size:0.72rem; color:#cbd5e1; margin-bottom:8px;">友達から聞いた4桁のルーム番号を入力（最大4人）</div>
               <div style="display:flex; gap:6px;">
                 <input id="joinRoomInput" type="text" inputmode="numeric" maxlength="4" placeholder="4桁番号" style="flex:1; min-width:80px; padding:8px; border-radius:12px; border:2px solid #38bdf8; background:#020617; color:#fef08a; font-weight:900; font-size:1.05rem; text-align:center; letter-spacing:0.12em;">
                 <button class="action-btn btn-blue" style="padding:8px 14px; font-size:0.9rem;" onclick="joinOnlineRoom()">参加</button>
@@ -1882,29 +2065,26 @@ html, body {
           </div>
         </div>
 
-        <!-- ② 入室中ロビーカード（部屋を作った後 / 入った後に表示） -->
+        <!-- ② 入室中ロビーカード（最大4人 2×2席表示） -->
         <div id="onlineRoomActiveLobby" style="display:none; background:linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,27,75,0.96)); border:2.5px solid #4ade80; border-radius:18px; padding:12px 14px;">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="background:#facc15; color:#422006; font-weight:900; font-size:0.76rem; padding:3px 9px; border-radius:999px;" id="onlineRoleBadge">🏠 ホスト</span>
-              <span style="font-size:0.88rem; font-weight:900; color:#bae6fd;">ルーム番号:</span>
-              <span id="myRoomCodeText" style="font-size:1.35rem; font-weight:900; color:#fef08a; letter-spacing:0.1em; background:#020617; padding:2px 12px; border-radius:10px; border:2px solid #facc15;">----</span>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <span style="background:#facc15; color:#422006; font-weight:900; font-size:0.74rem; padding:3px 9px; border-radius:999px;" id="onlineRoleBadge">🏠 ホスト</span>
+              <span style="font-size:0.84rem; font-weight:900; color:#bae6fd;">番号:</span>
+              <span id="myRoomCodeText" style="font-size:1.25rem; font-weight:900; color:#fef08a; letter-spacing:0.1em; background:#020617; padding:2px 10px; border-radius:10px; border:2px solid #facc15;">----</span>
+              <span id="onlineSeatCountBadge" style="font-size:0.74rem; font-weight:900; background:#0284c7; color:#fff; padding:2px 8px; border-radius:999px;">1/4人</span>
             </div>
-            <button class="back-btn" style="background:#fee2e2; color:#991b1b; border-color:#f87171; font-size:0.74rem; padding:4px 10px;" onclick="leaveOnlineRoom()">🚪 部屋を出る</button>
+            <button class="back-btn" style="background:#fee2e2; color:#991b1b; border-color:#f87171; font-size:0.74rem; padding:4px 10px;" onclick="leaveOnlineRoom()">🚪 退室</button>
           </div>
 
-          <!-- プレイヤー1(ホスト) vs プレイヤー2(ゲスト) 接続カード -->
-          <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px; background:rgba(2,6,23,0.7); border-radius:14px; padding:10px; margin-bottom:8px;">
-            <div style="text-align:center;">
-              <div style="font-size:0.7rem; color:#94a3b8; font-weight:800;">🏠 ホスト (親/1P)</div>
-              <div id="lobbyHostName" style="font-size:0.95rem; font-weight:900; color:#fef08a;">待機中</div>
-              <div id="lobbyHostChips" style="font-size:0.76rem; color:#4ade80; font-weight:800;">🪙 -</div>
-            </div>
-            <div style="font-size:1.1rem; font-weight:900; color:#f472b6;">VS</div>
-            <div style="text-align:center;">
-              <div style="font-size:0.7rem; color:#94a3b8; font-weight:800;">🚪 ゲスト (子/2P)</div>
-              <div id="lobbyGuestName" style="font-size:0.95rem; font-weight:900; color:#7dd3fc;">参加者待ち...</div>
-              <div id="lobbyGuestChips" style="font-size:0.76rem; color:#4ade80; font-weight:800;">🪙 -</div>
+          <!-- 最大4人ロビー席 (2×2グリッド) -->
+          <div id="onlineLobbySeatsGrid" class="multi-seats-grid" style="margin-bottom:8px;"></div>
+
+          <!-- フレンドをこの部屋にワンタップ招待 -->
+          <div id="onlineInviteFriendBar" style="background:rgba(2,6,23,0.72); border:1.5px solid #38bdf8; border-radius:12px; padding:8px 10px; margin-bottom:8px;">
+            <div style="font-size:0.74rem; font-weight:900; color:#7dd3fc; margin-bottom:5px;">🤝 フレンドをこの部屋に招待：</div>
+            <div id="onlineInviteFriendList" style="display:flex; flex-wrap:wrap; gap:6px; font-size:0.74rem; color:#94a3b8;">
+              フレンドリスト同期中...
             </div>
           </div>
 
@@ -2089,8 +2269,8 @@ html, body {
         </div>
       </div>
 
-      <!-- 親・子の出目ステータス -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+      <!-- 親・子の出目ステータス（2〜4人対応グリッド） -->
+      <div id="ccSeatsGrid" class="multi-seats-grid">
         <div style="background:rgba(15,23,42,0.85); border:2px solid #f87171; border-radius:14px; padding:10px; text-align:center;">
           <div style="font-size:0.76rem; color:#fca5a5; font-weight:900;" id="ccDealerLabel">👹 親 (AIディーラー)</div>
           <div style="font-size:1.05rem; font-weight:900; color:#fff; margin-top:4px;" id="ccDealerResultText">待機中...</div>
@@ -2179,12 +2359,12 @@ html, body {
         <!-- JSで5個生成 -->
       </div>
 
-      <!-- スコアシート（12役＋ボーナス） -->
+      <!-- スコアシート（12役＋ボーナス・最大4人対応） -->
       <div style="overflow-x:auto;">
-        <table class="yacht-score-table">
+        <table class="yacht-score-table" id="ytScoreTable">
           <thead>
-            <tr>
-              <th style="text-align:left;">役 (カテゴリー)</th>
+            <tr id="ytTableHeadRow">
+              <th style="text-align:left;">役</th>
               <th id="ytColP1">🧑 あなた</th>
               <th id="ytColP2">🤖 AI</th>
             </tr>
@@ -2220,7 +2400,7 @@ html, body {
         </div>
       </div>
 
-      <!-- ディーラー（または2P）ハンド -->
+      <!-- ディーラーハンド -->
       <div style="text-align:center; margin-bottom:10px;">
         <div style="font-size:0.84rem; font-weight:900; color:#fca5a5; margin-bottom:4px;">
           <span id="bjDealerTitle">🎩 ディーラー</span> (合計: <span id="bjDealerTotal">?</span>)
@@ -2228,8 +2408,11 @@ html, body {
         <div class="cards-hand-row" id="bjDealerHand"></div>
       </div>
 
-      <!-- プレイヤー1ハンド -->
-      <div style="text-align:center; margin-bottom:12px;">
+      <!-- 2〜4人用 プレイヤー席グリッド -->
+      <div id="bjMultiSeatsGrid" class="multi-seats-grid" style="display:none;"></div>
+
+      <!-- 1人(AI戦)用 プレイヤーハンド -->
+      <div id="bjSinglePlayerArea" style="text-align:center; margin-bottom:12px;">
         <div style="font-size:0.84rem; font-weight:900; color:#7dd3fc; margin-bottom:4px;">
           <span id="bjPlayerTitle">🧑 あなた</span> (合計: <span id="bjPlayerTotal">0</span>)
         </div>
@@ -2298,16 +2481,28 @@ html, body {
         </div>
       </div>
 
-      <!-- 相手の手札 -->
-      <div style="text-align:center; margin-bottom:10px;">
+      <!-- 2〜4人対戦用 プレイヤー一覧席 -->
+      <div id="pkMultiSeatsGrid" class="multi-seats-grid" style="display:none;"></div>
+
+      <!-- 1人戦時の相手の手札 -->
+      <div id="pkSingleOpponentArea" style="text-align:center; margin-bottom:10px;">
         <div style="font-size:0.82rem; font-weight:900; color:#fca5a5; margin-bottom:4px;">
           <span id="pkOpponentLabel">🤖 対戦相手 (AI)</span> — <span id="pkOpponentRank">???</span>
         </div>
         <div class="cards-hand-row" id="pkOpponentHand"></div>
       </div>
 
+      <!-- 1台ローカル複数人プレイ時の覗き見防止カバー -->
+      <div id="pkPrivacyCover" class="poker-privacy-cover" style="display:none;">
+        <div style="font-size:2rem; margin-bottom:4px;">🫣</div>
+        <div id="pkPrivacyPromptText" style="font-weight:900; font-size:0.96rem; color:#fef08a; margin-bottom:10px;">
+          次のプレイヤーにスマホを渡してください
+        </div>
+        <button class="action-btn btn-green" onclick="revealLocalPokerHand()">👁️ 手札を見る</button>
+      </div>
+
       <!-- 自分の手札（タップでHOLD） -->
-      <div style="text-align:center; margin-bottom:12px;">
+      <div id="pkMyHandArea" style="text-align:center; margin-bottom:12px;">
         <div style="font-size:0.82rem; font-weight:900; color:#7dd3fc; margin-bottom:4px;">
           <span id="pkPlayerLabel">🧑 あなたの手札（残すカードをタップでHOLD）</span> — <span id="pkPlayerRank" style="color:#fef08a;">-</span>
         </div>
@@ -2486,6 +2681,12 @@ html, body {
     <div class="casino-table-card">
       <!-- ① ベット選択ビュー（選ぶときは盤面を広く表示！） -->
       <div id="rlBetStage">
+        <!-- 2〜4人プレイ時のターン＆準備状況バー -->
+        <div id="rlMultiTurnBar" class="multi-turn-bar" style="display:none;">
+          <div id="rlMultiTurnText" style="font-size:0.82rem; font-weight:900; color:#fef08a;"></div>
+          <button class="action-btn btn-blue" id="rlConfirmBetBtn" onclick="confirmRoulettePlayerBet()" style="padding:7px 14px; font-size:0.82rem;">✅ ベット確定</button>
+        </div>
+
         <div class="bet-control-bar">
           <div style="font-size:0.86rem; font-weight:900;">
             1タップ配置額:
@@ -2530,6 +2731,8 @@ html, body {
           <canvas id="rouletteCanvas" width="340" height="340" style="max-width:100%; height:auto; background:radial-gradient(circle, #1e293b 0%, #0f172a 100%); border-radius:50%; box-shadow:0 10px 30px rgba(0,0,0,0.8);"></canvas>
         </div>
 
+        <div id="rlMultiResultsList" style="display:none; margin-bottom:10px;"></div>
+
         <div style="text-align:center;">
           <button class="action-btn" id="rlBackToBetBtn" onclick="backToRouletteBetStage()" style="display:none;">🔄 次のベットを選ぶ（盤面へ戻る）</button>
         </div>
@@ -2542,7 +2745,7 @@ html, body {
   ======================================================================== -->
   <section id="screen-game-bigsix" class="screen">
     <div class="sub-nav-header">
-      <div class="sub-nav-title">🎡 ビッグシックス (マネーホイール)</div>
+      <div class="sub-nav-title">🎡 ビッグシックス <span id="bsModeBadge" style="font-size:0.75rem; background:#0284c7; padding:2px 8px; border-radius:999px;">🤖 AI戦</span></div>
       <button class="back-btn" onclick="navigateTo('screen-sub-wheel')">⬅️ ホイール選択へ</button>
     </div>
 
@@ -2560,11 +2763,18 @@ html, body {
     </div>
 
     <div class="casino-table-card">
+      <!-- 2〜4人プレイ時のターン＆準備状況バー -->
+      <div id="bsMultiTurnBar" class="multi-turn-bar" style="display:none;">
+        <div id="bsMultiTurnText" style="font-size:0.82rem; font-weight:900; color:#fef08a;"></div>
+        <button class="action-btn btn-blue" id="bsConfirmBetBtn" onclick="confirmBigSixPlayerBet()" style="padding:7px 14px; font-size:0.82rem;">✅ ベット確定</button>
+      </div>
+
       <div style="display:flex; flex-direction:column; align-items:center;">
         <canvas id="bigSixCanvas" width="310" height="310" style="max-width:100%; height:auto;"></canvas>
         <div id="bsResultText" style="font-size:1.05rem; font-weight:900; color:#fef08a; margin:8px 0; text-align:center;">
           1〜10の番号を選んでベット！当たればその枠に書いてある倍数分もらえる！
         </div>
+        <div id="bsMultiResultsList" style="display:none; width:100%; margin:6px 0;"></div>
       </div>
 
       <div class="bet-control-bar">
@@ -2808,7 +3018,7 @@ html, body {
     <!-- フレンド(2P)チップリセット・データ管理 -->
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button class="back-btn" style="background:#fef08a; border-color:#854d0e;" onclick="openNameChangeModal()">✏️ プレイヤー名を変更する</button>
-      <button class="back-btn" onclick="resetP2Chips()">🔄 フレンド(2P)のチップを100に戻す</button>
+      <button class="back-btn" onclick="resetP2Chips()">🔄 フレンド(2P〜4P)のチップを100に戻す</button>
       <button class="back-btn" style="background:#fee2e2; color:#991b1b; border-color:#f87171;" onclick="resetAllCasinoData()">🗑️ セーブデータ初期化</button>
     </div>
   </section>
@@ -2983,6 +3193,8 @@ let state = {
   playerName: '',
   chips: 100,
   p2Chips: 100,
+  localPlayerCount: 2, // 2〜4人（1台フレンド対戦用）
+  localChips: [100, 100, 100, 100],
   maxChips: 100,
   totalWins: 0,
   studyEarnedTotal: 0,
@@ -2995,6 +3207,8 @@ let state = {
   activeDebtTotal: 0,
   debtStudyLock: false
 };
+
+const PLAYER_COLORS = ['#facc15', '#38bdf8', '#4ade80', '#f472b6'];
 
 /* --- 👑 管理者専用テストモード（本番データ自動保護 ＆ チップ無限 ＆ ランキング完全非反映） --- */
 const CASINO_ADMIN_PASS_DEFAULT = 'bio2026';
@@ -3486,12 +3700,19 @@ function getTodayStr() {
 }
 
 function saveState() {
+  if (!Array.isArray(state.localChips) || state.localChips.length < 4) {
+    state.localChips = [state.chips || 100, state.p2Chips || 100, 100, 100];
+  }
   if (state.isTestAccount && state.infiniteChips) {
     state.chips = 999999;
     state.p2Chips = 999999;
+    state.localChips = [999999, 999999, 999999, 999999];
   }
   if (state.chips < 0) state.chips = 0;
   if (state.p2Chips < 0) state.p2Chips = 0;
+  state.localChips[0] = state.chips;
+  state.localChips = state.localChips.map(c => Math.max(0, Number(c) || 0));
+  state.p2Chips = state.localChips[1];
   if (state.chips > state.maxChips) state.maxChips = state.chips;
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
@@ -3524,6 +3745,13 @@ function loadState() {
   if (!state.friendCode) {
     state.friendCode = generateCasinoFriendCode();
   }
+  if (!Array.isArray(state.localChips) || state.localChips.length < 4) {
+    state.localChips = [state.chips || 100, state.p2Chips || 100, 100, 100];
+  } else {
+    state.localChips[0] = state.chips;
+    if (state.localChips[1] === undefined) state.localChips[1] = state.p2Chips || 100;
+  }
+  state.localPlayerCount = Math.min(4, Math.max(2, Number(state.localPlayerCount) || 2));
 
   // 保存されている名前が万一NGワードに該当していたらリセット
   if (state.playerName && !validatePlayerName(state.playerName).ok) {
@@ -3553,9 +3781,11 @@ function loadState() {
     syncMyScoreToCloud(true);
   }
 
-  // 起動時にフレンド＆借用書データを静かに同期（返金回収や通知バッジ更新）
+  // 起動時にフレンド＆借用書データを静かに同期（リアルタイム監視も開始）
   setTimeout(() => {
     if (typeof syncFriendAndLoanData === 'function') syncFriendAndLoanData(false);
+    if (typeof startFriendRealtimeListener === 'function') startFriendRealtimeListener();
+    if (typeof syncModeSelectorUI === 'function') syncModeSelectorUI();
   }, 600);
 }
 
@@ -4169,7 +4399,7 @@ function showToast(msg) {
   }, 2800);
 }
 
-/* --- ⚔️ 対戦モード（AI / その場でフレンド2P / 通信ルーム：バイオ・ロジカ方式 Firebase Firestore ルーム同期！） --- */
+/* --- ⚔️ 対戦モード（AI / 1台2〜4人フレンド / 通信ルーム最大4人同時！） --- */
 let peer = null;
 let conn = null;
 let myRoomCode = '';
@@ -4178,6 +4408,7 @@ let onlineRoomState = {
   active: false,
   code: '',
   role: '', // 'host' | 'guest'
+  mySeatId: '',
   docId: '',
   unsub: null,
   bc: null,
@@ -4188,7 +4419,8 @@ let onlineRoomState = {
   guestId: '',
   guestName: '',
   guestChips: 100,
-  status: 'idle', // 'idle' | 'waiting' | 'connected'
+  seats: [], // 最大4人 [{ id, name, chips, role, joinedAt }]
+  status: 'idle', // 'idle' | 'waiting' | 'connected' | 'full'
   activeGame: '',
   processedRoundId: '',
   lastToastId: ''
@@ -4210,17 +4442,163 @@ function getRoomDocRef(code) {
   return db.collection('players').doc('MATCH_CASINO_ROOM_' + code);
 }
 
+function syncModeSelectorUI() {
+  const mode = state.playMode || 'ai';
+  const tAi = document.getElementById('modeTabAi');
+  const tLoc = document.getElementById('modeTabLocal');
+  const tOn = document.getElementById('modeTabOnline');
+  if (tAi) tAi.classList.toggle('active', mode === 'ai');
+  if (tLoc) tLoc.classList.toggle('active', mode === 'local');
+  if (tOn) tOn.classList.toggle('active', mode === 'online');
+
+  const localBar = document.getElementById('localPlayerCountBar');
+  if (localBar) localBar.style.display = mode === 'local' ? 'block' : 'none';
+  const onlinePanel = document.getElementById('onlineRoomPanel');
+  if (onlinePanel) onlinePanel.style.display = mode === 'online' ? 'block' : 'none';
+
+  [2, 3, 4].forEach(n => {
+    const b = document.getElementById('localCntBtn' + n);
+    if (b) b.classList.toggle('active', (state.localPlayerCount || 2) === n);
+  });
+  renderLocalPlayersSummary();
+}
+
+function setLocalPlayerCount(n) {
+  playSE('click');
+  state.localPlayerCount = Math.min(4, Math.max(2, Number(n) || 2));
+  syncModeSelectorUI();
+  saveState();
+}
+
+function renderLocalPlayersSummary() {
+  const box = document.getElementById('localPlayersChipsSummary');
+  if (!box) return;
+  const cnt = Math.min(4, Math.max(2, state.localPlayerCount || 2));
+  const myName = sanitizeDisplayPlayerName(state.playerName || 'あなた');
+  const chipsArr = Array.isArray(state.localChips) ? state.localChips : [state.chips, state.p2Chips, 100, 100];
+  let html = '';
+  for (let i = 0; i < cnt; i++) {
+    const c = i === 0 ? state.chips : (chipsArr[i] ?? 100);
+    const label = i === 0 ? `1P(${myName})` : `${i + 1}P`;
+    html += `<span style="background:rgba(15,23,42,0.9); border:1.5px solid ${PLAYER_COLORS[i]}; color:${PLAYER_COLORS[i]}; border-radius:999px; padding:2px 9px;">${label}: 🪙${c.toLocaleString()}</span>`;
+  }
+  box.innerHTML = html;
+}
+
 function setPlayMode(mode) {
   playSE('click');
   state.playMode = mode;
-  document.getElementById('modeTabAi').classList.toggle('active', mode === 'ai');
-  document.getElementById('modeTabLocal').classList.toggle('active', mode === 'local');
-  document.getElementById('modeTabOnline').classList.toggle('active', mode === 'online');
-  document.getElementById('onlineRoomPanel').style.display = mode === 'online' ? 'block' : 'none';
+  syncModeSelectorUI();
   if (mode === 'online') {
     refreshOpenCasinoRooms();
   }
   saveState();
+}
+
+function getActivePlayers() {
+  const myName = sanitizeDisplayPlayerName(state.playerName || 'あなた');
+  if (state.playMode === 'online' && onlineRoomState.active && Array.isArray(onlineRoomState.seats) && onlineRoomState.seats.length > 0) {
+    return onlineRoomState.seats.slice(0, 4).map((s, idx) => ({
+      idx,
+      slotKey: 'p' + (idx + 1),
+      id: s.id,
+      name: sanitizeDisplayPlayerName(s.name || `${idx + 1}P`),
+      chips: Number(s.chips) || 0,
+      isHost: idx === 0,
+      isMe: s.id === onlineRoomState.mySeatId,
+      isAi: false,
+      color: PLAYER_COLORS[idx % 4]
+    }));
+  }
+  if (state.playMode === 'local') {
+    const cnt = Math.min(4, Math.max(2, state.localPlayerCount || 2));
+    const arr = [];
+    for (let i = 0; i < cnt; i++) {
+      const chipsVal = i === 0 ? state.chips : (state.localChips[i] ?? 100);
+      arr.push({
+        idx: i,
+        slotKey: 'p' + (i + 1),
+        id: 'local_' + i,
+        name: i === 0 ? `1P(${myName})` : `フレンド${i + 1}P`,
+        chips: Number(chipsVal) || 0,
+        isHost: i === 0,
+        isMe: true,
+        isAi: false,
+        color: PLAYER_COLORS[i % 4]
+      });
+    }
+    return arr;
+  }
+  return [{
+    idx: 0,
+    slotKey: 'p1',
+    id: state.playerId || 'me',
+    name: myName,
+    chips: state.chips,
+    isHost: true,
+    isMe: true,
+    isAi: false,
+    color: PLAYER_COLORS[0]
+  }];
+}
+
+function getMyOnlineSeatIdx() {
+  if (state.playMode !== 'online' || !onlineRoomState.active) return 0;
+  const idx = (onlineRoomState.seats || []).findIndex(s => s.id === onlineRoomState.mySeatId);
+  return idx >= 0 ? idx : 0;
+}
+
+function getPlayerChipsByIdx(idx) {
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    const s = (onlineRoomState.seats || [])[idx];
+    if (idx === getMyOnlineSeatIdx()) return state.chips;
+    return s ? (Number(s.chips) || 0) : 0;
+  }
+  if (state.playMode === 'local') {
+    if (idx === 0) return state.chips;
+    return Number(state.localChips[idx] ?? 100);
+  }
+  return state.chips;
+}
+
+function adjustPlayerChipsByIdx(idx, delta) {
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    if (idx === getMyOnlineSeatIdx()) {
+      state.chips = Math.max(0, state.chips + delta);
+      if (delta > 0) state.totalWins++;
+      saveState();
+      pushMyChipsToOnlineSeat();
+    }
+    return;
+  }
+  if (state.playMode === 'local') {
+    if (idx === 0) {
+      state.chips = Math.max(0, state.chips + delta);
+      if (delta > 0) state.totalWins++;
+    } else {
+      state.localChips[idx] = Math.max(0, (Number(state.localChips[idx]) || 0) + delta);
+    }
+    saveState();
+    renderLocalPlayersSummary();
+    return;
+  }
+  if (idx === 0) {
+    state.chips = Math.max(0, state.chips + delta);
+    if (delta > 0) state.totalWins++;
+    saveState();
+  }
+}
+
+function pushMyChipsToOnlineSeat() {
+  if (state.playMode !== 'online' || !onlineRoomState.active || !Array.isArray(onlineRoomState.seats)) return;
+  const nextSeats = onlineRoomState.seats.map(s =>
+    s.id === onlineRoomState.mySeatId ? { ...s, chips: state.chips } : s
+  );
+  onlineRoomState.seats = nextSeats;
+  const patch = { seats: nextSeats };
+  if (onlineRoomState.role === 'host') patch.hostChips = state.chips;
+  else patch.guestChips = state.chips;
+  pushOnlineRoomPatch(patch);
 }
 
 async function refreshOpenCasinoRooms() {
@@ -4233,19 +4611,19 @@ async function refreshOpenCasinoRooms() {
   try {
     const hubSnap = await Promise.race([
       db.collection('players').doc('MATCH_CASINO_ROOMS_INDEX').get(),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2000))
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2500))
     ]);
     const now = Date.now();
     const rooms = [];
     if (hubSnap && hubSnap.exists && hubSnap.data() && hubSnap.data().rooms) {
       Object.values(hubSnap.data().rooms).forEach(r => {
-        if (r && r.code && r.status === 'waiting' && (now - (r.updatedAt || 0) < 1000 * 60 * 20)) {
+        if (r && r.code && (r.status === 'waiting' || r.status === 'connected') && (Number(r.playerCount) || 1) < 4 && (now - (r.updatedAt || 0) < 1000 * 60 * 20)) {
           rooms.push(r);
         }
       });
     }
     if (rooms.length === 0) {
-      box.innerHTML = '<span style="color:#94a3b8;">現在待機中の部屋はありません。「✨ 新しい部屋を作成！」で作ってみよう！</span>';
+      box.innerHTML = '<span style="color:#94a3b8;">現在募集中の部屋はありません。「✨ 新しい部屋を作成！」で作ってみよう！</span>';
       return;
     }
     rooms.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
@@ -4254,7 +4632,7 @@ async function refreshOpenCasinoRooms() {
       const btn = document.createElement('button');
       btn.className = 'back-btn';
       btn.style.cssText = 'background:#0284c7; color:#fff; border-color:#38bdf8; font-size:0.76rem; padding:4px 10px;';
-      btn.textContent = `🏠 部屋【${r.code}】ホスト: ${sanitizeDisplayPlayerName(r.hostName)} (🪙${r.hostChips || 100})`;
+      btn.textContent = `🏠 部屋【${r.code}】${sanitizeDisplayPlayerName(r.hostName)} (${r.playerCount || 1}/4人)`;
       btn.onclick = () => {
         document.getElementById('joinRoomInput').value = r.code;
         joinOnlineRoom(r.code);
@@ -4266,7 +4644,7 @@ async function refreshOpenCasinoRooms() {
   }
 }
 
-async function registerRoomToIndex(code, status, hostName, hostChips) {
+async function registerRoomToIndex(code, status, hostName, hostChips, playerCount = 1) {
   if (!db || !code) return;
   try {
     await db.collection('players').doc('MATCH_CASINO_ROOMS_INDEX').set({
@@ -4277,12 +4655,64 @@ async function registerRoomToIndex(code, status, hostName, hostChips) {
           status,
           hostName: sanitizeDisplayPlayerName(hostName || 'ホスト'),
           hostChips: Number(hostChips) || 100,
+          playerCount,
           updatedAt: Date.now()
         }
       },
       updatedAt: Date.now()
     }, { merge: true });
   } catch (e) {}
+}
+
+function renderOnlineLobbySeats() {
+  const grid = document.getElementById('onlineLobbySeatsGrid');
+  if (!grid) return;
+  const seats = Array.isArray(onlineRoomState.seats) ? onlineRoomState.seats : [];
+  const cntBadge = document.getElementById('onlineSeatCountBadge');
+  if (cntBadge) cntBadge.textContent = `${seats.length}/4人`;
+
+  grid.innerHTML = '';
+  for (let i = 0; i < 4; i++) {
+    const s = seats[i];
+    const col = PLAYER_COLORS[i];
+    const card = document.createElement('div');
+    card.className = 'multi-seat-card' + (s ? ' done-seat' : '');
+    card.style.borderColor = s ? col : '#334155';
+    if (s) {
+      const isMe = s.id === onlineRoomState.mySeatId;
+      card.innerHTML = `
+        <div class="seat-name-row" style="color:${col};">${i === 0 ? '🏠 1P(ホスト)' : `🚪 ${i + 1}P`} ${isMe ? '★あなた' : ''}</div>
+        <div style="font-weight:900; font-size:0.9rem; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${sanitizeDisplayPlayerName(s.name)}</div>
+        <div class="seat-sub-row" style="color:#4ade80;">🪙 ${(Number(s.chips) || 0).toLocaleString()}</div>
+      `;
+    } else {
+      card.innerHTML = `
+        <div class="seat-name-row" style="color:#64748b;">🪑 ${i + 1}P 空き席</div>
+        <div style="font-size:0.78rem; color:#64748b; margin-top:4px;">参加者待ち...</div>
+      `;
+    }
+    grid.appendChild(card);
+  }
+  renderOnlineInviteFriendsBar();
+}
+
+function renderOnlineInviteFriendsBar() {
+  const box = document.getElementById('onlineInviteFriendList');
+  if (!box) return;
+  const friends = Object.values(friendCache.friends || {});
+  if (friends.length === 0) {
+    box.innerHTML = '<span style="color:#94a3b8;">フレンドを追加するとここからワンタップ招待できます！</span>';
+    return;
+  }
+  box.innerHTML = '';
+  friends.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'chip-bet-btn c-10';
+    btn.style.cssText = 'font-size:0.74rem; padding:4px 10px;';
+    btn.textContent = `📩 ${sanitizeDisplayPlayerName(f.name || f.code)} を招待`;
+    btn.onclick = () => inviteFriendToOnlineRoom(f.code, f.name);
+    box.appendChild(btn);
+  });
 }
 
 async function createOnlineRoom() {
@@ -4295,12 +4725,20 @@ async function createOnlineRoom() {
   const code = String(Math.floor(1000 + Math.random() * 9000));
   myRoomCode = code;
   const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ホスト');
+  const hostSeat = {
+    id: state.playerId,
+    name: mySafeName,
+    chips: state.chips,
+    role: 'host',
+    joinedAt: Date.now()
+  };
 
   onlineRoomState = {
     ...onlineRoomState,
     active: true,
     code,
     role: 'host',
+    mySeatId: state.playerId,
     docId: 'MATCH_CASINO_ROOM_' + code,
     hostId: state.playerId,
     hostName: mySafeName,
@@ -4308,6 +4746,7 @@ async function createOnlineRoom() {
     guestId: '',
     guestName: '',
     guestChips: 100,
+    seats: [hostSeat],
     status: 'waiting',
     activeGame: '',
     processedRoundId: ''
@@ -4315,13 +4754,10 @@ async function createOnlineRoom() {
 
   document.getElementById('onlineRoomEntryView').style.display = 'none';
   document.getElementById('onlineRoomActiveLobby').style.display = 'block';
-  document.getElementById('onlineRoleBadge').textContent = '🏠 ホスト (親/1P)';
+  document.getElementById('onlineRoleBadge').textContent = '🏠 ホスト (1P)';
   document.getElementById('myRoomCodeText').textContent = code;
-  document.getElementById('lobbyHostName').textContent = mySafeName;
-  document.getElementById('lobbyHostChips').textContent = `🪙 ${state.chips}`;
-  document.getElementById('lobbyGuestName').textContent = '参加者待ち...';
-  document.getElementById('lobbyGuestChips').textContent = '🪙 -';
-  document.getElementById('onlineStatusMsg').textContent = `🟢 部屋【${code}】を作成しました！友達がこの番号で入るのを待っています...`;
+  document.getElementById('onlineStatusMsg').textContent = `🟢 部屋【${code}】を作成！最大4人まで入室できます！`;
+  renderOnlineLobbySeats();
 
   const initialPayload = {
     isSystemDoc: true,
@@ -4330,14 +4766,14 @@ async function createOnlineRoom() {
     hostId: state.playerId,
     hostName: mySafeName,
     hostChips: state.chips,
-    guestId: '',
-    guestName: '',
-    guestChips: 0,
+    seats: [hostSeat],
     activeGame: '',
     chinchiro: null,
     yacht: null,
     blackjack: null,
     poker: null,
+    roulette: null,
+    bigsix: null,
     toastEvent: null,
     updatedAt: Date.now()
   };
@@ -4348,7 +4784,7 @@ async function createOnlineRoom() {
     try {
       const ref = getRoomDocRef(code);
       await ref.set(initialPayload);
-      registerRoomToIndex(code, 'waiting', mySafeName, state.chips);
+      registerRoomToIndex(code, 'waiting', mySafeName, state.chips, 1);
       onlineRoomState.unsub = ref.onSnapshot(snap => {
         if (snap && snap.exists) {
           handleOnlineRoomDocUpdate(snap.data());
@@ -4363,7 +4799,8 @@ async function createOnlineRoom() {
     }
   } catch (e) {}
 
-  showToast(`🏠 通信ルーム【${code}】を作成しました！`);
+  showToast(`🏠 通信ルーム【${code}】（最大4人）を作成しました！`);
+  return code;
 }
 
 async function joinOnlineRoom(forcedCode) {
@@ -4382,22 +4819,16 @@ async function joinOnlineRoom(forcedCode) {
 
   myRoomCode = code;
   const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
-
-  document.getElementById('onlineRoomEntryView').style.display = 'none';
-  document.getElementById('onlineRoomActiveLobby').style.display = 'block';
-  document.getElementById('onlineRoleBadge').textContent = '🚪 ゲスト (子/2P)';
-  document.getElementById('myRoomCodeText').textContent = code;
-  document.getElementById('lobbyGuestName').textContent = mySafeName;
-  document.getElementById('lobbyGuestChips').textContent = `🪙 ${state.chips}`;
-  document.getElementById('onlineStatusMsg').textContent = `🚪 部屋【${code}】へ入室しています...`;
+  const myJoinId = state.playerId + '_' + Math.random().toString(36).slice(2, 5);
 
   onlineRoomState = {
     ...onlineRoomState,
     active: true,
     code,
     role: 'guest',
+    mySeatId: myJoinId,
     docId: 'MATCH_CASINO_ROOM_' + code,
-    guestId: state.playerId,
+    guestId: myJoinId,
     guestName: mySafeName,
     guestChips: state.chips,
     status: 'connected',
@@ -4409,7 +4840,7 @@ async function joinOnlineRoom(forcedCode) {
       const ref = getRoomDocRef(code);
       const snap = await Promise.race([
         ref.get(),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2500))
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
       ]);
 
       if (!snap || !snap.exists || snap.data().status === 'closed') {
@@ -4419,17 +4850,42 @@ async function joinOnlineRoom(forcedCode) {
       }
 
       const d = snap.data();
-      // 同一端末の別タブ検証でも確実に入れるよう、ゲスト情報を書き込み
+      let seats = Array.isArray(d.seats) ? [...d.seats] : [
+        { id: d.hostId || 'host', name: d.hostName || 'ホスト', chips: d.hostChips || 100, role: 'host' }
+      ];
+      // 同一playerIdの再入室チェック（別タブ検証時はsuffix違いで別席として許容）
+      if (seats.length >= 4) {
+        showToast(`⚠️ 部屋【${code}】はすでに満員（4/4人）です！`);
+        leaveOnlineRoom(true);
+        return;
+      }
+      const mySeat = {
+        id: myJoinId,
+        name: mySafeName,
+        chips: state.chips,
+        role: 'guest',
+        joinedAt: Date.now()
+      };
+      seats.push(mySeat);
+      onlineRoomState.seats = seats;
+
       const joinUpdate = {
         isSystemDoc: true,
-        status: 'connected',
-        guestId: state.playerId + '_g',
+        status: seats.length >= 4 ? 'full' : 'waiting',
+        guestId: myJoinId,
         guestName: mySafeName,
         guestChips: state.chips,
+        seats,
         updatedAt: Date.now()
       };
       await ref.set(joinUpdate, { merge: true });
-      registerRoomToIndex(code, 'connected', d.hostName || 'ホスト', d.hostChips || 100);
+      registerRoomToIndex(code, joinUpdate.status, d.hostName || 'ホスト', d.hostChips || 100, seats.length);
+
+      document.getElementById('onlineRoomEntryView').style.display = 'none';
+      document.getElementById('onlineRoomActiveLobby').style.display = 'block';
+      document.getElementById('onlineRoleBadge').textContent = `🚪 ゲスト (${seats.length}P)`;
+      document.getElementById('myRoomCodeText').textContent = code;
+      renderOnlineLobbySeats();
 
       onlineRoomState.unsub = ref.onSnapshot(s => {
         if (s && s.exists) {
@@ -4446,10 +4902,8 @@ async function joinOnlineRoom(forcedCode) {
         payload: {
           ...(onlineRoomState.lastData || {}),
           roomCode: code,
-          status: 'connected',
-          guestId: state.playerId + '_g',
-          guestName: mySafeName,
-          guestChips: state.chips,
+          status: 'waiting',
+          seats: onlineRoomState.seats,
           updatedAt: Date.now()
         }
       });
@@ -4464,6 +4918,7 @@ async function leaveOnlineRoom(silent = false) {
   if (!silent) playSE('click');
   const code = onlineRoomState.code;
   const role = onlineRoomState.role;
+  const mySeatId = onlineRoomState.mySeatId;
   if (onlineRoomState.unsub) {
     try { onlineRoomState.unsub(); } catch (e) {}
     onlineRoomState.unsub = null;
@@ -4473,15 +4928,28 @@ async function leaveOnlineRoom(silent = false) {
       const ref = getRoomDocRef(code);
       if (role === 'host') {
         await ref.set({ isSystemDoc: true, status: 'closed', updatedAt: Date.now() }, { merge: true });
-        registerRoomToIndex(code, 'closed', onlineRoomState.hostName, state.chips);
+        registerRoomToIndex(code, 'closed', onlineRoomState.hostName, state.chips, 0);
       } else {
-        await ref.set({ isSystemDoc: true, status: 'waiting', guestId: '', guestName: '', updatedAt: Date.now() }, { merge: true });
+        const snap = await ref.get();
+        if (snap && snap.exists) {
+          const d = snap.data();
+          const nextSeats = (Array.isArray(d.seats) ? d.seats : []).filter(s => s.id !== mySeatId);
+          await ref.set({
+            isSystemDoc: true,
+            status: 'waiting',
+            seats: nextSeats,
+            updatedAt: Date.now()
+          }, { merge: true });
+          registerRoomToIndex(code, 'waiting', d.hostName || 'ホスト', d.hostChips || 100, nextSeats.length);
+        }
       }
     } catch (e) {}
   }
   onlineRoomState.active = false;
   onlineRoomState.code = '';
   onlineRoomState.role = '';
+  onlineRoomState.mySeatId = '';
+  onlineRoomState.seats = [];
   onlineRoomState.status = 'idle';
   document.getElementById('onlineRoomEntryView').style.display = 'block';
   document.getElementById('onlineRoomActiveLobby').style.display = 'none';
@@ -4517,7 +4985,7 @@ function sendOnlineToast(msg) {
   pushOnlineRoomPatch({
     toastEvent: {
       id: Math.random().toString(36).slice(2, 9),
-      senderRole: onlineRoomState.role,
+      senderSeatId: onlineRoomState.mySeatId,
       senderName: sanitizeDisplayPlayerName(state.playerName || 'プレイヤー'),
       msg,
       at: Date.now()
@@ -4535,37 +5003,50 @@ function handleOnlineRoomDocUpdate(data) {
     return;
   }
 
-  const prevStatus = onlineRoomState.status;
+  const prevCount = (onlineRoomState.seats || []).length;
   onlineRoomState.status = data.status || 'waiting';
   onlineRoomState.hostName = sanitizeDisplayPlayerName(data.hostName || 'ホスト');
   onlineRoomState.hostChips = Number(data.hostChips) || 100;
-  onlineRoomState.guestName = data.guestName ? sanitizeDisplayPlayerName(data.guestName) : '';
-  onlineRoomState.guestChips = Number(data.guestChips) || 100;
-
-  // ロビーUI更新
-  document.getElementById('lobbyHostName').textContent = onlineRoomState.hostName;
-  document.getElementById('lobbyHostChips').textContent = `🪙 ${onlineRoomState.hostChips.toLocaleString()}`;
-  document.getElementById('lobbyGuestName').textContent = onlineRoomState.guestName || '参加者待ち...';
-  document.getElementById('lobbyGuestChips').textContent = onlineRoomState.guestName ? `🪙 ${onlineRoomState.guestChips.toLocaleString()}` : '🪙 -';
-
-  // 相手チップをヘッダーの2Pバッジにもリアルタイム表示
-  state.p2Chips = onlineRoomState.role === 'host' ? onlineRoomState.guestChips : onlineRoomState.hostChips;
-  updateHeaderUI();
-
-  if (onlineRoomState.guestName) {
-    if (prevStatus !== 'connected') {
-      playSE('win');
-      showToast(`🎉 ${onlineRoomState.role === 'host' ? onlineRoomState.guestName : onlineRoomState.hostName} と通信ルームで繋がりました！`);
-    }
-    document.getElementById('onlineStatusMsg').innerHTML = `🟢 <strong>${onlineRoomState.hostName}</strong> ⚔️ <strong>${onlineRoomState.guestName}</strong> 接続完了！下のゲームを選ぶと一緒に始まります！`;
+  if (Array.isArray(data.seats) && data.seats.length > 0) {
+    onlineRoomState.seats = data.seats;
   } else {
-    document.getElementById('onlineStatusMsg').textContent = `🟢 部屋【${onlineRoomState.code}】待機中！友達の入室を待っています...`;
+    onlineRoomState.seats = [{ id: data.hostId || 'host', name: onlineRoomState.hostName, chips: onlineRoomState.hostChips, role: 'host' }];
+  }
+  const secondSeat = onlineRoomState.seats[1];
+  onlineRoomState.guestName = secondSeat ? sanitizeDisplayPlayerName(secondSeat.name) : '';
+  onlineRoomState.guestChips = secondSeat ? (Number(secondSeat.chips) || 100) : 100;
+
+  renderOnlineLobbySeats();
+
+  // ロビーのroleバッジ更新
+  const mySeatIdx = getMyOnlineSeatIdx();
+  const roleBadge = document.getElementById('onlineRoleBadge');
+  if (roleBadge) {
+    roleBadge.textContent = mySeatIdx === 0 ? '🏠 ホスト (1P)' : `🚪 ゲスト (${mySeatIdx + 1}P)`;
+  }
+
+  if (onlineRoomState.seats.length > prevCount && onlineRoomState.seats.length >= 2) {
+    const newest = onlineRoomState.seats[onlineRoomState.seats.length - 1];
+    if (newest && newest.id !== onlineRoomState.mySeatId) {
+      playSE('win');
+      showToast(`🎉 ${sanitizeDisplayPlayerName(newest.name)} さんがルームに参加しました！（${onlineRoomState.seats.length}/4人）`);
+    }
+  }
+
+  const statusMsgEl = document.getElementById('onlineStatusMsg');
+  if (statusMsgEl) {
+    if (onlineRoomState.seats.length >= 2) {
+      const namesStr = onlineRoomState.seats.map((s, i) => `${i + 1}P:${sanitizeDisplayPlayerName(s.name)}`).join(' / ');
+      statusMsgEl.innerHTML = `🟢 <strong>${onlineRoomState.seats.length}人接続中</strong> (${namesStr})<br>下のゲームを選ぶと全員で一斉スタートします！`;
+    } else {
+      statusMsgEl.textContent = `🟢 部屋【${onlineRoomState.code}】待機中！友達の入室を待っています (1/4人)...`;
+    }
   }
 
   // トースト通知同期
   if (data.toastEvent && data.toastEvent.id !== onlineRoomState.lastToastId) {
     onlineRoomState.lastToastId = data.toastEvent.id;
-    if (data.toastEvent.senderRole !== onlineRoomState.role) {
+    if (data.toastEvent.senderSeatId !== onlineRoomState.mySeatId) {
       showToast(`🌐 ${data.toastEvent.senderName}: ${data.toastEvent.msg}`);
     }
   }
@@ -4589,19 +5070,29 @@ function handleOnlineRoomDocUpdate(data) {
     }
   }
 
-  // 🥣 チンチロのリアルタイム同期反映
+  // 各ゲームのリアルタイム同期反映
   if (data.chinchiro && document.getElementById('screen-game-chinchiro').classList.contains('active')) {
     syncChinchiroFromOnline(data.chinchiro);
   }
-
-  // ⛵ ヨットのリアルタイム同期反映
   if (data.yacht && document.getElementById('screen-game-yacht').classList.contains('active')) {
     syncYachtFromOnline(data.yacht);
+  }
+  if (data.blackjack && document.getElementById('screen-game-blackjack').classList.contains('active')) {
+    syncBlackjackFromOnline(data.blackjack);
+  }
+  if (data.poker && document.getElementById('screen-game-poker').classList.contains('active')) {
+    syncPokerFromOnline(data.poker);
+  }
+  if (data.roulette && document.getElementById('screen-game-roulette').classList.contains('active')) {
+    syncRouletteFromOnline(data.roulette);
+  }
+  if (data.bigsix && document.getElementById('screen-game-bigsix').classList.contains('active')) {
+    syncBigSixFromOnline(data.bigsix);
   }
 }
 
 function isOnlineRoomReady() {
-  return state.playMode === 'online' && onlineRoomState.active && !!onlineRoomState.guestName;
+  return state.playMode === 'online' && onlineRoomState.active && (onlineRoomState.seats || []).length >= 2;
 }
 
 function getOpponentDisplayName() {
@@ -4610,7 +5101,7 @@ function getOpponentDisplayName() {
       ? (onlineRoomState.guestName || 'ゲスト(2P)')
       : (onlineRoomState.hostName || 'ホスト(1P)');
   }
-  if (state.playMode === 'local') return 'フレンド(2P)';
+  if (state.playMode === 'local') return `フレンド(${state.localPlayerCount || 2}人)`;
   return 'AI';
 }
 
@@ -4631,26 +5122,24 @@ function openGame(gameKey, fromRemoteSync = false) {
     }
     onlineRoomState.activeGame = gameKey;
     if (!fromRemoteSync) {
+      const nextSeats = (onlineRoomState.seats || []).map(s =>
+        s.id === onlineRoomState.mySeatId ? { ...s, chips: state.chips } : s
+      );
       pushOnlineRoomPatch({
         activeGame: gameKey,
-        hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
-        guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
+        seats: nextSeats,
+        hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips
       });
     }
   }
 
+  const players = getActivePlayers();
   const modeLabel = state.playMode === 'ai'
     ? '🤖 AI対戦'
-    : (state.playMode === 'local' ? '👥 フレンド2P戦' : `🌐 通信ルーム【${onlineRoomState.code}】`);
+    : (state.playMode === 'local' ? `👥 フレンド${players.length}人戦` : `🌐 ルーム【${onlineRoomState.code}】(${players.length}人)`);
 
   if (gameKey === 'chinchiro') {
     document.getElementById('ccModeBadge').textContent = modeLabel;
-    if (state.playMode === 'online') {
-      document.getElementById('ccDealerLabel').textContent = `🏠 親 (${onlineRoomState.hostName || 'ホスト'})`;
-      document.getElementById('ccPlayerLabel').textContent = `🚪 子 (${onlineRoomState.guestName || 'ゲスト'})`;
-    } else {
-      document.getElementById('ccDealerLabel').textContent = state.playMode === 'ai' ? '👹 親 (AIディーラー)' : '👥 親 (フレンド 2P)';
-    }
     resetChinchiroUI();
     navigateTo('screen-game-chinchiro');
   } else if (gameKey === 'yacht') {
@@ -4666,13 +5155,17 @@ function openGame(gameKey, fromRemoteSync = false) {
     resetPokerUI();
     navigateTo('screen-game-poker');
   } else if (gameKey === 'roulette') {
-    initRouletteUI();
+    const rlBadge = document.getElementById('rlModeBadge');
+    if (rlBadge) rlBadge.textContent = modeLabel;
+    initRouletteUI(fromRemoteSync);
     navigateTo('screen-game-roulette');
   } else if (gameKey === 'bigsix') {
-    initBigSixUI();
+    const bsBadge = document.getElementById('bsModeBadge');
+    if (bsBadge) bsBadge.textContent = modeLabel;
+    initBigSixUI(fromRemoteSync);
     navigateTo('screen-game-bigsix');
   } else if (gameKey === 'slot') {
-    document.getElementById('slModeBadge').textContent = modeLabel;
+    document.getElementById('slModeBadge').textContent = state.playMode === 'ai' ? '🧬 1人プレイ' : modeLabel;
     initSlotUI();
     navigateTo('screen-game-slot');
   }
@@ -4708,17 +5201,57 @@ function checkBankruptNotice() {
 }
 
 /* ============================================================================
-   🥣 ゲーム1：チンチロ (Chinchiro) ロジック
+   🥣 ゲーム1：チンチロ (Chinchiro：1人AI / 2〜4人フレンド・通信対応) ロジック
 ============================================================================ */
 let ccState = {
   bet: 10,
-  phase: 'idle', // 'idle' | 'dealer_manual' | 'player_turn' | 'rolling'
+  phase: 'idle', // 'idle' | 'multi_turn' | 'player_turn' | 'rolling'
+  turnIdx: 0,
   dealerRoll: null,
   playerRoll: null,
+  seatResults: [], // [{ text, roll }]
   lastDice: [1, 1, 1],
   rollsLeft: 3,
   roundId: ''
 };
+
+function renderChinchiroSeats() {
+  const grid = document.getElementById('ccSeatsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  if (state.playMode === 'ai') {
+    const dRes = ccState.seatResults[0] || { text: '待機中...' };
+    const pRes = ccState.seatResults[1] || { text: '待機中...' };
+    grid.innerHTML = `
+      <div class="multi-seat-card ${ccState.phase === 'rolling' && !ccState.dealerRoll ? 'active-turn' : ''}" style="border-color:#f87171;">
+        <div class="seat-name-row" style="color:#fca5a5;">👹 親 (AIディーラー)</div>
+        <div class="seat-result-row" style="color:#fff;">${dRes.text}</div>
+      </div>
+      <div class="multi-seat-card ${ccState.phase === 'player_turn' ? 'active-turn' : ''}" style="border-color:#38bdf8;">
+        <div class="seat-name-row" style="color:#7dd3fc;">🧑 子 (あなた)</div>
+        <div class="seat-result-row">${pRes.text}</div>
+      </div>
+    `;
+    return;
+  }
+
+  const players = getActivePlayers();
+  players.forEach((p, idx) => {
+    const resObj = ccState.seatResults[idx] || { text: '待機中...' };
+    const isTurn = ccState.phase === 'multi_turn' && ccState.turnIdx === idx;
+    const roleTag = idx === 0 ? '👑 親' : '🎲 子';
+    const card = document.createElement('div');
+    card.className = 'multi-seat-card' + (isTurn ? ' active-turn' : '');
+    card.style.borderColor = isTurn ? '#facc15' : p.color;
+    card.innerHTML = `
+      <div class="seat-name-row" style="color:${p.color};">${roleTag} ${p.name}</div>
+      <div class="seat-sub-row">🪙 ${getPlayerChipsByIdx(idx).toLocaleString()}</div>
+      <div class="seat-result-row">${resObj.text}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
 
 function adjustCcBet(val) {
   if (ccState.phase !== 'idle') return;
@@ -4741,19 +5274,23 @@ function adjustCcBet(val) {
 
 function resetChinchiroUI() {
   ccState.phase = 'idle';
+  ccState.turnIdx = 0;
+  ccState.dealerRoll = null;
+  ccState.seatResults = [];
   ccState.bet = Math.min(Math.max(1, ccState.bet), Math.max(1, state.chips));
   document.getElementById('ccBetText').textContent = ccState.bet;
-  document.getElementById('ccDealerResultText').textContent = '待機中...';
-  document.getElementById('ccPlayerResultText').textContent = '待機中...';
+  renderChinchiroSeats();
   if (state.playMode === 'online' && onlineRoomState.active) {
-    document.getElementById('ccDealerLabel').textContent = `🏠 親 (${onlineRoomState.hostName || 'ホスト'})`;
-    document.getElementById('ccPlayerLabel').textContent = `🚪 子 (${onlineRoomState.guestName || 'ゲスト'})`;
-    document.getElementById('ccBannerMsg').textContent = `🌐 通信ルーム【${onlineRoomState.code}】：賭けチップを決めて「勝負開始！」を押そう！`;
+    document.getElementById('ccBannerMsg').textContent = `🌐 ルーム【${onlineRoomState.code}】：賭けチップを決めて「勝負開始！」を押そう！`;
+  } else if (state.playMode === 'local') {
+    document.getElementById('ccBannerMsg').textContent = `👥 ${getActivePlayers().length}人チンチロ：1Pが親で他全員が子！賭け額を決めて開始！`;
   } else {
     document.getElementById('ccBannerMsg').textContent = '賭けチップを決めて「勝負開始！」を押そう！';
   }
   document.getElementById('ccStartBtn').style.display = 'inline-block';
+  document.getElementById('ccStartBtn').textContent = '🎲 勝負開始！';
   document.getElementById('ccRollBtn').style.display = 'none';
+  updateGameBackLockUI();
 }
 
 function syncChinchiroFromOnline(cData) {
@@ -4769,34 +5306,26 @@ function syncChinchiroFromOnline(cData) {
     });
   }
 
-  document.getElementById('ccDealerLabel').textContent = `🏠 親 (${onlineRoomState.hostName || 'ホスト'})`;
-  document.getElementById('ccPlayerLabel').textContent = `🚪 子 (${onlineRoomState.guestName || 'ゲスト'})`;
+  ccState.phase = cData.phase || 'idle';
+  ccState.turnIdx = Number(cData.turnIdx) || 0;
+  ccState.rollsLeft = typeof cData.rollsLeft === 'number' ? cData.rollsLeft : 3;
+  ccState.seatResults = Array.isArray(cData.seatResults) ? cData.seatResults : [];
+  ccState.dealerRoll = (ccState.seatResults[0] && ccState.seatResults[0].roll) || cData.dealerRoll || null;
 
-  if (cData.dealerText) document.getElementById('ccDealerResultText').textContent = cData.dealerText;
-  if (cData.playerText) document.getElementById('ccPlayerResultText').textContent = cData.playerText;
+  renderChinchiroSeats();
   if (cData.bannerMsg) document.getElementById('ccBannerMsg').textContent = cData.bannerMsg;
 
-  ccState.phase = cData.phase || 'idle';
-  ccState.rollsLeft = typeof cData.rollsLeft === 'number' ? cData.rollsLeft : 3;
-  ccState.dealerRoll = cData.dealerRoll || null;
-
-  const isHost = onlineRoomState.role === 'host';
+  const mySeatIdx = getMyOnlineSeatIdx();
+  const players = getActivePlayers();
   const startBtn = document.getElementById('ccStartBtn');
   const rollBtn = document.getElementById('ccRollBtn');
 
-  if (ccState.phase === 'dealer_manual') {
+  if (ccState.phase === 'multi_turn') {
     startBtn.style.display = 'none';
-    if (isHost) {
+    if (ccState.turnIdx === mySeatIdx) {
+      const curP = players[ccState.turnIdx];
       rollBtn.style.display = 'inline-block';
-      rollBtn.textContent = `🥣 親(あなた)が振る！ (残り${ccState.rollsLeft}回)`;
-    } else {
-      rollBtn.style.display = 'none';
-    }
-  } else if (ccState.phase === 'player_turn') {
-    startBtn.style.display = 'none';
-    if (!isHost) {
-      rollBtn.style.display = 'inline-block';
-      rollBtn.textContent = `🥣 子(あなた)が振る！ (残り${ccState.rollsLeft}回)`;
+      rollBtn.textContent = `🥣 ${ccState.turnIdx === 0 ? '親' : '子'}(${curP ? curP.name : 'あなた'})が振る！ (残り${ccState.rollsLeft}回)`;
     } else {
       rollBtn.style.display = 'none';
     }
@@ -4805,11 +5334,14 @@ function syncChinchiroFromOnline(cData) {
     startBtn.textContent = '🎲 次の勝負へ！';
     rollBtn.style.display = 'none';
 
-    // ラウンド決着時のチップ増減を1回だけ適用
     if (cData.roundId && cData.settled && onlineRoomState.processedRoundId !== cData.roundId) {
       onlineRoomState.processedRoundId = cData.roundId;
-      const hostDelta = Number(cData.hostDelta) || 0;
-      const myDelta = isHost ? hostDelta : -hostDelta;
+      let myDelta = 0;
+      if (Array.isArray(cData.deltas) && cData.deltas[mySeatIdx] !== undefined) {
+        myDelta = Number(cData.deltas[mySeatIdx]) || 0;
+      } else if (cData.hostDelta !== undefined) {
+        myDelta = mySeatIdx === 0 ? Number(cData.hostDelta) : -Number(cData.hostDelta);
+      }
       if (myDelta > 0) {
         state.chips += myDelta;
         state.totalWins++;
@@ -4821,13 +5353,11 @@ function syncChinchiroFromOnline(cData) {
         playSE('click');
       }
       saveState();
-      pushOnlineRoomPatch({
-        hostChips: isHost ? state.chips : onlineRoomState.hostChips,
-        guestChips: !isHost ? state.chips : onlineRoomState.guestChips
-      });
+      pushMyChipsToOnlineSeat();
       checkBankruptNotice();
     }
   }
+  updateGameBackLockUI();
 }
 
 function evaluateChinchiro(d1, d2, d3, isShonben = false) {
@@ -4835,23 +5365,18 @@ function evaluateChinchiro(d1, d2, d3, isShonben = false) {
     return { rankType: 'shonben', name: '💦 しょんべん（場外）', power: -10, mult: -1, instant: true };
   }
   const s = [d1, d2, d3].sort((a, b) => a - b);
-  // ピンゾロ (1-1-1)
   if (s[0] === 1 && s[1] === 1 && s[2] === 1) {
     return { rankType: 'pinzoro', name: '🔥 ピンゾロ (5倍)！', power: 100, mult: 5, instant: true };
   }
-  // アラシ (2〜6のゾロ目)
   if (s[0] === s[1] && s[1] === s[2]) {
     return { rankType: 'arashi', name: `⚡ ${s[0]}のアラシ (3倍)！`, power: 80 + s[0], mult: 3, instant: true };
   }
-  // シゴロ (4-5-6)
   if (s[0] === 4 && s[1] === 5 && s[2] === 6) {
     return { rankType: 'shigoro', name: '✨ シゴロ (2倍)！', power: 70, mult: 2, instant: true };
   }
-  // ヒフミ (1-2-3)
   if (s[0] === 1 && s[1] === 2 && s[2] === 3) {
     return { rankType: 'hifumi', name: '💀 ヒフミ (2倍払い)…', power: -20, mult: -2, instant: true };
   }
-  // 通常の目（ペア＋1個）
   let point = 0;
   if (s[0] === s[1]) point = s[2];
   else if (s[1] === s[2]) point = s[0];
@@ -4889,49 +5414,53 @@ function startChinchiroRound() {
   ccState.bet = Math.min(ccState.bet, state.chips);
   document.getElementById('ccBetText').textContent = ccState.bet;
   document.getElementById('ccStartBtn').style.display = 'none';
-  document.getElementById('ccDealerResultText').textContent = 'サイコロ準備中...';
-  document.getElementById('ccPlayerResultText').textContent = '親の結果待ち...';
+  ccState.seatResults = [];
+  ccState.dealerRoll = null;
 
-  // 🌐 通信ルーム対戦時：ホストが「親」、ゲストが「子」としてリアルタイム同期！
-  if (state.playMode === 'online' && onlineRoomState.active) {
+  const players = getActivePlayers();
+
+  // 👥 2〜4人（オンライン通信 または 1台フレンド対戦）
+  if (state.playMode === 'online' || state.playMode === 'local') {
     const newRoundId = 'cc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
     ccState.roundId = newRoundId;
-    ccState.phase = 'dealer_manual';
+    ccState.phase = 'multi_turn';
+    ccState.turnIdx = 0;
     ccState.rollsLeft = 3;
+    ccState.seatResults = players.map((_, i) => ({ text: i === 0 ? '親準備中...' : '親の結果待ち...', roll: null }));
+    renderChinchiroSeats();
     updateGameBackLockUI();
-    pushOnlineRoomPatch({
-      chinchiro: {
-        roundId: newRoundId,
-        bet: ccState.bet,
-        phase: 'dealer_manual',
-        rollsLeft: 3,
-        dealerRoll: null,
-        dealerText: '親がサイコロ準備中...',
-        playerText: '親の結果待ち...',
-        bannerMsg: `🏠 親（${onlineRoomState.hostName || 'ホスト'}）の番です！サイコロを振ってください！`,
-        settled: false,
-        hostDelta: 0
-      }
-    });
+
+    const bMsg = `👑 親（${players[0].name}）の番です！サイコロを振ってください！`;
+    document.getElementById('ccBannerMsg').textContent = bMsg;
+
+    if (state.playMode === 'online' && onlineRoomState.active) {
+      pushOnlineRoomPatch({
+        chinchiro: {
+          roundId: newRoundId,
+          bet: ccState.bet,
+          phase: 'multi_turn',
+          turnIdx: 0,
+          rollsLeft: 3,
+          seatResults: ccState.seatResults,
+          bannerMsg: bMsg,
+          settled: false,
+          deltas: []
+        }
+      });
+    } else {
+      const rollBtn = document.getElementById('ccRollBtn');
+      rollBtn.style.display = 'inline-block';
+      rollBtn.textContent = `🥣 親(${players[0].name})が振る！ (残り3回)`;
+    }
     return;
   }
 
-  // フレンド2P対戦時は親（2P）も自分でボタンを押して振る！
-  if (state.playMode === 'local') {
-    ccState.phase = 'dealer_manual';
-    ccState.rollsLeft = 3;
-    updateGameBackLockUI();
-    const rollBtn = document.getElementById('ccRollBtn');
-    rollBtn.style.display = 'inline-block';
-    rollBtn.textContent = `🥣 親(2P)が振る！ (残り3回)`;
-    document.getElementById('ccBannerMsg').textContent = `👥 親（フレンド 2P）の番です！サイコロを振ってください！`;
-    return;
-  }
-
+  // 🤖 AI対戦（従来通り1vs1）
   ccState.phase = 'rolling';
+  ccState.seatResults = [{ text: 'サイコロ準備中...', roll: null }, { text: '親の結果待ち...', roll: null }];
+  renderChinchiroSeats();
   updateGameBackLockUI();
 
-  // AI対戦時は親（AI）が最大3回自動で振る
   let dealerTries = 0;
   function dealerStep() {
     dealerTries++;
@@ -4940,13 +5469,15 @@ function startChinchiroRound() {
     const shonben = Math.random() < 0.015;
     animateBowlDice(d, () => {
       const res = evaluateChinchiro(d[0], d[1], d[2], shonben);
-      document.getElementById('ccDealerResultText').textContent = `${res.name} (${d.join('-')})`;
+      ccState.seatResults[0] = { text: `${res.name} (${d.join('-')})`, roll: res };
+      renderChinchiroSeats();
       if (!res.instant && dealerTries < 3) {
         setTimeout(dealerStep, 600);
       } else {
         ccState.dealerRoll = res;
         ccState.rollsLeft = 3;
         ccState.phase = 'player_turn';
+        renderChinchiroSeats();
         const rollBtn = document.getElementById('ccRollBtn');
         rollBtn.style.display = 'inline-block';
         rollBtn.textContent = `🥣 子(あなた)が振る！ (残り${ccState.rollsLeft}回)`;
@@ -4958,73 +5489,90 @@ function startChinchiroRound() {
 }
 
 function playerRollChinchiro() {
-  if (ccState.phase === 'dealer_manual') {
-    if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'host') {
-      showToast('🏠 現在は親（ホスト）がサイコロを振る番です！');
+  // 2〜4人モードのターン処理
+  if (ccState.phase === 'multi_turn') {
+    const players = getActivePlayers();
+    const mySeatIdx = getMyOnlineSeatIdx();
+    if (state.playMode === 'online' && onlineRoomState.active && ccState.turnIdx !== mySeatIdx) {
+      showToast(`⏳ 現在は ${players[ccState.turnIdx] ? players[ccState.turnIdx].name : '相手'} の番です！`);
       return;
     }
+
+    const curIdx = ccState.turnIdx;
+    const curPlayer = players[curIdx];
     ccState.phase = 'rolling';
     ccState.rollsLeft--;
     document.getElementById('ccRollBtn').style.display = 'none';
+
     const d = [1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)];
     const shonben = Math.random() < 0.015;
     animateBowlDice(d, () => {
       const res = evaluateChinchiro(d[0], d[1], d[2], shonben);
-      const dText = `${res.name} (${d.join('-')})`;
-      document.getElementById('ccDealerResultText').textContent = dText;
+      const rText = `${res.name} (${d.join('-')})`;
+      ccState.seatResults[curIdx] = { text: rText, roll: res };
+
       if (!res.instant && ccState.rollsLeft > 0) {
-        ccState.phase = 'dealer_manual';
-        const rollBtn = document.getElementById('ccRollBtn');
-        rollBtn.style.display = 'inline-block';
-        rollBtn.textContent = `🥣 親もう1回振る！ (残り${ccState.rollsLeft}回)`;
-        const bMsg = `親：目なし！あと ${ccState.rollsLeft} 回振れます！`;
+        ccState.phase = 'multi_turn';
+        renderChinchiroSeats();
+        const bMsg = `${curPlayer.name}：目なし！あと ${ccState.rollsLeft} 回振れます！`;
         document.getElementById('ccBannerMsg').textContent = bMsg;
         if (state.playMode === 'online' && onlineRoomState.active) {
           pushOnlineRoomPatch({
             chinchiro: {
               ...(onlineRoomState.lastData && onlineRoomState.lastData.chinchiro ? onlineRoomState.lastData.chinchiro : {}),
-              phase: 'dealer_manual',
+              phase: 'multi_turn',
+              turnIdx: curIdx,
               rollsLeft: ccState.rollsLeft,
               lastDice: d,
-              dealerText: dText,
-              bannerMsg: bMsg
-            }
-          });
-        }
-      } else {
-        ccState.dealerRoll = res;
-        ccState.rollsLeft = 3;
-        ccState.phase = 'player_turn';
-        const bMsg = `親は「${res.name}」！次は子（${state.playMode === 'online' ? (onlineRoomState.guestName || 'ゲスト') : '1P'}）の番です！`;
-        document.getElementById('ccBannerMsg').textContent = bMsg;
-        if (state.playMode === 'online' && onlineRoomState.active) {
-          pushOnlineRoomPatch({
-            chinchiro: {
-              ...(onlineRoomState.lastData && onlineRoomState.lastData.chinchiro ? onlineRoomState.lastData.chinchiro : {}),
-              phase: 'player_turn',
-              rollsLeft: 3,
-              lastDice: d,
-              dealerRoll: res,
-              dealerText: dText,
-              playerText: '子がサイコロを振っています...',
+              seatResults: ccState.seatResults,
               bannerMsg: bMsg
             }
           });
         } else {
           const rollBtn = document.getElementById('ccRollBtn');
           rollBtn.style.display = 'inline-block';
-          rollBtn.textContent = `🥣 子(1P)が振る！ (残り3回)`;
+          rollBtn.textContent = `🥣 ${curPlayer.name} もう1回！ (残り${ccState.rollsLeft}回)`;
+        }
+      } else {
+        if (curIdx === 0) ccState.dealerRoll = res;
+        // 次のプレイヤーへ
+        const nextIdx = curIdx + 1;
+        if (nextIdx < players.length) {
+          ccState.turnIdx = nextIdx;
+          ccState.rollsLeft = 3;
+          ccState.phase = 'multi_turn';
+          const nextP = players[nextIdx];
+          if (ccState.seatResults[nextIdx]) ccState.seatResults[nextIdx].text = 'サイコロ準備中...';
+          renderChinchiroSeats();
+          const bMsg = `${curPlayer.name}は「${res.name}」！次は 🎲子 ${nextP.name} の番です！`;
+          document.getElementById('ccBannerMsg').textContent = bMsg;
+          if (state.playMode === 'online' && onlineRoomState.active) {
+            pushOnlineRoomPatch({
+              chinchiro: {
+                ...(onlineRoomState.lastData && onlineRoomState.lastData.chinchiro ? onlineRoomState.lastData.chinchiro : {}),
+                phase: 'multi_turn',
+                turnIdx: nextIdx,
+                rollsLeft: 3,
+                lastDice: d,
+                seatResults: ccState.seatResults,
+                bannerMsg: bMsg
+              }
+            });
+          } else {
+            const rollBtn = document.getElementById('ccRollBtn');
+            rollBtn.style.display = 'inline-block';
+            rollBtn.textContent = `🥣 ${nextP.name}が振る！ (残り3回)`;
+          }
+        } else {
+          finishChinchiroMultiRound(d);
         }
       }
     });
     return;
   }
 
+  // AI対戦：子(あなた)のターン
   if (ccState.phase !== 'player_turn') return;
-  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'guest') {
-    showToast('🚪 現在は子（ゲスト）がサイコロを振る番です！');
-    return;
-  }
   ccState.phase = 'rolling';
   ccState.rollsLeft--;
   document.getElementById('ccRollBtn').style.display = 'none';
@@ -5034,34 +5582,81 @@ function playerRollChinchiro() {
   animateBowlDice(d, () => {
     const res = evaluateChinchiro(d[0], d[1], d[2], shonben);
     const pText = `${res.name} (${d.join('-')})`;
-    document.getElementById('ccPlayerResultText').textContent = pText;
+    ccState.seatResults[1] = { text: pText, roll: res };
+    renderChinchiroSeats();
 
     if (!res.instant && ccState.rollsLeft > 0) {
       ccState.phase = 'player_turn';
       const rollBtn = document.getElementById('ccRollBtn');
       rollBtn.style.display = 'inline-block';
       rollBtn.textContent = `🥣 もう1回振る！ (残り${ccState.rollsLeft}回)`;
-      const bMsg = `子：目なし！あと ${ccState.rollsLeft} 回振れます！`;
-      document.getElementById('ccBannerMsg').textContent = bMsg;
-      if (state.playMode === 'online' && onlineRoomState.active) {
-        pushOnlineRoomPatch({
-          chinchiro: {
-            ...(onlineRoomState.lastData && onlineRoomState.lastData.chinchiro ? onlineRoomState.lastData.chinchiro : {}),
-            phase: 'player_turn',
-            rollsLeft: ccState.rollsLeft,
-            lastDice: d,
-            playerText: pText,
-            bannerMsg: bMsg
-          }
-        });
-      }
+      document.getElementById('ccBannerMsg').textContent = `子：目なし！あと ${ccState.rollsLeft} 回振れます！`;
     } else {
-      finishChinchiroRound(ccState.dealerRoll, res, d, pText);
+      finishChinchiroRound(ccState.dealerRoll, res);
     }
   });
 }
 
-function finishChinchiroRound(dealer, player, finalDice = null, pText = '') {
+function finishChinchiroMultiRound(finalDice) {
+  ccState.phase = 'idle';
+  const players = getActivePlayers();
+  const dealer = ccState.seatResults[0].roll;
+  const deltas = players.map(() => 0);
+  const summaryParts = [];
+
+  for (let i = 1; i < players.length; i++) {
+    const child = ccState.seatResults[i].roll;
+    if (child.power > dealer.power) {
+      const winMult = child.mult > 0 ? child.mult : (dealer.mult < 0 ? Math.abs(dealer.mult) : 1);
+      const amt = ccState.bet * winMult;
+      deltas[i] += amt;
+      deltas[0] -= amt;
+      summaryParts.push(`${players[i].name}+${amt}`);
+    } else if (child.power < dealer.power) {
+      const loseMult = child.mult < 0 ? Math.abs(child.mult) : (dealer.mult > 0 ? dealer.mult : 1);
+      const amt = ccState.bet * loseMult;
+      deltas[i] -= amt;
+      deltas[0] += amt;
+      summaryParts.push(`${players[i].name}-${amt}`);
+    } else {
+      summaryParts.push(`${players[i].name}±0`);
+    }
+  }
+
+  const outcomeMsg = `🏁 決着！ 親(${players[0].name}): ${deltas[0] >= 0 ? '+' : ''}${deltas[0]}🪙 ｜ ${summaryParts.join(' / ')}`;
+  document.getElementById('ccBannerMsg').textContent = outcomeMsg;
+  document.getElementById('ccStartBtn').style.display = 'inline-block';
+  document.getElementById('ccStartBtn').textContent = '🎲 次の勝負へ！';
+
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    const curCc = (onlineRoomState.lastData && onlineRoomState.lastData.chinchiro) || {};
+    pushOnlineRoomPatch({
+      chinchiro: {
+        ...curCc,
+        roundId: ccState.roundId || ('cc_' + Date.now()),
+        phase: 'idle',
+        lastDice: finalDice || [1, 1, 1],
+        seatResults: ccState.seatResults,
+        bannerMsg: outcomeMsg,
+        settled: true,
+        deltas
+      }
+    });
+    updateGameBackLockUI();
+    return;
+  }
+
+  // ローカル2〜4人精算
+  players.forEach((_, idx) => {
+    adjustPlayerChipsByIdx(idx, deltas[idx]);
+  });
+  playSE(deltas[0] >= 0 ? 'win' : 'click');
+  renderChinchiroSeats();
+  updateGameBackLockUI();
+  checkBankruptNotice();
+}
+
+function finishChinchiroRound(dealer, player) {
   ccState.phase = 'idle';
   document.getElementById('ccStartBtn').style.display = 'inline-block';
   document.getElementById('ccStartBtn').textContent = '🎲 次の勝負へ！';
@@ -5069,107 +5664,80 @@ function finishChinchiroRound(dealer, player, finalDice = null, pText = '') {
   let delta = 0;
   let outcomeMsg = '';
 
-  // 🌐 通信ルーム対戦時：親(ホスト) vs 子(ゲスト) の勝敗を双方に即時同期！
-  if (state.playMode === 'online' && onlineRoomState.active) {
-    const curCc = (onlineRoomState.lastData && onlineRoomState.lastData.chinchiro) || {};
-    const roundId = curCc.roundId || ('cc_' + Date.now());
-    let hostDelta = 0;
-    if (player.power > dealer.power) {
-      const winMult = player.mult > 0 ? player.mult : (dealer.mult < 0 ? Math.abs(dealer.mult) : 1);
-      delta = ccState.bet * winMult;
-      hostDelta = -delta; // 子(ゲスト)の勝ち、親(ホスト)の負け
-      outcomeMsg = `🎉 子（${onlineRoomState.guestName || 'ゲスト'}）の勝ち！ (${player.name}) ➔ 🪙${delta} チップ移動！`;
-    } else if (player.power < dealer.power) {
-      const loseMult = player.mult < 0 ? Math.abs(player.mult) : (dealer.mult > 0 ? dealer.mult : 1);
-      delta = ccState.bet * loseMult;
-      hostDelta = delta; // 親(ホスト)の勝ち、子(ゲスト)の負け
-      outcomeMsg = `🏠 親（${onlineRoomState.hostName || 'ホスト'}）の勝ち！ (${dealer.name}) ➔ 🪙${delta} チップ移動！`;
-    } else {
-      hostDelta = 0;
-      outcomeMsg = `🤝 引き分け（分け）！チップ移動なし`;
-    }
-
-    pushOnlineRoomPatch({
-      chinchiro: {
-        ...curCc,
-        roundId,
-        phase: 'idle',
-        lastDice: finalDice || [1, 1, 1],
-        playerText: pText || `${player.name}`,
-        bannerMsg: outcomeMsg,
-        settled: true,
-        hostDelta
-      }
-    });
-    return;
-  }
-
   if (player.power > dealer.power) {
-    // プレイヤーの勝ち！
     const winMult = player.mult > 0 ? player.mult : (dealer.mult < 0 ? Math.abs(dealer.mult) : 1);
     delta = ccState.bet * winMult;
     state.chips += delta;
-    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - delta);
     state.totalWins++;
     playSE('win');
     outcomeMsg = `🎉 あなたの勝ち！ (${player.name}) ➔ +${delta} チップ獲得！`;
   } else if (player.power < dealer.power) {
-    // プレイヤーの負け
     const loseMult = player.mult < 0 ? Math.abs(player.mult) : (dealer.mult > 0 ? dealer.mult : 1);
     delta = Math.min(state.chips, ccState.bet * loseMult);
     state.chips -= delta;
-    if (state.playMode === 'local') state.p2Chips += delta;
     playSE('lose');
     outcomeMsg = `💀 親の勝ち… (${dealer.name}) ➔ -${delta} チップ`;
   } else {
-    // 引き分け
     playSE('click');
     outcomeMsg = `🤝 引き分け（分け）！チップ移動なし`;
   }
 
   document.getElementById('ccBannerMsg').textContent = outcomeMsg;
   saveState();
+  renderChinchiroSeats();
+  updateGameBackLockUI();
   checkBankruptNotice();
 }
 
 /* ============================================================================
-   ⛵ ゲーム2：ヨット (Yacht - 1戦点差マッチ) ロジック
+   ⛵ ゲーム2：ヨット (Yacht - 1戦点差マッチ：1人AI / 2〜4人フレンド・通信対応) ロジック
 ============================================================================ */
 const YACHT_CATEGORIES = [
-  { id: 'ones', name: '1️⃣ エース (1の合計)', section: 'upper' },
-  { id: 'twos', name: '2️⃣ デュース (2の合計)', section: 'upper' },
-  { id: 'threes', name: '3️⃣ トレイ (3の合計)', section: 'upper' },
-  { id: 'fours', name: '4️⃣ フォー (4の合計)', section: 'upper' },
-  { id: 'fives', name: '5️⃣ ファイブ (5の合計)', section: 'upper' },
-  { id: 'sixes', name: '6️⃣ シックス (6の合計)', section: 'upper' },
-  { id: 'choice', name: '🎯 チョイス (全5個の合計)', section: 'lower' },
-  { id: 'four_dice', name: '🍀 フォーダイス (同目4個〜)', section: 'lower' },
-  { id: 'full_house', name: '🏠 フルハウス (3個＋2個)', section: 'lower' },
-  { id: 's_straight', name: '📏 S.ストレート (4連続:15点)', section: 'lower' },
-  { id: 'b_straight', name: '📐 B.ストレート (5連続:30点)', section: 'lower' },
-  { id: 'yacht', name: '👑 ヨット (5個すべて同じ:50点)', section: 'lower' }
+  { id: 'ones', name: '1️⃣ エース (1の合計)', shortName: '1️⃣ エース', section: 'upper' },
+  { id: 'twos', name: '2️⃣ デュース (2の合計)', shortName: '2️⃣ デュース', section: 'upper' },
+  { id: 'threes', name: '3️⃣ トレイ (3の合計)', shortName: '3️⃣ トレイ', section: 'upper' },
+  { id: 'fours', name: '4️⃣ フォー (4の合計)', shortName: '4️⃣ フォー', section: 'upper' },
+  { id: 'fives', name: '5️⃣ ファイブ (5の合計)', shortName: '5️⃣ ファイブ', section: 'upper' },
+  { id: 'sixes', name: '6️⃣ シックス (6の合計)', shortName: '6️⃣ シックス', section: 'upper' },
+  { id: 'choice', name: '🎯 チョイス (全5個の合計)', shortName: '🎯 チョイス', section: 'lower' },
+  { id: 'four_dice', name: '🍀 フォーダイス (同目4個〜)', shortName: '🍀 4ダイス', section: 'lower' },
+  { id: 'full_house', name: '🏠 フルハウス (3個＋2個)', shortName: '🏠 フルハウス', section: 'lower' },
+  { id: 's_straight', name: '📏 S.ストレート (4連続:15点)', shortName: '📏 S.スト', section: 'lower' },
+  { id: 'b_straight', name: '📐 B.ストレート (5連続:30点)', shortName: '📐 B.スト', section: 'lower' },
+  { id: 'yacht', name: '👑 ヨット (5個すべて同じ:50点)', shortName: '👑 ヨット', section: 'lower' }
 ];
 
 let ytState = {
   matchId: '',
   rate: 1, // 1点差あたりのチップ
   round: 1,
-  currentTurn: 'p1', // 'p1' (ホスト/1P) | 'p2' (ゲスト/2P/AI)
+  turnIdx: 0, // 0..N-1
+  currentTurn: 'p1', // 'p1'..'p4'
   rollsLeft: 3,
   hasRolledThisTurn: false,
   dice: [1, 2, 3, 4, 5],
   kept: [false, false, false, false, false],
-  scores: { p1: {}, p2: {} },
+  scores: { p1: {}, p2: {}, p3: {}, p4: {} },
   matchOver: false
 };
 
+function getYachtRoster() {
+  if (state.playMode === 'ai') {
+    const p1 = getActivePlayers()[0];
+    return [
+      { idx: 0, slotKey: 'p1', name: p1.name, color: PLAYER_COLORS[0], isAi: false },
+      { idx: 1, slotKey: 'p2', name: '🤖 AI', color: PLAYER_COLORS[1], isAi: true }
+    ];
+  }
+  return getActivePlayers().map(p => ({ ...p, isAi: false }));
+}
+
 function isMyYachtTurn() {
   if (state.playMode === 'online' && onlineRoomState.active) {
-    if (onlineRoomState.role === 'host') return ytState.currentTurn === 'p1';
-    if (onlineRoomState.role === 'guest') return ytState.currentTurn === 'p2';
+    return ytState.turnIdx === getMyOnlineSeatIdx();
   }
-  if (state.playMode === 'ai') return ytState.currentTurn === 'p1';
-  return true; // local 2P
+  if (state.playMode === 'ai') return ytState.turnIdx === 0;
+  return true;
 }
 
 function pushYachtStateToOnline() {
@@ -5179,6 +5747,7 @@ function pushYachtStateToOnline() {
       matchId: ytState.matchId || ('yt_' + Date.now()),
       rate: ytState.rate,
       round: ytState.round,
+      turnIdx: ytState.turnIdx,
       currentTurn: ytState.currentTurn,
       rollsLeft: ytState.rollsLeft,
       hasRolledThisTurn: ytState.hasRolledThisTurn,
@@ -5186,7 +5755,9 @@ function pushYachtStateToOnline() {
       kept: [...ytState.kept],
       scores: {
         p1: { ...(ytState.scores.p1 || {}) },
-        p2: { ...(ytState.scores.p2 || {}) }
+        p2: { ...(ytState.scores.p2 || {}) },
+        p3: { ...(ytState.scores.p3 || {}) },
+        p4: { ...(ytState.scores.p4 || {}) }
       },
       matchOver: ytState.matchOver
     }
@@ -5200,7 +5771,8 @@ function syncYachtFromOnline(yData) {
   ytState.rate = Number(yData.rate) || 1;
   document.getElementById('ytRateText').textContent = ytState.rate;
   ytState.round = Number(yData.round) || 1;
-  ytState.currentTurn = yData.currentTurn || 'p1';
+  ytState.turnIdx = typeof yData.turnIdx === 'number' ? yData.turnIdx : (yData.currentTurn === 'p2' ? 1 : 0);
+  ytState.currentTurn = yData.currentTurn || ('p' + (ytState.turnIdx + 1));
   ytState.rollsLeft = typeof yData.rollsLeft === 'number' ? yData.rollsLeft : 3;
   ytState.hasRolledThisTurn = !!yData.hasRolledThisTurn;
   if (Array.isArray(yData.dice) && yData.dice.length === 5) ytState.dice = [...yData.dice];
@@ -5208,7 +5780,9 @@ function syncYachtFromOnline(yData) {
   if (yData.scores) {
     ytState.scores = {
       p1: { ...(yData.scores.p1 || {}) },
-      p2: { ...(yData.scores.p2 || {}) }
+      p2: { ...(yData.scores.p2 || {}) },
+      p3: { ...(yData.scores.p3 || {}) },
+      p4: { ...(yData.scores.p4 || {}) }
     };
   }
   ytState.matchOver = !!yData.matchOver;
@@ -5231,21 +5805,19 @@ function setYachtRate(r) {
 function initYachtMatch(fromRemoteSync = false) {
   ytState.matchId = 'yt_' + Date.now();
   ytState.round = 1;
+  ytState.turnIdx = 0;
   ytState.currentTurn = 'p1';
   ytState.rollsLeft = 3;
   ytState.hasRolledThisTurn = false;
   ytState.dice = [1, 2, 3, 4, 5];
   ytState.kept = [false, false, false, false, false];
-  ytState.scores = { p1: {}, p2: {} };
+  ytState.scores = { p1: {}, p2: {}, p3: {}, p4: {} };
   ytState.matchOver = false;
-  if (state.playMode === 'online' && onlineRoomState.active) {
-    document.getElementById('ytColP1').textContent = `🏠 ${onlineRoomState.hostName || 'ホスト'}`;
-    document.getElementById('ytColP2').textContent = `🚪 ${onlineRoomState.guestName || 'ゲスト'}`;
-    if (!fromRemoteSync) pushYachtStateToOnline();
-  } else {
-    document.getElementById('ytColP2').textContent = state.playMode === 'ai' ? '🤖 AI' : '👥 フレンド(2P)';
+  if (state.playMode === 'online' && onlineRoomState.active && !fromRemoteSync) {
+    pushYachtStateToOnline();
   }
   renderYachtUI();
+  updateGameBackLockUI();
 }
 
 function calcYachtCategoryScore(catId, dice) {
@@ -5286,7 +5858,7 @@ function calcYachtCategoryScore(catId, dice) {
 }
 
 function getPlayerTotalScore(playerKey) {
-  const sc = ytState.scores[playerKey];
+  const sc = ytState.scores[playerKey] || {};
   let upper = 0;
   let lower = 0;
   YACHT_CATEGORIES.forEach(c => {
@@ -5352,14 +5924,19 @@ function advanceYachtTurn() {
   ytState.hasRolledThisTurn = false;
   ytState.kept = [false, false, false, false, false];
 
-  if (ytState.currentTurn === 'p1') {
-    ytState.currentTurn = 'p2';
+  const roster = getYachtRoster();
+  const nextIdx = ytState.turnIdx + 1;
+
+  if (nextIdx < roster.length) {
+    ytState.turnIdx = nextIdx;
+    ytState.currentTurn = roster[nextIdx].slotKey;
     renderYachtUI();
     pushYachtStateToOnline();
-    if (state.playMode === 'ai') {
+    if (state.playMode === 'ai' && roster[nextIdx].isAi) {
       setTimeout(runAiYachtTurn, 550);
     }
   } else {
+    ytState.turnIdx = 0;
     ytState.currentTurn = 'p1';
     ytState.round++;
     if (ytState.round > YACHT_CATEGORIES.length) {
@@ -5373,14 +5950,12 @@ function advanceYachtTurn() {
 
 function runAiYachtTurn() {
   if (ytState.matchOver) return;
-  // AI 1回目のロール
   for (let i = 0; i < 5; i++) ytState.dice[i] = 1 + Math.floor(Math.random() * 6);
   ytState.hasRolledThisTurn = true;
   ytState.rollsLeft = 2;
   playSE('dice');
   renderYachtUI();
 
-  // 最も多い目をキープして2回目ロール
   setTimeout(() => {
     const counts = [0, 0, 0, 0, 0, 0, 0];
     ytState.dice.forEach(d => counts[d]++);
@@ -5397,7 +5972,6 @@ function runAiYachtTurn() {
     playSE('dice');
     renderYachtUI();
 
-    // 最もスコア効率の高い空き役を選択
     setTimeout(() => {
       const openCats = YACHT_CATEGORIES.filter(c => ytState.scores.p2[c.id] === undefined);
       let chosenCat = openCats[0].id;
@@ -5421,6 +5995,7 @@ function runAiYachtTurn() {
 function finishYachtMatch() {
   ytState.matchOver = true;
   renderYachtUI();
+  updateGameBackLockUI();
   if (state.playMode === 'online' && onlineRoomState.active) {
     onlineRoomState.processedRoundId = ytState.matchId || ('yt_' + Date.now());
     pushYachtStateToOnline();
@@ -5429,75 +6004,98 @@ function finishYachtMatch() {
 }
 
 function settleYachtChipsAndModal() {
-  const p1Tot = getPlayerTotalScore('p1').total;
-  const p2Tot = getPlayerTotalScore('p2').total;
-  const diff = Math.abs(p1Tot - p2Tot);
-  const chipDelta = diff * ytState.rate;
+  const roster = getYachtRoster();
+  const totals = roster.map(r => getPlayerTotalScore(r.slotKey).total);
 
-  const isGuestInOnline = (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role === 'guest');
-  const myScore = isGuestInOnline ? p2Tot : p1Tot;
-  const rivalScore = isGuestInOnline ? p1Tot : p2Tot;
+  // 2人戦時は従来通り1対1の点差×レート
+  if (roster.length === 2) {
+    const diff = Math.abs(totals[0] - totals[1]);
+    const chipDelta = diff * ytState.rate;
+    const myIdx = state.playMode === 'online' ? getMyOnlineSeatIdx() : 0;
+    const rivalIdx = myIdx === 0 ? 1 : 0;
+    const myScore = totals[myIdx];
+    const rivalScore = totals[rivalIdx];
 
-  if (myScore > rivalScore) {
-    state.chips += chipDelta;
-    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - chipDelta);
-    state.totalWins++;
-    saveState();
-    showRewardModal(
-      '⛵',
-      'ヨット 点差マッチ勝利！',
-      `あなた: <strong>${myScore}点</strong> vs 相手: <strong>${rivalScore}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${chipDelta} チップ</span> 獲得！`,
-      '🎉 最高！'
-    );
-  } else if (myScore < rivalScore) {
-    const lost = Math.min(state.chips, chipDelta);
-    state.chips -= lost;
-    if (state.playMode === 'local') state.p2Chips += lost;
-    saveState();
-    if (state.chips <= 0) {
-      checkBankruptNotice();
+    if (state.playMode === 'local') {
+      if (totals[0] > totals[1]) {
+        adjustPlayerChipsByIdx(0, chipDelta);
+        adjustPlayerChipsByIdx(1, -chipDelta);
+      } else if (totals[1] > totals[0]) {
+        adjustPlayerChipsByIdx(0, -chipDelta);
+        adjustPlayerChipsByIdx(1, chipDelta);
+      }
+    } else if (state.playMode === 'online') {
+      if (myScore > rivalScore) adjustPlayerChipsByIdx(myIdx, chipDelta);
+      else if (myScore < rivalScore) adjustPlayerChipsByIdx(myIdx, -chipDelta);
     } else {
-      showRewardModal(
-        '⛵',
-        'ヨット 点差マッチ敗北…',
-        `あなた: <strong>${myScore}点</strong> vs 相手: <strong>${rivalScore}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 -${lost} チップ</span> 失いました…`,
-        '🔄 リベンジする'
-      );
+      if (myScore > rivalScore) adjustPlayerChipsByIdx(0, chipDelta);
+      else if (myScore < rivalScore) adjustPlayerChipsByIdx(0, -chipDelta);
     }
-  } else {
-    showRewardModal('🤝', '同点ドロー！', `${myScore}点 対 ${rivalScore}点 で完全引き分け！チップ移動はありません。`, 'OK');
+
+    if (myScore > rivalScore) {
+      showRewardModal('⛵', 'ヨット 点差マッチ勝利！', `あなた: <strong>${myScore}点</strong> vs 相手: <strong>${rivalScore}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${chipDelta} チップ</span> 獲得！`, '🎉 最高！');
+    } else if (myScore < rivalScore) {
+      if (state.chips <= 0) checkBankruptNotice();
+      else showRewardModal('⛵', 'ヨット 点差マッチ敗北…', `あなた: <strong>${myScore}点</strong> vs 相手: <strong>${rivalScore}点</strong><br>点差 <strong>${diff}点 × ${ytState.rate}チップ</strong> により<br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 -${chipDelta} チップ</span> 失いました…`, '🔄 リベンジする');
+    } else {
+      showRewardModal('🤝', '同点ドロー！', `${myScore}点 対 ${rivalScore}点 で完全引き分け！チップ移動はありません。`, 'OK');
+    }
+    return;
   }
+
+  // 3〜4人戦時は平均点との点差×レートで公平ゼロサム精算！
+  const avg = totals.reduce((a, b) => a + b, 0) / roster.length;
+  const deltas = totals.map(t => Math.round((t - avg) * ytState.rate));
+  const ranked = roster.map((r, i) => ({ name: r.name, score: totals[i], delta: deltas[i], idx: i }))
+    .sort((a, b) => b.score - a.score);
+
+  if (state.playMode === 'local') {
+    deltas.forEach((d, idx) => adjustPlayerChipsByIdx(idx, d));
+  } else if (state.playMode === 'online') {
+    const myIdx = getMyOnlineSeatIdx();
+    if (deltas[myIdx] !== undefined) adjustPlayerChipsByIdx(myIdx, deltas[myIdx]);
+  }
+
+  const lines = ranked.map((x, rank) => {
+    const medal = rank === 0 ? '🥇' : (rank === 1 ? '🥈' : (rank === 2 ? '🥉' : '4️⃣'));
+    const dStr = x.delta >= 0 ? `<span style="color:#4ade80;">+${x.delta}🪙</span>` : `<span style="color:#f87171;">${x.delta}🪙</span>`;
+    return `${medal} <strong>${x.name}</strong>：${x.score}点 (${dStr})`;
+  }).join('<br>');
+
+  showRewardModal('⛵', `ヨット ${roster.length}人マッチ決着！`, lines, '👑 結果確認！');
+  checkBankruptNotice();
 }
 
 function renderYachtUI() {
-  // ターン表示
+  const roster = getYachtRoster();
+  const isMulti3Plus = roster.length >= 3;
+  const tableEl = document.getElementById('ytScoreTable');
+  if (tableEl) tableEl.classList.toggle('multi-4p', isMulti3Plus);
+
+  const headRow = document.getElementById('ytTableHeadRow');
+  if (headRow) {
+    headRow.innerHTML = `<th style="text-align:left;">役</th>` + roster.map((r, idx) => {
+      const isTurn = !ytState.matchOver && ytState.turnIdx === idx;
+      return `<th style="color:${r.color}; ${isTurn ? 'background:rgba(250,204,21,0.22); border-bottom:3px solid #facc15;' : ''}">${r.name}</th>`;
+    }).join('');
+  }
+
   const banner = document.getElementById('ytTurnBanner');
   const rollBtn = document.getElementById('ytRollBtn');
-  const isOnline = (state.playMode === 'online' && onlineRoomState.active);
-  if (isOnline) {
-    document.getElementById('ytColP1').textContent = `🏠 ${onlineRoomState.hostName || 'ホスト'}`;
-    document.getElementById('ytColP2').textContent = `🚪 ${onlineRoomState.guestName || 'ゲスト'}`;
-  }
   if (ytState.matchOver) {
     banner.textContent = '🏁 全12ラウンド終了！「🔄 新規1戦」で再戦できます';
     rollBtn.disabled = true;
     rollBtn.textContent = '試合終了';
   } else {
-    let who = '';
-    if (isOnline) {
-      const turnOwnerName = ytState.currentTurn === 'p1'
-        ? `🏠 ${onlineRoomState.hostName || 'ホスト'}`
-        : `🚪 ${onlineRoomState.guestName || 'ゲスト'}`;
-      who = isMyYachtTurn() ? `🎯 あなたの番 (${turnOwnerName})` : `⏳ 相手の番 (${turnOwnerName})`;
-    } else {
-      who = ytState.currentTurn === 'p1' ? '🧑 あなたの番' : (state.playMode === 'ai' ? '🤖 AI思考中...' : '👥 フレンド(2P)の番');
-    }
+    const curP = roster[ytState.turnIdx] || roster[0];
+    const who = (state.playMode === 'online' && onlineRoomState.active)
+      ? (isMyYachtTurn() ? `🎯 あなたの番 (${curP.name})` : `⏳ ${curP.name} の番`)
+      : (curP.isAi ? '🤖 AI思考中...' : `🎯 ${curP.name} の番`);
     banner.textContent = `${who} (ラウンド ${ytState.round}/12)`;
     rollBtn.disabled = (ytState.rollsLeft <= 0) || !isMyYachtTurn();
     rollBtn.textContent = `🎲 サイコロを振る (残り${ytState.rollsLeft}回)`;
   }
 
-  // ダイストレイ描画
   const tray = document.getElementById('ytDiceTray');
   tray.innerHTML = '';
   ytState.dice.forEach((val, idx) => {
@@ -5515,61 +6113,44 @@ function renderYachtUI() {
     tray.appendChild(slot);
   });
 
-  // スコアシート描画
   const tbody = document.getElementById('ytScoreBody');
   tbody.innerHTML = '';
+  const previewScoreCache = {};
+  YACHT_CATEGORIES.forEach(c => { previewScoreCache[c.id] = calcYachtCategoryScore(c.id, ytState.dice); });
 
   YACHT_CATEGORIES.forEach((cat, idx) => {
     const tr = document.createElement('tr');
-    const p1Val = ytState.scores.p1[cat.id];
-    const p2Val = ytState.scores.p2[cat.id];
+    const cellsHtml = roster.map((r, rIdx) => {
+      const val = (ytState.scores[r.slotKey] || {})[cat.id];
+      const canSelect = !ytState.matchOver && ytState.turnIdx === rIdx && isMyYachtTurn() && !r.isAi && ytState.hasRolledThisTurn && val === undefined;
+      if (val !== undefined) return `<td class="yacht-cell-filled">${val}</td>`;
+      if (canSelect) return `<td class="yacht-cell-selectable" onclick="selectYachtCategory('${cat.id}')">+${previewScoreCache[cat.id]}</td>`;
+      return `<td>-</td>`;
+    }).join('');
 
-    const canP1Select = !ytState.matchOver && ytState.currentTurn === 'p1' && isMyYachtTurn() && ytState.hasRolledThisTurn && p1Val === undefined;
-    const canP2Select = !ytState.matchOver && ytState.currentTurn === 'p2' && isMyYachtTurn() && state.playMode !== 'ai' && ytState.hasRolledThisTurn && p2Val === undefined;
-
-    const previewScore = calcYachtCategoryScore(cat.id, ytState.dice);
-
-    const p1CellHtml = p1Val !== undefined
-      ? `<td class="yacht-cell-filled">${p1Val}</td>`
-      : (canP1Select
-          ? `<td class="yacht-cell-selectable" onclick="selectYachtCategory('${cat.id}')">+${previewScore} 決定</td>`
-          : `<td>-</td>`);
-
-    const p2CellHtml = p2Val !== undefined
-      ? `<td class="yacht-cell-filled">${p2Val}</td>`
-      : (canP2Select
-          ? `<td class="yacht-cell-selectable" onclick="selectYachtCategory('${cat.id}')">+${previewScore} 決定</td>`
-          : `<td>-</td>`);
-
-    tr.innerHTML = `<td class="cat-name">${cat.name}</td>${p1CellHtml}${p2CellHtml}`;
+    tr.innerHTML = `<td class="cat-name">${isMulti3Plus ? cat.shortName : cat.name}</td>${cellsHtml}`;
     tbody.appendChild(tr);
 
-    // 上段6個の直後にボーナス行を挿入
     if (idx === 5) {
-      const s1 = getPlayerTotalScore('p1');
-      const s2 = getPlayerTotalScore('p2');
       const bRow = document.createElement('tr');
       bRow.style.background = 'rgba(250, 204, 21, 0.14)';
-      bRow.innerHTML = `
-        <td class="cat-name" style="color:#fef08a;">⭐ 上段合計(63点〜で+35点)</td>
-        <td style="font-weight:900; color:#fef08a;">${s1.upper}/63 (+${s1.bonus})</td>
-        <td style="font-weight:900; color:#fef08a;">${s2.upper}/63 (+${s2.bonus})</td>
-      `;
+      bRow.innerHTML = `<td class="cat-name" style="color:#fef08a;">${isMulti3Plus ? '⭐ 上段(+35)' : '⭐ 上段合計(63点〜で+35点)'}</td>` +
+        roster.map(r => {
+          const s = getPlayerTotalScore(r.slotKey);
+          return `<td style="font-weight:900; color:#fef08a;">${s.upper}${s.bonus ? `(+${s.bonus})` : ''}</td>`;
+        }).join('');
       tbody.appendChild(bRow);
     }
   });
 
-  // 総合計行
-  const t1 = getPlayerTotalScore('p1').total;
-  const t2 = getPlayerTotalScore('p2').total;
   const totRow = document.createElement('tr');
   totRow.style.background = '#1e293b';
-  totRow.style.fontSize = '0.96rem';
-  totRow.innerHTML = `
-    <td class="cat-name" style="color:#fef08a; font-weight:900;">👑 トータルスコア (点差: ${Math.abs(t1 - t2)}点)</td>
-    <td style="font-weight:900; color:#4ade80;">${t1} 点</td>
-    <td style="font-weight:900; color:#38bdf8;">${t2} 点</td>
-  `;
+  totRow.style.fontSize = isMulti3Plus ? '0.78rem' : '0.96rem';
+  totRow.innerHTML = `<td class="cat-name" style="color:#fef08a; font-weight:900;">👑 合計</td>` +
+    roster.map(r => {
+      const t = getPlayerTotalScore(r.slotKey).total;
+      return `<td style="font-weight:900; color:${r.color};">${t}</td>`;
+    }).join('');
   tbody.appendChild(totRow);
 }
 
@@ -5630,16 +6211,27 @@ function createCardElement(card, faceDown = false, isHeld = false, onClick = nul
 }
 
 /* ============================================================================
-   🃏 ゲーム3：ブラックジャック (Blackjack) ロジック
+   🃏 ゲーム3：ブラックジャック (Blackjack：1人AI / 2〜4人フレンド・通信対応) ロジック
 ============================================================================ */
 let bjState = {
   bet: 10,
   deck: [],
   playerHand: [],
   dealerHand: [],
+  seats: [], // [{ hand, bet, status: 'wait'|'playing'|'stand'|'bust'|'bj', delta }]
+  turnIdx: 0,
+  roundId: '',
   phase: 'idle', // 'idle' | 'playing' | 'done'
   hideDealerHole: true
 };
+
+function isMyBjTurn() {
+  if (state.playMode === 'ai') return true;
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    return bjState.turnIdx === getMyOnlineSeatIdx();
+  }
+  return true;
+}
 
 function adjustBjBet(val) {
   if (bjState.phase === 'playing') return;
@@ -5649,6 +6241,15 @@ function adjustBjBet(val) {
   else bjState.bet = Math.min(state.chips, bjState.bet + val);
   if (bjState.bet < 1 && state.chips > 0) bjState.bet = 1;
   document.getElementById('bjBetText').textContent = bjState.bet;
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    pushOnlineRoomPatch({
+      blackjack: {
+        ...(onlineRoomState.lastData && onlineRoomState.lastData.blackjack ? onlineRoomState.lastData.blackjack : {}),
+        bet: bjState.bet,
+        phase: 'idle'
+      }
+    });
+  }
 }
 
 function calcBjTotal(hand) {
@@ -5667,17 +6268,102 @@ function calcBjTotal(hand) {
 
 function resetBlackjackUI() {
   bjState.phase = 'idle';
+  bjState.seats = [];
+  bjState.turnIdx = 0;
   bjState.bet = Math.min(Math.max(1, bjState.bet), Math.max(1, state.chips));
   document.getElementById('bjBetText').textContent = bjState.bet;
   document.getElementById('bjDealerHand').innerHTML = '';
   document.getElementById('bjPlayerHand').innerHTML = '';
   document.getElementById('bjDealerTotal').textContent = '?';
   document.getElementById('bjPlayerTotal').textContent = '0';
+
+  const isMulti = state.playMode !== 'ai';
+  document.getElementById('bjMultiSeatsGrid').style.display = isMulti ? 'grid' : 'none';
+  document.getElementById('bjSinglePlayerArea').style.display = isMulti ? 'none' : 'block';
+  if (isMulti) {
+    const players = getActivePlayers();
+    bjState.seats = players.map(() => ({ hand: [], bet: bjState.bet, status: 'wait', delta: 0 }));
+    renderBlackjackHands();
+  }
+
   document.getElementById('bjStatusText').textContent = 'ベットを決めて「ディール（配る）」を押そう！';
   document.getElementById('bjDealBtn').style.display = 'inline-block';
+  document.getElementById('bjDealBtn').textContent = '🃏 ディール (配る)';
   document.getElementById('bjHitBtn').style.display = 'none';
   document.getElementById('bjStandBtn').style.display = 'none';
   document.getElementById('bjDoubleBtn').style.display = 'none';
+  updateGameBackLockUI();
+}
+
+function pushBlackjackToOnline(extra = {}) {
+  if (state.playMode !== 'online' || !onlineRoomState.active) return;
+  pushOnlineRoomPatch({
+    blackjack: {
+      roundId: bjState.roundId,
+      bet: bjState.bet,
+      deck: bjState.deck,
+      dealerHand: bjState.dealerHand,
+      seats: bjState.seats,
+      turnIdx: bjState.turnIdx,
+      phase: bjState.phase,
+      hideDealerHole: bjState.hideDealerHole,
+      statusText: document.getElementById('bjStatusText').textContent,
+      ...extra
+    }
+  });
+}
+
+function syncBlackjackFromOnline(bData) {
+  if (!bData) return;
+  if (bData.bet) {
+    bjState.bet = bData.bet;
+    document.getElementById('bjBetText').textContent = bjState.bet;
+  }
+  bjState.roundId = bData.roundId || bjState.roundId;
+  bjState.deck = Array.isArray(bData.deck) ? bData.deck : bjState.deck;
+  bjState.dealerHand = Array.isArray(bData.dealerHand) ? bData.dealerHand : [];
+  bjState.seats = Array.isArray(bData.seats) ? bData.seats : [];
+  bjState.turnIdx = Number(bData.turnIdx) || 0;
+  bjState.phase = bData.phase || 'idle';
+  bjState.hideDealerHole = bData.hideDealerHole !== undefined ? !!bData.hideDealerHole : true;
+
+  document.getElementById('bjMultiSeatsGrid').style.display = 'grid';
+  document.getElementById('bjSinglePlayerArea').style.display = 'none';
+  renderBlackjackHands();
+  if (bData.statusText) document.getElementById('bjStatusText').textContent = bData.statusText;
+
+  const players = getActivePlayers();
+  const myIdx = getMyOnlineSeatIdx();
+  const myTurn = bjState.phase === 'playing' && bjState.turnIdx === myIdx;
+
+  if (bjState.phase === 'playing') {
+    document.getElementById('bjDealBtn').style.display = 'none';
+    document.getElementById('bjHitBtn').style.display = myTurn ? 'inline-block' : 'none';
+    document.getElementById('bjStandBtn').style.display = myTurn ? 'inline-block' : 'none';
+    const curSeat = bjState.seats[myIdx];
+    const canDbl = myTurn && curSeat && curSeat.hand.length === 2 && state.chips >= curSeat.bet * 2;
+    document.getElementById('bjDoubleBtn').style.display = canDbl ? 'inline-block' : 'none';
+  } else {
+    document.getElementById('bjDealBtn').style.display = 'inline-block';
+    document.getElementById('bjDealBtn').textContent = bjState.phase === 'done' ? '🃏 次のディール' : '🃏 ディール (配る)';
+    document.getElementById('bjHitBtn').style.display = 'none';
+    document.getElementById('bjStandBtn').style.display = 'none';
+    document.getElementById('bjDoubleBtn').style.display = 'none';
+
+    if (bjState.phase === 'done' && bData.roundId && bData.settled && onlineRoomState.processedRoundId !== bData.roundId) {
+      onlineRoomState.processedRoundId = bData.roundId;
+      const mySeat = bjState.seats[myIdx];
+      const delta = mySeat ? (Number(mySeat.delta) || 0) : 0;
+      if (delta !== 0) {
+        adjustPlayerChipsByIdx(myIdx, delta);
+        playSE(delta > 0 ? 'win' : 'lose');
+      } else {
+        playSE('click');
+      }
+      checkBankruptNotice();
+    }
+  }
+  updateGameBackLockUI();
 }
 
 function startBlackjack() {
@@ -5687,16 +6373,55 @@ function startBlackjack() {
   document.getElementById('bjBetText').textContent = bjState.bet;
 
   bjState.deck = createShuffledDeck();
-  bjState.playerHand = [bjState.deck.pop(), bjState.deck.pop()];
   bjState.dealerHand = [bjState.deck.pop(), bjState.deck.pop()];
   bjState.phase = 'playing';
   bjState.hideDealerHole = true;
 
+  // 👥 2〜4人モード
+  if (state.playMode !== 'ai') {
+    const players = getActivePlayers();
+    bjState.roundId = 'bj_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5);
+    bjState.seats = players.map((_, idx) => {
+      const hand = [bjState.deck.pop(), bjState.deck.pop()];
+      const tot = calcBjTotal(hand);
+      const seatBet = Math.min(bjState.bet, Math.max(1, getPlayerChipsByIdx(idx)));
+      return {
+        hand,
+        bet: seatBet,
+        status: tot === 21 ? 'bj' : 'wait',
+        delta: 0
+      };
+    });
+    bjState.turnIdx = 0;
+    while (bjState.turnIdx < bjState.seats.length && bjState.seats[bjState.turnIdx].status === 'bj') {
+      bjState.turnIdx++;
+    }
+    if (bjState.turnIdx >= bjState.seats.length) {
+      finishBlackjackMultiRound();
+      return;
+    }
+    bjState.seats[bjState.turnIdx].status = 'playing';
+    document.getElementById('bjMultiSeatsGrid').style.display = 'grid';
+    document.getElementById('bjSinglePlayerArea').style.display = 'none';
+    renderBlackjackHands();
+
+    const curP = players[bjState.turnIdx];
+    const msg = `🎯 ${curP.name} の番！ヒット(引く)かスタンド(勝負)を選んでください`;
+    document.getElementById('bjStatusText').textContent = msg;
+    updateBjActionButtonsMulti();
+    updateGameBackLockUI();
+    pushBlackjackToOnline({ settled: false });
+    return;
+  }
+
+  // 🤖 AI 1人モード
+  bjState.playerHand = [bjState.deck.pop(), bjState.deck.pop()];
+  document.getElementById('bjMultiSeatsGrid').style.display = 'none';
+  document.getElementById('bjSinglePlayerArea').style.display = 'block';
   renderBlackjackHands();
 
   const pTot = calcBjTotal(bjState.playerHand);
   if (pTot === 21) {
-    // ナチュラルブラックジャック！
     bjStand();
     return;
   }
@@ -5706,29 +6431,118 @@ function startBlackjack() {
   document.getElementById('bjStandBtn').style.display = 'inline-block';
   document.getElementById('bjDoubleBtn').style.display = (state.chips >= bjState.bet * 2) ? 'inline-block' : 'none';
   document.getElementById('bjStatusText').textContent = 'ヒット（引く）かスタンド（勝負）を選んでください';
+  updateGameBackLockUI();
+}
+
+function updateBjActionButtonsMulti() {
+  const show = bjState.phase === 'playing' && isMyBjTurn();
+  document.getElementById('bjDealBtn').style.display = 'none';
+  document.getElementById('bjHitBtn').style.display = show ? 'inline-block' : 'none';
+  document.getElementById('bjStandBtn').style.display = show ? 'inline-block' : 'none';
+  const curSeat = bjState.seats[bjState.turnIdx];
+  const curChips = getPlayerChipsByIdx(bjState.turnIdx);
+  const canDbl = show && curSeat && curSeat.hand.length === 2 && curChips >= curSeat.bet * 2;
+  document.getElementById('bjDoubleBtn').style.display = canDbl ? 'inline-block' : 'none';
 }
 
 function renderBlackjackHands() {
   const dBox = document.getElementById('bjDealerHand');
-  const pBox = document.getElementById('bjPlayerHand');
   dBox.innerHTML = '';
-  pBox.innerHTML = '';
-
   bjState.dealerHand.forEach((c, idx) => {
     const hide = bjState.hideDealerHole && idx === 1;
     dBox.appendChild(createCardElement(c, hide));
   });
+  document.getElementById('bjDealerTotal').textContent = bjState.dealerHand.length
+    ? (bjState.hideDealerHole ? `${bjState.dealerHand[0].bjVal} + ?` : calcBjTotal(bjState.dealerHand))
+    : '?';
 
+  if (state.playMode !== 'ai') {
+    const grid = document.getElementById('bjMultiSeatsGrid');
+    grid.innerHTML = '';
+    const players = getActivePlayers();
+    players.forEach((p, idx) => {
+      const seat = bjState.seats[idx] || { hand: [], bet: bjState.bet, status: 'wait', delta: 0 };
+      const tot = seat.hand.length ? calcBjTotal(seat.hand) : 0;
+      const isTurn = bjState.phase === 'playing' && bjState.turnIdx === idx;
+      const card = document.createElement('div');
+      card.className = 'multi-seat-card' + (isTurn ? ' active-turn' : '') + (seat.status === 'bust' ? ' busted-seat' : '');
+      card.style.borderColor = isTurn ? '#facc15' : p.color;
+
+      let statusTag = '';
+      if (seat.status === 'bj') statusTag = '👑 BJ!';
+      else if (seat.status === 'bust') statusTag = '💥 バースト';
+      else if (seat.status === 'stand') statusTag = '✋ スタンド';
+      else if (isTurn) statusTag = '🎯 手番中';
+      else if (seat.status === 'done') {
+        statusTag = seat.delta > 0 ? `🎉+${seat.delta}` : (seat.delta < 0 ? `💀${seat.delta}` : '🤝引分');
+      }
+
+      const cardsWrap = document.createElement('div');
+      cardsWrap.className = 'cards-hand-row compact-cards';
+      cardsWrap.style.marginTop = '4px';
+      seat.hand.forEach(c => cardsWrap.appendChild(createCardElement(c, false)));
+
+      card.innerHTML = `
+        <div class="seat-name-row" style="color:${p.color};">${p.name} <span style="color:#cbd5e1;">(${tot}点)</span></div>
+        <div class="seat-sub-row">賭:${seat.bet}🪙 ${statusTag}</div>
+      `;
+      card.appendChild(cardsWrap);
+      grid.appendChild(card);
+    });
+    return;
+  }
+
+  const pBox = document.getElementById('bjPlayerHand');
+  pBox.innerHTML = '';
   bjState.playerHand.forEach(c => {
     pBox.appendChild(createCardElement(c, false));
   });
-
   document.getElementById('bjPlayerTotal').textContent = calcBjTotal(bjState.playerHand);
-  document.getElementById('bjDealerTotal').textContent = bjState.hideDealerHole ? `${bjState.dealerHand[0].bjVal} + ?` : calcBjTotal(bjState.dealerHand);
+}
+
+function advanceBjMultiTurn() {
+  const players = getActivePlayers();
+  bjState.turnIdx++;
+  while (bjState.turnIdx < players.length && bjState.seats[bjState.turnIdx].status === 'bj') {
+    bjState.turnIdx++;
+  }
+  if (bjState.turnIdx >= players.length) {
+    finishBlackjackMultiRound();
+  } else {
+    bjState.seats[bjState.turnIdx].status = 'playing';
+    renderBlackjackHands();
+    const curP = players[bjState.turnIdx];
+    document.getElementById('bjStatusText').textContent = `🎯 ${curP.name} の番！ヒットかスタンドを選んでください`;
+    updateBjActionButtonsMulti();
+    pushBlackjackToOnline({ settled: false });
+  }
 }
 
 function bjHit() {
   if (bjState.phase !== 'playing') return;
+  if (state.playMode !== 'ai') {
+    if (!isMyBjTurn()) { showToast('⏳ 相手の番です！'); return; }
+    playSE('click');
+    const seat = bjState.seats[bjState.turnIdx];
+    seat.hand.push(bjState.deck.pop());
+    const tot = calcBjTotal(seat.hand);
+    if (tot > 21) {
+      seat.status = 'bust';
+      playSE('lose');
+      renderBlackjackHands();
+      advanceBjMultiTurn();
+    } else if (tot === 21) {
+      seat.status = 'stand';
+      renderBlackjackHands();
+      advanceBjMultiTurn();
+    } else {
+      renderBlackjackHands();
+      updateBjActionButtonsMulti();
+      pushBlackjackToOnline({ settled: false });
+    }
+    return;
+  }
+
   playSE('click');
   bjState.playerHand.push(bjState.deck.pop());
   document.getElementById('bjDoubleBtn').style.display = 'none';
@@ -5744,6 +6558,19 @@ function bjHit() {
 
 function bjDoubleDown() {
   if (bjState.phase !== 'playing') return;
+  if (state.playMode !== 'ai') {
+    if (!isMyBjTurn()) { showToast('⏳ 相手の番です！'); return; }
+    playSE('coin');
+    const seat = bjState.seats[bjState.turnIdx];
+    seat.bet = Math.min(getPlayerChipsByIdx(bjState.turnIdx), seat.bet * 2);
+    seat.hand.push(bjState.deck.pop());
+    const tot = calcBjTotal(seat.hand);
+    seat.status = tot > 21 ? 'bust' : 'stand';
+    renderBlackjackHands();
+    advanceBjMultiTurn();
+    return;
+  }
+
   playSE('coin');
   bjState.bet = Math.min(state.chips, bjState.bet * 2);
   document.getElementById('bjBetText').textContent = bjState.bet;
@@ -5758,12 +6585,73 @@ function bjDoubleDown() {
 
 function bjStand() {
   if (bjState.phase !== 'playing') return;
+  if (state.playMode !== 'ai') {
+    if (!isMyBjTurn()) { showToast('⏳ 相手の番です！'); return; }
+    playSE('click');
+    bjState.seats[bjState.turnIdx].status = 'stand';
+    advanceBjMultiTurn();
+    return;
+  }
+
   bjState.hideDealerHole = false;
   while (calcBjTotal(bjState.dealerHand) < 17) {
     bjState.dealerHand.push(bjState.deck.pop());
   }
   renderBlackjackHands();
   finishBlackjackRound();
+}
+
+function finishBlackjackMultiRound() {
+  bjState.phase = 'done';
+  bjState.hideDealerHole = false;
+  while (calcBjTotal(bjState.dealerHand) < 17) {
+    bjState.dealerHand.push(bjState.deck.pop());
+  }
+  const dTot = calcBjTotal(bjState.dealerHand);
+  const isDealerNaturalBJ = dTot === 21 && bjState.dealerHand.length === 2;
+  const players = getActivePlayers();
+  const resParts = [];
+
+  bjState.seats.forEach((seat, idx) => {
+    const pTot = calcBjTotal(seat.hand);
+    const isNat = pTot === 21 && seat.hand.length === 2;
+    let delta = 0;
+    if (pTot > 21) {
+      delta = -seat.bet;
+    } else if (isNat && !isDealerNaturalBJ) {
+      delta = Math.ceil(seat.bet * 1.5);
+    } else if (dTot > 21 || pTot > dTot) {
+      delta = seat.bet;
+    } else if (pTot < dTot) {
+      delta = -seat.bet;
+    }
+    seat.delta = delta;
+    seat.status = 'done';
+    resParts.push(`${players[idx].name}:${delta > 0 ? '+' + delta : delta}🪙`);
+  });
+
+  renderBlackjackHands();
+  document.getElementById('bjDealBtn').style.display = 'inline-block';
+  document.getElementById('bjDealBtn').textContent = '🃏 次のディール';
+  document.getElementById('bjHitBtn').style.display = 'none';
+  document.getElementById('bjStandBtn').style.display = 'none';
+  document.getElementById('bjDoubleBtn').style.display = 'none';
+
+  const msg = `🎩 ディーラー(${dTot > 21 ? 'バースト!' : dTot}) ｜ ` + resParts.join(' / ');
+  document.getElementById('bjStatusText').textContent = msg;
+  updateGameBackLockUI();
+
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    pushBlackjackToOnline({ settled: true, statusText: msg });
+    return;
+  }
+
+  players.forEach((_, idx) => {
+    const d = bjState.seats[idx].delta;
+    if (d !== 0) adjustPlayerChipsByIdx(idx, d);
+  });
+  playSE(bjState.seats[0].delta >= 0 ? 'win' : 'lose');
+  checkBankruptNotice();
 }
 
 function finishBlackjackRound() {
@@ -5785,25 +6673,21 @@ function finishBlackjackRound() {
   let msg = '';
   if (pTot > 21) {
     state.chips -= bjState.bet;
-    if (state.playMode === 'local') state.p2Chips += bjState.bet;
     playSE('lose');
     msg = `💥 バースト (${pTot})！ -${bjState.bet} チップ`;
   } else if (isNaturalBJ && !isDealerNaturalBJ) {
     const winAmt = Math.ceil(bjState.bet * 1.5);
     state.chips += winAmt;
-    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - winAmt);
     state.totalWins++;
     playSE('win');
     msg = `👑 ブラックジャック (1.5倍勝ち)！ +${winAmt} チップ獲得！`;
   } else if (dTot > 21 || pTot > dTot) {
     state.chips += bjState.bet;
-    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - bjState.bet);
     state.totalWins++;
     playSE('win');
     msg = `🎉 あなたの勝ち (${pTot} vs ${dTot})！ +${bjState.bet} チップ獲得！`;
   } else if (pTot < dTot) {
     state.chips -= bjState.bet;
-    if (state.playMode === 'local') state.p2Chips += bjState.bet;
     playSE('lose');
     msg = `💀 ディーラーの勝ち (${pTot} vs ${dTot})… -${bjState.bet} チップ`;
   } else {
@@ -5813,18 +6697,12 @@ function finishBlackjackRound() {
 
   document.getElementById('bjStatusText').textContent = msg;
   saveState();
-  if (state.playMode === 'online' && onlineRoomState.active) {
-    pushOnlineRoomPatch({
-      hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
-      guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
-    });
-    sendOnlineToast(`ブラックジャック: ${msg}`);
-  }
+  updateGameBackLockUI();
   checkBankruptNotice();
 }
 
 /* ============================================================================
-   👑 ゲーム4：ポーカー (5枚ドローポーカー対戦) ロジック
+   👑 ゲーム4：ポーカー (5枚ドローポーカー：1人AI / 2〜4人フレンド・通信対応) ロジック
 ============================================================================ */
 let pkState = {
   bet: 10,
@@ -5832,6 +6710,12 @@ let pkState = {
   playerHand: [],
   opponentHand: [],
   held: [false, false, false, false, false],
+  hands: [], // 2〜4人用 [[card x 5], ...]
+  bets: [],  // 各プレイヤーの参加額
+  doneFlags: [], // [bool, ...]
+  turnIdx: 0,
+  localRevealed: true,
+  roundId: '',
   phase: 'idle',
   hideOpponent: true
 };
@@ -5844,6 +6728,15 @@ function adjustPkBet(val) {
   else pkState.bet = Math.min(state.chips, pkState.bet + val);
   if (pkState.bet < 1 && state.chips > 0) pkState.bet = 1;
   document.getElementById('pkBetText').textContent = pkState.bet;
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    pushOnlineRoomPatch({
+      poker: {
+        ...(onlineRoomState.lastData && onlineRoomState.lastData.poker ? onlineRoomState.lastData.poker : {}),
+        bet: pkState.bet,
+        phase: 'idle'
+      }
+    });
+  }
 }
 
 function evaluatePokerHand(hand) {
@@ -5856,7 +6749,6 @@ function evaluatePokerHand(hand) {
   let straightHigh = vals[0];
   if (uniq.length === 5) {
     if (vals[0] - vals[4] === 4) isStraight = true;
-    // A-2-3-4-5 ローストレート
     if (vals[0] === 14 && vals[1] === 5 && vals[4] === 2) {
       isStraight = true;
       straightHigh = 5;
@@ -5903,16 +6795,112 @@ function evaluatePokerHand(hand) {
 
 function resetPokerUI() {
   pkState.phase = 'idle';
+  pkState.hands = [];
+  pkState.bets = [];
+  pkState.doneFlags = [];
+  pkState.turnIdx = 0;
+  pkState.localRevealed = true;
   pkState.bet = Math.min(Math.max(1, pkState.bet), Math.max(1, state.chips));
   document.getElementById('pkBetText').textContent = pkState.bet;
+
+  const isMulti = state.playMode !== 'ai';
+  document.getElementById('pkMultiSeatsGrid').style.display = isMulti ? 'grid' : 'none';
+  document.getElementById('pkSingleOpponentArea').style.display = isMulti ? 'none' : 'block';
+  document.getElementById('pkPrivacyCover').style.display = 'none';
+  document.getElementById('pkMyHandArea').style.display = 'block';
+
   document.getElementById('pkOpponentHand').innerHTML = '';
   document.getElementById('pkPlayerHand').innerHTML = '';
   document.getElementById('pkOpponentRank').textContent = '???';
   document.getElementById('pkPlayerRank').textContent = '-';
   document.getElementById('pkDealBtn').style.display = 'inline-block';
+  document.getElementById('pkDealBtn').textContent = '🃏 カードを配る';
   document.getElementById('pkDrawBtn').style.display = 'none';
   document.getElementById('pkRaiseBtn').style.display = 'none';
   document.getElementById('pkStatusText').textContent = '「カードを配る」でポーカー開始！';
+  if (isMulti) renderPokerMultiSeats();
+  updateGameBackLockUI();
+}
+
+function autoHoldPokerPairs(hand) {
+  const counts = {};
+  hand.forEach(c => { counts[c.val] = (counts[c.val] || 0) + 1; });
+  return hand.map(c => counts[c.val] >= 2);
+}
+
+function pushPokerToOnline(extra = {}) {
+  if (state.playMode !== 'online' || !onlineRoomState.active) return;
+  pushOnlineRoomPatch({
+    poker: {
+      roundId: pkState.roundId,
+      bet: pkState.bet,
+      deck: pkState.deck,
+      hands: pkState.hands,
+      bets: pkState.bets,
+      doneFlags: pkState.doneFlags,
+      turnIdx: pkState.turnIdx,
+      phase: pkState.phase,
+      statusText: document.getElementById('pkStatusText').textContent,
+      ...extra
+    }
+  });
+}
+
+function syncPokerFromOnline(pData) {
+  if (!pData) return;
+  if (pData.bet) {
+    pkState.bet = pData.bet;
+    document.getElementById('pkBetText').textContent = pkState.bet;
+  }
+  const prevTurn = pkState.turnIdx;
+  const prevRound = pkState.roundId;
+  pkState.roundId = pData.roundId || pkState.roundId;
+  pkState.deck = Array.isArray(pData.deck) ? pData.deck : pkState.deck;
+  pkState.hands = Array.isArray(pData.hands) ? pData.hands : [];
+  pkState.bets = Array.isArray(pData.bets) ? pData.bets : [];
+  pkState.doneFlags = Array.isArray(pData.doneFlags) ? pData.doneFlags : [];
+  pkState.turnIdx = Number(pData.turnIdx) || 0;
+  pkState.phase = pData.phase || 'idle';
+
+  document.getElementById('pkMultiSeatsGrid').style.display = 'grid';
+  document.getElementById('pkSingleOpponentArea').style.display = 'none';
+  document.getElementById('pkPrivacyCover').style.display = 'none';
+  document.getElementById('pkMyHandArea').style.display = 'block';
+
+  const myIdx = getMyOnlineSeatIdx();
+  const myHand = pkState.hands[myIdx] || [];
+  if (pkState.phase === 'draw' && (prevRound !== pkState.roundId || (prevTurn !== pkState.turnIdx && pkState.turnIdx === myIdx))) {
+    pkState.held = myHand.length ? autoHoldPokerPairs(myHand) : [false, false, false, false, false];
+  }
+
+  renderPokerHands();
+  if (pData.statusText) document.getElementById('pkStatusText').textContent = pData.statusText;
+
+  const isMyTurn = pkState.phase === 'draw' && pkState.turnIdx === myIdx;
+  if (pkState.phase === 'draw') {
+    document.getElementById('pkDealBtn').style.display = 'none';
+    document.getElementById('pkDrawBtn').style.display = isMyTurn ? 'inline-block' : 'none';
+    document.getElementById('pkRaiseBtn').style.display = (isMyTurn && state.chips >= (pkState.bets[myIdx] || pkState.bet) * 2) ? 'inline-block' : 'none';
+  } else {
+    document.getElementById('pkDealBtn').style.display = 'inline-block';
+    document.getElementById('pkDealBtn').textContent = pkState.phase === 'done' ? '🃏 次の勝負へ' : '🃏 カードを配る';
+    document.getElementById('pkDrawBtn').style.display = 'none';
+    document.getElementById('pkRaiseBtn').style.display = 'none';
+
+    if (pkState.phase === 'done' && pData.roundId && pData.settled && onlineRoomState.processedRoundId !== pData.roundId) {
+      onlineRoomState.processedRoundId = pData.roundId;
+      const deltas = Array.isArray(pData.deltas) ? pData.deltas : [];
+      const myDelta = Number(deltas[myIdx]) || 0;
+      if (myDelta !== 0) {
+        adjustPlayerChipsByIdx(myIdx, myDelta);
+        playSE(myDelta > 0 ? 'win' : 'lose');
+      } else {
+        playSE('click');
+      }
+      checkBankruptNotice();
+    }
+  }
+  updateGameBackLockUI();
 }
 
 function startPoker() {
@@ -5920,27 +6908,150 @@ function startPoker() {
   playSE('click');
   pkState.bet = Math.min(pkState.bet, state.chips);
   document.getElementById('pkBetText').textContent = pkState.bet;
-
   pkState.deck = createShuffledDeck();
+
+  // 👥 2〜4人モード
+  if (state.playMode !== 'ai') {
+    const players = getActivePlayers();
+    pkState.roundId = 'pk_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5);
+    pkState.hands = players.map(() => [pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop()]);
+    pkState.bets = players.map((_, idx) => Math.min(pkState.bet, Math.max(1, getPlayerChipsByIdx(idx))));
+    pkState.doneFlags = players.map(() => false);
+    pkState.turnIdx = 0;
+    pkState.phase = 'draw';
+    pkState.localRevealed = (state.playMode === 'online');
+
+    const myIdx = state.playMode === 'online' ? getMyOnlineSeatIdx() : 0;
+    pkState.held = autoHoldPokerPairs(pkState.hands[myIdx] || pkState.hands[0]);
+
+    document.getElementById('pkMultiSeatsGrid').style.display = 'grid';
+    document.getElementById('pkSingleOpponentArea').style.display = 'none';
+    document.getElementById('pkDealBtn').style.display = 'none';
+
+    if (state.playMode === 'local') {
+      showLocalPokerTurnCover();
+    } else {
+      renderPokerHands();
+      const curP = players[0];
+      document.getElementById('pkStatusText').textContent = `🎯 ${curP.name} の交換ターン！`;
+      const isMyTurn = myIdx === 0;
+      document.getElementById('pkDrawBtn').style.display = isMyTurn ? 'inline-block' : 'none';
+      document.getElementById('pkRaiseBtn').style.display = (isMyTurn && state.chips >= pkState.bets[0] * 2) ? 'inline-block' : 'none';
+      pushPokerToOnline({ settled: false });
+    }
+    updateGameBackLockUI();
+    return;
+  }
+
+  // 🤖 AI 1人モード
   pkState.playerHand = [pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop()];
   pkState.opponentHand = [pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop(), pkState.deck.pop()];
-  pkState.held = [false, false, false, false, false];
+  pkState.held = autoHoldPokerPairs(pkState.playerHand);
   pkState.hideOpponent = true;
   pkState.phase = 'draw';
 
-  // ペアになっているカードを自動HOLDアシスト
-  const counts = {};
-  pkState.playerHand.forEach(c => { counts[c.val] = (counts[c.val] || 0) + 1; });
-  pkState.held = pkState.playerHand.map(c => counts[c.val] >= 2);
+  document.getElementById('pkMultiSeatsGrid').style.display = 'none';
+  document.getElementById('pkSingleOpponentArea').style.display = 'block';
+  document.getElementById('pkPrivacyCover').style.display = 'none';
+  document.getElementById('pkMyHandArea').style.display = 'block';
 
   renderPokerHands();
   document.getElementById('pkDealBtn').style.display = 'none';
   document.getElementById('pkDrawBtn').style.display = 'inline-block';
   document.getElementById('pkRaiseBtn').style.display = (state.chips >= pkState.bet * 2) ? 'inline-block' : 'none';
   document.getElementById('pkStatusText').textContent = '残したいカードをHOLDして「カード交換＆勝負！」を押そう！';
+  updateGameBackLockUI();
+}
+
+function showLocalPokerTurnCover() {
+  const players = getActivePlayers();
+  const curP = players[pkState.turnIdx];
+  pkState.localRevealed = false;
+  renderPokerMultiSeats();
+  document.getElementById('pkMyHandArea').style.display = 'none';
+  document.getElementById('pkDrawBtn').style.display = 'none';
+  document.getElementById('pkRaiseBtn').style.display = 'none';
+  document.getElementById('pkPrivacyCover').style.display = 'block';
+  document.getElementById('pkPrivacyPromptText').textContent = `🫣 「${curP.name}」にスマホを渡してください（他の人は見ないで！）`;
+  document.getElementById('pkStatusText').textContent = `🔒 ${curP.name} の交換準備中...`;
+}
+
+function revealLocalPokerHand() {
+  playSE('click');
+  pkState.localRevealed = true;
+  const players = getActivePlayers();
+  const curP = players[pkState.turnIdx];
+  pkState.held = autoHoldPokerPairs(pkState.hands[pkState.turnIdx]);
+  document.getElementById('pkPrivacyCover').style.display = 'none';
+  document.getElementById('pkMyHandArea').style.display = 'block';
+  document.getElementById('pkPlayerLabel').textContent = `🃏 ${curP.name} の手札（タップでHOLD）`;
+  document.getElementById('pkDrawBtn').style.display = 'inline-block';
+  document.getElementById('pkRaiseBtn').style.display = (getPlayerChipsByIdx(pkState.turnIdx) >= pkState.bets[pkState.turnIdx] * 2) ? 'inline-block' : 'none';
+  document.getElementById('pkStatusText').textContent = `${curP.name}：残したいカードをHOLDして交換しよう！`;
+  renderPokerHands();
+}
+
+function renderPokerMultiSeats() {
+  const grid = document.getElementById('pkMultiSeatsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const players = getActivePlayers();
+  const isDone = pkState.phase === 'done';
+
+  players.forEach((p, idx) => {
+    const hand = pkState.hands[idx] || [];
+    const betVal = pkState.bets[idx] ?? pkState.bet;
+    const isTurn = pkState.phase === 'draw' && pkState.turnIdx === idx;
+    const isDoneSeat = !!pkState.doneFlags[idx];
+    const card = document.createElement('div');
+    card.className = 'multi-seat-card' + (isTurn ? ' active-turn' : (isDoneSeat ? ' done-seat' : ''));
+    card.style.borderColor = isTurn ? '#facc15' : p.color;
+
+    let rankLabel = '待機中';
+    if (isDone && hand.length === 5) rankLabel = evaluatePokerHand(hand).name;
+    else if (isDoneSeat) rankLabel = '✅ 交換済';
+    else if (isTurn) rankLabel = '🎯 交換中';
+
+    card.innerHTML = `
+      <div class="seat-name-row" style="color:${p.color};">${p.name}</div>
+      <div class="seat-sub-row">賭:${betVal}🪙 ｜ ${rankLabel}</div>
+    `;
+
+    if (isDone && hand.length === 5) {
+      const miniRow = document.createElement('div');
+      miniRow.className = 'cards-hand-row compact-cards';
+      miniRow.style.marginTop = '4px';
+      hand.forEach(c => miniRow.appendChild(createCardElement(c, false)));
+      card.appendChild(miniRow);
+    }
+    grid.appendChild(card);
+  });
 }
 
 function renderPokerHands() {
+  if (state.playMode !== 'ai') {
+    renderPokerMultiSeats();
+    const pBox = document.getElementById('pkPlayerHand');
+    pBox.innerHTML = '';
+    const viewIdx = state.playMode === 'online' ? getMyOnlineSeatIdx() : pkState.turnIdx;
+    const hand = pkState.hands[viewIdx] || [];
+    const players = getActivePlayers();
+    const viewP = players[viewIdx] || players[0];
+    document.getElementById('pkPlayerLabel').textContent = `🃏 ${viewP ? viewP.name : 'あなた'} の手札（タップでHOLD）`;
+
+    const canToggle = pkState.phase === 'draw' && (state.playMode === 'local' ? pkState.localRevealed : pkState.turnIdx === viewIdx);
+    hand.forEach((c, idx) => {
+      pBox.appendChild(createCardElement(c, false, canToggle && pkState.held[idx], () => {
+        if (!canToggle) return;
+        playSE('click');
+        pkState.held[idx] = !pkState.held[idx];
+        renderPokerHands();
+      }));
+    });
+    document.getElementById('pkPlayerRank').textContent = hand.length === 5 ? evaluatePokerHand(hand).name : '-';
+    return;
+  }
+
   const oBox = document.getElementById('pkOpponentHand');
   const pBox = document.getElementById('pkPlayerHand');
   oBox.innerHTML = '';
@@ -5973,6 +7084,13 @@ function renderPokerHands() {
 
 function pokerRaiseAndDraw() {
   if (pkState.phase !== 'draw') return;
+  if (state.playMode !== 'ai') {
+    const idx = state.playMode === 'online' ? getMyOnlineSeatIdx() : pkState.turnIdx;
+    if (state.playMode === 'online' && pkState.turnIdx !== idx) return;
+    pkState.bets[idx] = Math.min(getPlayerChipsByIdx(idx), (pkState.bets[idx] || pkState.bet) * 2);
+    pokerDrawAndShowdown();
+    return;
+  }
   pkState.bet = Math.min(state.chips, pkState.bet * 2);
   document.getElementById('pkBetText').textContent = pkState.bet;
   pokerDrawAndShowdown();
@@ -5982,12 +7100,49 @@ function pokerDrawAndShowdown() {
   if (pkState.phase !== 'draw') return;
   playSE('coin');
 
-  // プレイヤーの非HOLDカードを交換
+  // 👥 2〜4人モード
+  if (state.playMode !== 'ai') {
+    const players = getActivePlayers();
+    const curIdx = pkState.turnIdx;
+    if (state.playMode === 'online' && curIdx !== getMyOnlineSeatIdx()) {
+      showToast('⏳ 相手の交換ターンです！');
+      return;
+    }
+
+    const curHand = pkState.hands[curIdx];
+    for (let i = 0; i < 5; i++) {
+      if (!pkState.held[i]) {
+        if (pkState.deck.length === 0) pkState.deck = createShuffledDeck();
+        curHand[i] = pkState.deck.pop();
+      }
+    }
+    pkState.doneFlags[curIdx] = true;
+
+    const nextIdx = curIdx + 1;
+    if (nextIdx < players.length) {
+      pkState.turnIdx = nextIdx;
+      if (state.playMode === 'local') {
+        showLocalPokerTurnCover();
+      } else {
+        const nextP = players[nextIdx];
+        const msg = `🎯 ${nextP.name} の交換ターンです！`;
+        document.getElementById('pkStatusText').textContent = msg;
+        document.getElementById('pkDrawBtn').style.display = 'none';
+        document.getElementById('pkRaiseBtn').style.display = 'none';
+        renderPokerHands();
+        pushPokerToOnline({ settled: false });
+      }
+    } else {
+      finishPokerMultiShowdown();
+    }
+    return;
+  }
+
+  // 🤖 AI 1人モード
   for (let i = 0; i < 5; i++) {
     if (!pkState.held[i]) pkState.playerHand[i] = pkState.deck.pop();
   }
 
-  // AI相手の思考交換（ペアや高カードをHOLDして残りを交換）
   const oppCounts = {};
   pkState.opponentHand.forEach(c => { oppCounts[c.val] = (oppCounts[c.val] || 0) + 1; });
   for (let i = 0; i < 5; i++) {
@@ -6012,13 +7167,11 @@ function pokerDrawAndShowdown() {
   if (pEval.score > oEval.score) {
     const gain = Math.round(pkState.bet * pEval.mult);
     state.chips += gain;
-    if (state.playMode === 'local') state.p2Chips = Math.max(0, state.p2Chips - gain);
     state.totalWins++;
     playSE('win');
     document.getElementById('pkStatusText').textContent = `🎉 あなたの勝ち！ (${pEval.name} vs ${oEval.name}) ➔ +${gain} チップ獲得！`;
   } else if (pEval.score < oEval.score) {
     state.chips -= pkState.bet;
-    if (state.playMode === 'local') state.p2Chips += pkState.bet;
     playSE('lose');
     document.getElementById('pkStatusText').textContent = `💀 相手の勝ち… (${pEval.name} vs ${oEval.name}) ➔ -${pkState.bet} チップ`;
   } else {
@@ -6027,18 +7180,53 @@ function pokerDrawAndShowdown() {
   }
 
   saveState();
+  updateGameBackLockUI();
+  checkBankruptNotice();
+}
+
+function finishPokerMultiShowdown() {
+  pkState.phase = 'done';
+  const players = getActivePlayers();
+  const evals = pkState.hands.map(h => evaluatePokerHand(h));
+  let bestScore = -1;
+  evals.forEach(e => { if (e.score > bestScore) bestScore = e.score; });
+
+  const winnerIdxs = [];
+  evals.forEach((e, idx) => { if (e.score === bestScore) winnerIdxs.push(idx); });
+
+  const totalPot = pkState.bets.reduce((a, b) => a + b, 0);
+  const deltas = players.map((_, idx) => -(pkState.bets[idx] || pkState.bet));
+  const share = Math.floor(totalPot / winnerIdxs.length);
+  winnerIdxs.forEach(wIdx => { deltas[wIdx] += share; });
+
+  const winNames = winnerIdxs.map(i => `${players[i].name}(${evals[i].name})`).join(' & ');
+  const msg = `👑 勝者: ${winNames}！ 総ポット ${totalPot}🪙 獲得！`;
+
+  document.getElementById('pkPrivacyCover').style.display = 'none';
+  document.getElementById('pkMyHandArea').style.display = 'block';
+  document.getElementById('pkDealBtn').style.display = 'inline-block';
+  document.getElementById('pkDealBtn').textContent = '🃏 次の勝負へ';
+  document.getElementById('pkDrawBtn').style.display = 'none';
+  document.getElementById('pkRaiseBtn').style.display = 'none';
+  document.getElementById('pkStatusText').textContent = msg;
+
+  renderPokerHands();
+  updateGameBackLockUI();
+
   if (state.playMode === 'online' && onlineRoomState.active) {
-    pushOnlineRoomPatch({
-      hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
-      guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
-    });
-    sendOnlineToast(`ポーカー結果: ${document.getElementById('pkStatusText').textContent}`);
+    pushPokerToOnline({ settled: true, deltas, statusText: msg });
+    return;
   }
+
+  players.forEach((_, idx) => {
+    if (deltas[idx] !== 0) adjustPlayerChipsByIdx(idx, deltas[idx]);
+  });
+  playSE('win');
   checkBankruptNotice();
 }
 
 /* ============================================================================
-   🎯 ゲーム5：ルーレット (Roulette) ロジック
+   🎯 ゲーム5：ルーレット (Roulette：1人 / 2〜4人フレンド・通信対応) ロジック
 ============================================================================ */
 const ROULETTE_WHEEL_ORDER = [
   0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
@@ -6047,7 +7235,11 @@ const ROULETTE_WHEEL_ORDER = [
 const RED_NUMS = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
 
 let rlState = {
-  bets: {}, // key -> chip amount
+  bets: {}, // 1P or local current bets
+  playerBets: [], // [{ key: amt }, ...] for 2〜4P
+  readyFlags: [], // [bool, ...] for online
+  betTurnIdx: 0,
+  roundId: '',
   angle: 0,
   spinning: false,
   lastNum: null
@@ -6065,21 +7257,162 @@ const RL_OUTSIDE_DEFS = [
   { key: 'DOZ3', label: '3rd 12 (25〜36) ×3', mult: 3 }
 ];
 
-function initRouletteUI() {
+function initRouletteUI(fromRemoteSync = false) {
+  const players = getActivePlayers();
   rlState.bets = {};
+  rlState.playerBets = players.map(() => ({}));
+  rlState.readyFlags = players.map(() => false);
+  rlState.betTurnIdx = 0;
   rlState.spinning = false;
   document.getElementById('rlBetStage').style.display = 'block';
   document.getElementById('rlWheelStage').style.display = 'none';
+  document.getElementById('rlMultiResultsList').style.display = 'none';
+  updateRouletteMultiBar();
   renderRouletteBoard();
   drawRouletteWheel(rlState.angle, rlState.lastNum);
+  updateGameBackLockUI();
+
+  if (state.playMode === 'online' && onlineRoomState.active && !fromRemoteSync && onlineRoomState.role === 'host') {
+    pushOnlineRoomPatch({
+      roulette: {
+        roundId: 'rl_' + Date.now(),
+        phase: 'betting',
+        playerBets: rlState.playerBets,
+        readyFlags: rlState.readyFlags,
+        winIdx: null
+      }
+    });
+  }
+}
+
+function updateRouletteMultiBar() {
+  const bar = document.getElementById('rlMultiTurnBar');
+  const txt = document.getElementById('rlMultiTurnText');
+  const btn = document.getElementById('rlConfirmBetBtn');
+  if (!bar) return;
+
+  if (state.playMode === 'ai') {
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = 'flex';
+  const players = getActivePlayers();
+
+  if (state.playMode === 'local') {
+    const curP = players[rlState.betTurnIdx] || players[0];
+    const isLast = rlState.betTurnIdx >= players.length - 1;
+    txt.innerHTML = `<span style="color:${curP.color};">🎯 ${curP.name}</span> がベット中 (${rlState.betTurnIdx + 1}/${players.length}人) ｜ 所持: 🪙${getPlayerChipsByIdx(rlState.betTurnIdx).toLocaleString()}`;
+    btn.style.display = isLast ? 'none' : 'inline-block';
+    btn.textContent = '✅ 確定して次の人へ ➔';
+  } else {
+    const myIdx = getMyOnlineSeatIdx();
+    const readyCount = rlState.readyFlags.filter(Boolean).length;
+    const myReady = !!rlState.readyFlags[myIdx];
+    txt.textContent = `🌐 ベット準備完了: ${readyCount}/${players.length}人` + (onlineRoomState.role === 'host' ? '（ホストが「回す」で全員同時スピン！）' : '（確定を押してホストの回転を待とう！）');
+    btn.style.display = 'inline-block';
+    btn.textContent = myReady ? '✏️ ベットを修正する' : '✅ ベット確定 (準備OK)';
+  }
+}
+
+function confirmRoulettePlayerBet() {
+  if (rlState.spinning) return;
+  const players = getActivePlayers();
+
+  if (state.playMode === 'local') {
+    if (getRouletteTotalBet() <= 0) {
+      showToast('🎯 1つ以上ベットしてから確定してください！');
+      return;
+    }
+    rlState.playerBets[rlState.betTurnIdx] = { ...rlState.bets };
+    if (rlState.betTurnIdx < players.length - 1) {
+      rlState.betTurnIdx++;
+      rlState.bets = { ...(rlState.playerBets[rlState.betTurnIdx] || {}) };
+      playSE('coin');
+      updateRouletteMultiBar();
+      renderRouletteBoard();
+      showToast(`👥 ${players[rlState.betTurnIdx].name} のベット番です！`);
+    }
+    return;
+  }
+
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    const myIdx = getMyOnlineSeatIdx();
+    const nowReady = !rlState.readyFlags[myIdx];
+    if (nowReady && getRouletteTotalBet() <= 0) {
+      showToast('🎯 1つ以上ベットしてから確定してください！');
+      return;
+    }
+    rlState.readyFlags[myIdx] = nowReady;
+    rlState.playerBets[myIdx] = { ...rlState.bets };
+    playSE('coin');
+    updateRouletteMultiBar();
+
+    const curRl = (onlineRoomState.lastData && onlineRoomState.lastData.roulette) || {};
+    const nextBets = Array.isArray(curRl.playerBets) ? [...curRl.playerBets] : players.map(() => ({}));
+    const nextFlags = Array.isArray(curRl.readyFlags) ? [...curRl.readyFlags] : players.map(() => false);
+    nextBets[myIdx] = { ...rlState.bets };
+    nextFlags[myIdx] = nowReady;
+    pushOnlineRoomPatch({
+      roulette: {
+        ...curRl,
+        phase: 'betting',
+        playerBets: nextBets,
+        readyFlags: nextFlags
+      }
+    });
+  }
+}
+
+function syncRouletteFromOnline(rData) {
+  if (!rData) return;
+  if (Array.isArray(rData.playerBets)) rlState.playerBets = rData.playerBets;
+  if (Array.isArray(rData.readyFlags)) rlState.readyFlags = rData.readyFlags;
+
+  if (rData.phase === 'betting') {
+    if (!rlState.spinning && document.getElementById('rlWheelStage').style.display === 'block') {
+      document.getElementById('rlWheelStage').style.display = 'none';
+      document.getElementById('rlBetStage').style.display = 'block';
+    }
+    updateRouletteMultiBar();
+  } else if (rData.phase === 'spinning' && rData.roundId && onlineRoomState.processedRoundId !== rData.roundId) {
+    onlineRoomState.processedRoundId = rData.roundId;
+    const winIdx = Number(rData.winIdx) || 0;
+    const myIdx = getMyOnlineSeatIdx();
+    rlState.playerBets[myIdx] = { ...rlState.bets };
+    const myBetTotal = getRouletteTotalBet();
+    if (myBetTotal > 0) {
+      state.chips = Math.max(0, state.chips - myBetTotal);
+      saveState();
+      pushMyChipsToOnlineSeat();
+    }
+    runRouletteWheelAnimation(winIdx, myBetTotal);
+  }
 }
 
 function backToRouletteBetStage() {
   if (rlState.spinning) return;
   playSE('click');
+  const players = getActivePlayers();
+  rlState.bets = {};
+  rlState.playerBets = players.map(() => ({}));
+  rlState.readyFlags = players.map(() => false);
+  rlState.betTurnIdx = 0;
   document.getElementById('rlWheelStage').style.display = 'none';
   document.getElementById('rlBetStage').style.display = 'block';
+  document.getElementById('rlMultiResultsList').style.display = 'none';
+  updateRouletteMultiBar();
   renderRouletteBoard();
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role === 'host') {
+    pushOnlineRoomPatch({
+      roulette: {
+        roundId: 'rl_' + Date.now(),
+        phase: 'betting',
+        playerBets: rlState.playerBets,
+        readyFlags: rlState.readyFlags,
+        winIdx: null
+      }
+    });
+  }
 }
 
 function getRouletteBetLabel(key) {
@@ -6124,20 +7457,24 @@ function renderRouletteSelectedBetsSidebar(winNum = null) {
   });
 }
 
-function getRouletteTotalBet() {
-  return Object.values(rlState.bets).reduce((a, b) => a + b, 0);
+function getRouletteTotalBet(betsObj = rlState.bets) {
+  return Object.values(betsObj || {}).reduce((a, b) => a + b, 0);
 }
 
 function placeRouletteBet(key) {
   if (rlState.spinning) return;
   const unit = parseInt(document.getElementById('rlChipUnitSelect').value, 10) || 10;
   const curTotal = getRouletteTotalBet();
-  if (curTotal + unit > state.chips) {
+  const availChips = state.playMode === 'local' ? getPlayerChipsByIdx(rlState.betTurnIdx) : state.chips;
+  if (curTotal + unit > availChips) {
     showToast('⚠️ 所持チップを超えるベットはできません！');
     return;
   }
   playSE('click');
   rlState.bets[key] = (rlState.bets[key] || 0) + unit;
+  if (state.playMode === 'local') {
+    rlState.playerBets[rlState.betTurnIdx] = { ...rlState.bets };
+  }
   renderRouletteBoard();
 }
 
@@ -6145,6 +7482,9 @@ function clearRouletteBets() {
   if (rlState.spinning) return;
   playSE('click');
   rlState.bets = {};
+  if (state.playMode === 'local') {
+    rlState.playerBets[rlState.betTurnIdx] = {};
+  }
   renderRouletteBoard();
 }
 
@@ -6185,7 +7525,6 @@ function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
   const r = cx - 14;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // 外枠ゴールドリム
   ctx.beginPath();
   ctx.arc(cx, cy, r + 6, 0, Math.PI * 2);
   ctx.fillStyle = '#78350f';
@@ -6211,7 +7550,6 @@ function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
     ctx.lineWidth = num === highlightNum ? 3.5 : 1.1;
     ctx.stroke();
 
-    // 大きく見やすい数字ラベル
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(a0 + arc / 2);
@@ -6222,7 +7560,6 @@ function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
     ctx.restore();
   }
 
-  // 内側の装飾サークル
   ctx.beginPath();
   ctx.arc(cx, cy, r * 0.62, 0, Math.PI * 2);
   ctx.fillStyle = '#064e3b';
@@ -6231,7 +7568,6 @@ function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
   ctx.lineWidth = 4;
   ctx.stroke();
 
-  // 中央ゴールドタレット
   ctx.beginPath();
   ctx.arc(cx, cy, 44, 0, Math.PI * 2);
   ctx.fillStyle = '#b45309';
@@ -6240,7 +7576,6 @@ function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
   ctx.lineWidth = 3.5;
   ctx.stroke();
 
-  // 中央に当選番号をドカンと表示
   if (highlightNum !== null) {
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 24px sans-serif';
@@ -6253,7 +7588,6 @@ function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
     ctx.fillText('SPIN', cx, cy + 4);
   }
 
-  // 白いルーレットボール（上部ポインター位置へ収束）
   const ballAngle = -Math.PI / 2 - (1 - progress) * Math.PI * 10;
   const ballRadius = r - 28 - progress * 14;
   const bx = cx + Math.cos(ballAngle) * ballRadius;
@@ -6266,7 +7600,6 @@ function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  // 上部ポインター針
   ctx.beginPath();
   ctx.moveTo(cx, 22);
   ctx.lineTo(cx - 11, 3);
@@ -6279,25 +7612,94 @@ function drawRouletteWheel(angle, highlightNum = null, progress = 1) {
   ctx.stroke();
 }
 
+function calcRoulettePayout(betsObj, winNum) {
+  let payout = 0;
+  const isRed = RED_NUMS.has(winNum);
+  const isBlack = winNum !== 0 && !isRed;
+  Object.entries(betsObj || {}).forEach(([key, amt]) => {
+    if (key === 'RED' && isRed) payout += amt * 2;
+    else if (key === 'BLACK' && isBlack) payout += amt * 2;
+    else if (key === 'EVEN' && winNum !== 0 && winNum % 2 === 0) payout += amt * 2;
+    else if (key === 'ODD' && winNum % 2 === 1) payout += amt * 2;
+    else if (key === 'LOW' && winNum >= 1 && winNum <= 18) payout += amt * 2;
+    else if (key === 'HIGH' && winNum >= 19 && winNum <= 36) payout += amt * 2;
+    else if (key === 'DOZ1' && winNum >= 1 && winNum <= 12) payout += amt * 3;
+    else if (key === 'DOZ2' && winNum >= 13 && winNum <= 24) payout += amt * 3;
+    else if (key === 'DOZ3' && winNum >= 25 && winNum <= 36) payout += amt * 3;
+    else if (key === 'NUM_' + winNum) payout += amt * 36;
+  });
+  return payout;
+}
+
 function spinRoulette() {
   if (rlState.spinning) return;
+
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    if (onlineRoomState.role !== 'host') {
+      showToast('🏠 ルーレットはホスト(1P)が「回す」を押すと全員同時に回ります！');
+      return;
+    }
+    const myIdx = getMyOnlineSeatIdx();
+    rlState.playerBets[myIdx] = { ...rlState.bets };
+    rlState.readyFlags[myIdx] = true;
+    const anyBet = rlState.playerBets.some(b => getRouletteTotalBet(b) > 0);
+    if (!anyBet) {
+      showToast('🎯 先にルーレット盤へチップを置いてください！');
+      return;
+    }
+    const winIdx = Math.floor(Math.random() * ROULETTE_WHEEL_ORDER.length);
+    const roundId = 'rl_spin_' + Date.now();
+    onlineRoomState.processedRoundId = roundId;
+    const myBetTotal = getRouletteTotalBet();
+    if (myBetTotal > 0) {
+      state.chips = Math.max(0, state.chips - myBetTotal);
+      saveState();
+      pushMyChipsToOnlineSeat();
+    }
+    pushOnlineRoomPatch({
+      roulette: {
+        roundId,
+        phase: 'spinning',
+        winIdx,
+        playerBets: rlState.playerBets,
+        readyFlags: rlState.readyFlags
+      }
+    });
+    runRouletteWheelAnimation(winIdx, myBetTotal);
+    return;
+  }
+
   const totalBet = getRouletteTotalBet();
   if (totalBet <= 0) {
     showToast('🎯 先にルーレット盤へチップを置いてください！');
     return;
   }
-  rlState.spinning = true;
-  state.chips -= totalBet;
-  saveState();
+  if (state.playMode === 'local') {
+    rlState.playerBets[rlState.betTurnIdx] = { ...rlState.bets };
+    const players = getActivePlayers();
+    players.forEach((_, idx) => {
+      const bTot = getRouletteTotalBet(rlState.playerBets[idx]);
+      if (bTot > 0) adjustPlayerChipsByIdx(idx, -bTot);
+    });
+  } else {
+    state.chips -= totalBet;
+    saveState();
+  }
 
-  // 画面を「特大ルーレット画面」へ切り替え、端っこに選択したベット一覧を表示！
+  const winIdx = Math.floor(Math.random() * ROULETTE_WHEEL_ORDER.length);
+  runRouletteWheelAnimation(winIdx, totalBet);
+}
+
+function runRouletteWheelAnimation(winIdx, totalBet) {
+  rlState.spinning = true;
+  updateGameBackLockUI();
   document.getElementById('rlBetStage').style.display = 'none';
   document.getElementById('rlWheelStage').style.display = 'block';
   document.getElementById('rlBackToBetBtn').style.display = 'none';
+  document.getElementById('rlMultiResultsList').style.display = 'none';
   document.getElementById('rlResultBubble').textContent = '🎡 ルーレット回転中...！';
   renderRouletteSelectedBetsSidebar(null);
 
-  const winIdx = Math.floor(Math.random() * ROULETTE_WHEEL_ORDER.length);
   const winNum = ROULETTE_WHEEL_ORDER[winIdx];
   const arc = (Math.PI * 2) / ROULETTE_WHEEL_ORDER.length;
   const targetAngle = (Math.PI * 2 * 5) - (winIdx * arc + arc / 2);
@@ -6331,26 +7733,49 @@ function spinRoulette() {
 }
 
 function settleRoulette(winNum, totalBet) {
-  let payout = 0;
   const isRed = RED_NUMS.has(winNum);
-  const isBlack = winNum !== 0 && !isRed;
-
-  Object.entries(rlState.bets).forEach(([key, amt]) => {
-    if (key === 'RED' && isRed) payout += amt * 2;
-    else if (key === 'BLACK' && isBlack) payout += amt * 2;
-    else if (key === 'EVEN' && winNum !== 0 && winNum % 2 === 0) payout += amt * 2;
-    else if (key === 'ODD' && winNum % 2 === 1) payout += amt * 2;
-    else if (key === 'LOW' && winNum >= 1 && winNum <= 18) payout += amt * 2;
-    else if (key === 'HIGH' && winNum >= 19 && winNum <= 36) payout += amt * 2;
-    else if (key === 'DOZ1' && winNum >= 1 && winNum <= 12) payout += amt * 3;
-    else if (key === 'DOZ2' && winNum >= 13 && winNum <= 24) payout += amt * 3;
-    else if (key === 'DOZ3' && winNum >= 25 && winNum <= 36) payout += amt * 3;
-    else if (key === 'NUM_' + winNum) payout += amt * 36;
-  });
-
+  const colEmoji = winNum === 0 ? '🟢' : (isRed ? '🔴' : '⚫');
   renderRouletteSelectedBetsSidebar(winNum);
 
-  const colEmoji = winNum === 0 ? '🟢' : (isRed ? '🔴' : '⚫');
+  if (state.playMode !== 'ai') {
+    const players = getActivePlayers();
+    const resBox = document.getElementById('rlMultiResultsList');
+    resBox.style.display = 'grid';
+    resBox.className = 'multi-seats-grid';
+    resBox.innerHTML = '';
+
+    players.forEach((p, idx) => {
+      const bObj = rlState.playerBets[idx] || {};
+      const bTot = getRouletteTotalBet(bObj);
+      const pay = calcRoulettePayout(bObj, winNum);
+      if (state.playMode === 'local' && pay > 0) {
+        adjustPlayerChipsByIdx(idx, pay);
+      } else if (state.playMode === 'online' && idx === getMyOnlineSeatIdx() && pay > 0) {
+        adjustPlayerChipsByIdx(idx, pay);
+      }
+      const card = document.createElement('div');
+      card.className = 'multi-seat-card ' + (pay > 0 ? 'done-seat' : '');
+      card.style.borderColor = p.color;
+      card.innerHTML = `
+        <div class="seat-name-row" style="color:${p.color};">${p.name}</div>
+        <div class="seat-sub-row">賭:${bTot}🪙</div>
+        <div class="seat-result-row" style="color:${pay > 0 ? '#4ade80' : '#f87171'};">${bTot === 0 ? '見送り' : (pay > 0 ? `🎉 +${pay}🪙` : `💨 -${bTot}🪙`)}</div>
+      `;
+      resBox.appendChild(card);
+    });
+
+    const myIdx = state.playMode === 'online' ? getMyOnlineSeatIdx() : 0;
+    const myPay = calcRoulettePayout(rlState.playerBets[myIdx] || {}, winNum);
+    playSE(myPay > 0 ? 'win' : 'lose');
+    document.getElementById('rlResultBubble').textContent = `${colEmoji} 当選番号【 ${winNum} 】！`;
+    document.getElementById('rlBackToBetBtn').style.display = 'inline-block';
+    rlState.bets = {};
+    updateGameBackLockUI();
+    checkBankruptNotice();
+    return;
+  }
+
+  const payout = calcRoulettePayout(rlState.bets, winNum);
   if (payout > 0) {
     state.chips += payout;
     state.totalWins++;
@@ -6364,20 +7789,12 @@ function settleRoulette(winNum, totalBet) {
   document.getElementById('rlBackToBetBtn').style.display = 'inline-block';
   rlState.bets = {};
   saveState();
-  if (state.playMode === 'online' && onlineRoomState.active) {
-    pushOnlineRoomPatch({
-      hostChips: onlineRoomState.role === 'host' ? state.chips : onlineRoomState.hostChips,
-      guestChips: onlineRoomState.role === 'guest' ? state.chips : onlineRoomState.guestChips
-    });
-    sendOnlineToast(`ルーレット: ${document.getElementById('rlResultBubble').textContent}`);
-  }
+  updateGameBackLockUI();
   checkBankruptNotice();
 }
 
 /* ============================================================================
-   🎡 ゲーム6：ビッグシックス (Big Six / マネーホイール) ロジック
-   ① 🎯 1〜10数字＆高倍率モード（1〜10の番号を選んで、その中に書いてある5〜9倍等の倍率分もらえる！）
-   ② 🏛️ カジノ標準モード（1, 2, 5, 10, 20, 40倍の54区画）
+   🎡 ゲーム6：ビッグシックス (Big Six：1人 / 2〜4人フレンド・通信対応) ロジック
 ============================================================================ */
 const BIGSIX_SEGMENTS = [
   1, 2, 1, 5, 1, 2, 1, 10, 1, 2, 1, 5, 1, 2, 1, 20, 1, 2,
@@ -6402,8 +7819,11 @@ const BS_1TO10_COLORS = [
 
 let bsState = {
   ruleMode: 'num1to10', // 'num1to10' | 'classic'
-  num1to10Mults: [5, 7, 6, 8, 9, 5, 8, 6, 7, 9], // 1〜10番の中に書かれている倍率(5〜9倍)
+  num1to10Mults: [5, 7, 6, 8, 9, 5, 8, 6, 7, 9],
   bets: {},
+  playerBets: [],
+  readyFlags: [],
+  betTurnIdx: 0,
   angle: 0,
   spinning: false,
   winSegIdx: null
@@ -6422,7 +7842,6 @@ function setBigSixRuleMode(mode) {
 function shuffleBigSix1to10Multipliers() {
   if (bsState.spinning) return;
   playSE('dice');
-  // 1〜10の各枠の中に5〜9倍の倍率をランダムに割り振る
   const pool = [5, 5, 6, 6, 7, 7, 8, 8, 9, 9];
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -6432,32 +7851,177 @@ function shuffleBigSix1to10Multipliers() {
   renderBigSixBoard();
   drawBigSixWheel(bsState.angle);
   showToast('🎲 1〜10番の中に書かれた倍率（×5〜×9倍）をシャッフルしました！');
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role === 'host') {
+    pushOnlineRoomPatch({
+      bigsix: {
+        ...(onlineRoomState.lastData && onlineRoomState.lastData.bigsix ? onlineRoomState.lastData.bigsix : {}),
+        ruleMode: bsState.ruleMode,
+        num1to10Mults: bsState.num1to10Mults
+      }
+    });
+  }
 }
 
-function initBigSixUI() {
+function initBigSixUI(fromRemoteSync = false) {
+  const players = getActivePlayers();
   bsState.bets = {};
+  bsState.playerBets = players.map(() => ({}));
+  bsState.readyFlags = players.map(() => false);
+  bsState.betTurnIdx = 0;
   bsState.spinning = false;
+  document.getElementById('bsMultiResultsList').style.display = 'none';
   document.getElementById('bsShuffleMultBtn').style.display = bsState.ruleMode === 'num1to10' ? 'inline-block' : 'none';
   document.getElementById('bsResultText').textContent = bsState.ruleMode === 'num1to10'
     ? '1〜10の数字を選んでベット！当たればその中に書いてある倍数分（×5〜×9倍）もらえる！'
     : '当たりそうな数字（1, 2, 5, 10, 20, 40）にベットしてホイールを回そう！';
+  updateBigSixMultiBar();
   renderBigSixBoard();
   drawBigSixWheel(bsState.angle);
+  updateGameBackLockUI();
+
+  if (state.playMode === 'online' && onlineRoomState.active && !fromRemoteSync && onlineRoomState.role === 'host') {
+    pushOnlineRoomPatch({
+      bigsix: {
+        roundId: 'bs_' + Date.now(),
+        phase: 'betting',
+        ruleMode: bsState.ruleMode,
+        num1to10Mults: bsState.num1to10Mults,
+        playerBets: bsState.playerBets,
+        readyFlags: bsState.readyFlags,
+        winIdx: null
+      }
+    });
+  }
 }
 
-function getBigSixTotalBet() {
-  return Object.values(bsState.bets).reduce((a, b) => a + b, 0);
+function updateBigSixMultiBar() {
+  const bar = document.getElementById('bsMultiTurnBar');
+  const txt = document.getElementById('bsMultiTurnText');
+  const btn = document.getElementById('bsConfirmBetBtn');
+  if (!bar) return;
+
+  if (state.playMode === 'ai') {
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = 'flex';
+  const players = getActivePlayers();
+
+  if (state.playMode === 'local') {
+    const curP = players[bsState.betTurnIdx] || players[0];
+    const isLast = bsState.betTurnIdx >= players.length - 1;
+    txt.innerHTML = `<span style="color:${curP.color};">🎯 ${curP.name}</span> がベット中 (${bsState.betTurnIdx + 1}/${players.length}人) ｜ 所持: 🪙${getPlayerChipsByIdx(bsState.betTurnIdx).toLocaleString()}`;
+    btn.style.display = isLast ? 'none' : 'inline-block';
+    btn.textContent = '✅ 確定して次の人へ ➔';
+  } else {
+    const myIdx = getMyOnlineSeatIdx();
+    const readyCount = bsState.readyFlags.filter(Boolean).length;
+    const myReady = !!bsState.readyFlags[myIdx];
+    txt.textContent = `🌐 ベット準備完了: ${readyCount}/${players.length}人` + (onlineRoomState.role === 'host' ? '（ホストが「回す」で全員同時スピン！）' : '（確定を押してホストの回転を待とう！）');
+    btn.style.display = 'inline-block';
+    btn.textContent = myReady ? '✏️ ベットを修正する' : '✅ ベット確定 (準備OK)';
+  }
+}
+
+function confirmBigSixPlayerBet() {
+  if (bsState.spinning) return;
+  const players = getActivePlayers();
+
+  if (state.playMode === 'local') {
+    if (getBigSixTotalBet() <= 0) {
+      showToast('🎡 1つ以上ベットしてから確定してください！');
+      return;
+    }
+    bsState.playerBets[bsState.betTurnIdx] = { ...bsState.bets };
+    if (bsState.betTurnIdx < players.length - 1) {
+      bsState.betTurnIdx++;
+      bsState.bets = { ...(bsState.playerBets[bsState.betTurnIdx] || {}) };
+      playSE('coin');
+      updateBigSixMultiBar();
+      renderBigSixBoard();
+      showToast(`👥 ${players[bsState.betTurnIdx].name} のベット番です！`);
+    }
+    return;
+  }
+
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    const myIdx = getMyOnlineSeatIdx();
+    const nowReady = !bsState.readyFlags[myIdx];
+    if (nowReady && getBigSixTotalBet() <= 0) {
+      showToast('🎡 1つ以上ベットしてから確定してください！');
+      return;
+    }
+    bsState.readyFlags[myIdx] = nowReady;
+    bsState.playerBets[myIdx] = { ...bsState.bets };
+    playSE('coin');
+    updateBigSixMultiBar();
+
+    const curBs = (onlineRoomState.lastData && onlineRoomState.lastData.bigsix) || {};
+    const nextBets = Array.isArray(curBs.playerBets) ? [...curBs.playerBets] : players.map(() => ({}));
+    const nextFlags = Array.isArray(curBs.readyFlags) ? [...curBs.readyFlags] : players.map(() => false);
+    nextBets[myIdx] = { ...bsState.bets };
+    nextFlags[myIdx] = nowReady;
+    pushOnlineRoomPatch({
+      bigsix: {
+        ...curBs,
+        phase: 'betting',
+        playerBets: nextBets,
+        readyFlags: nextFlags
+      }
+    });
+  }
+}
+
+function syncBigSixFromOnline(bData) {
+  if (!bData) return;
+  if (bData.ruleMode && bData.ruleMode !== bsState.ruleMode) {
+    bsState.ruleMode = bData.ruleMode;
+    document.getElementById('bsTab1to10').classList.toggle('active', bsState.ruleMode === 'num1to10');
+    document.getElementById('bsTabClassic').classList.toggle('active', bsState.ruleMode === 'classic');
+    document.getElementById('bsShuffleMultBtn').style.display = bsState.ruleMode === 'num1to10' ? 'inline-block' : 'none';
+  }
+  if (Array.isArray(bData.num1to10Mults) && bData.num1to10Mults.length === 10) {
+    bsState.num1to10Mults = bData.num1to10Mults;
+  }
+  if (Array.isArray(bData.playerBets)) bsState.playerBets = bData.playerBets;
+  if (Array.isArray(bData.readyFlags)) bsState.readyFlags = bData.readyFlags;
+
+  if (bData.phase === 'betting') {
+    renderBigSixBoard();
+    drawBigSixWheel(bsState.angle);
+    updateBigSixMultiBar();
+  } else if (bData.phase === 'spinning' && bData.roundId && onlineRoomState.processedRoundId !== bData.roundId) {
+    onlineRoomState.processedRoundId = bData.roundId;
+    const winIdx = Number(bData.winIdx) || 0;
+    const myIdx = getMyOnlineSeatIdx();
+    bsState.playerBets[myIdx] = { ...bsState.bets };
+    const myBetTotal = getBigSixTotalBet();
+    if (myBetTotal > 0) {
+      state.chips = Math.max(0, state.chips - myBetTotal);
+      saveState();
+      pushMyChipsToOnlineSeat();
+    }
+    runBigSixWheelAnimation(winIdx, myBetTotal);
+  }
+}
+
+function getBigSixTotalBet(betsObj = bsState.bets) {
+  return Object.values(betsObj || {}).reduce((a, b) => a + b, 0);
 }
 
 function placeBigSixBet(num) {
   if (bsState.spinning) return;
   const unit = parseInt(document.getElementById('bsChipUnit').value, 10) || 10;
-  if (getBigSixTotalBet() + unit > state.chips) {
+  const availChips = state.playMode === 'local' ? getPlayerChipsByIdx(bsState.betTurnIdx) : state.chips;
+  if (getBigSixTotalBet() + unit > availChips) {
     showToast('⚠️ 所持チップを超えるベットはできません！');
     return;
   }
   playSE('click');
   bsState.bets[num] = (bsState.bets[num] || 0) + unit;
+  if (state.playMode === 'local') {
+    bsState.playerBets[bsState.betTurnIdx] = { ...bsState.bets };
+  }
   renderBigSixBoard();
 }
 
@@ -6465,6 +8029,9 @@ function clearBigSixBets() {
   if (bsState.spinning) return;
   playSE('click');
   bsState.bets = {};
+  if (state.playMode === 'local') {
+    bsState.playerBets[bsState.betTurnIdx] = {};
+  }
   renderBigSixBoard();
 }
 
@@ -6538,7 +8105,6 @@ function drawBigSixWheel(angle, highlightIdx = null) {
       ctx.lineWidth = i === highlightIdx ? 4 : 2;
       ctx.stroke();
 
-      // 外側に「1〜10の番号」、内側に「書いてある倍率(×5〜×9)」を大きく描画！
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate(a0 + arc / 2);
@@ -6579,14 +8145,12 @@ function drawBigSixWheel(angle, highlightIdx = null) {
     }
   }
 
-  // 外枠ゴールドリング
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.strokeStyle = '#facc15';
   ctx.lineWidth = 4;
   ctx.stroke();
 
-  // 中央エンブレム
   ctx.beginPath();
   ctx.arc(cx, cy, 42, 0, Math.PI * 2);
   ctx.fillStyle = '#0f172a';
@@ -6600,7 +8164,6 @@ function drawBigSixWheel(angle, highlightIdx = null) {
   ctx.textAlign = 'center';
   ctx.fillText('BIG SIX', cx, cy + 4);
 
-  // 上部ストッパー針
   ctx.beginPath();
   ctx.moveTo(cx, 20);
   ctx.lineTo(cx - 11, 2);
@@ -6613,19 +8176,88 @@ function drawBigSixWheel(angle, highlightIdx = null) {
   ctx.stroke();
 }
 
+function calcBigSixReward(betsObj, winIdx) {
+  if (!betsObj) return 0;
+  if (bsState.ruleMode === 'num1to10') {
+    const winNum = winIdx + 1;
+    const mult = bsState.num1to10Mults[winIdx];
+    const betOnWin = betsObj[winNum] || 0;
+    return betOnWin > 0 ? betOnWin * mult : 0;
+  } else {
+    const winNum = BIGSIX_SEGMENTS[winIdx];
+    const betOnWin = betsObj[winNum] || 0;
+    return betOnWin > 0 ? betOnWin + betOnWin * winNum : 0;
+  }
+}
+
 function spinBigSix() {
   if (bsState.spinning) return;
+
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    if (onlineRoomState.role !== 'host') {
+      showToast('🏠 ホスト(1P)が「回す」を押すと全員同時に回ります！');
+      return;
+    }
+    const myIdx = getMyOnlineSeatIdx();
+    bsState.playerBets[myIdx] = { ...bsState.bets };
+    bsState.readyFlags[myIdx] = true;
+    const anyBet = bsState.playerBets.some(b => getBigSixTotalBet(b) > 0);
+    if (!anyBet) {
+      showToast('🎡 先に下の番号パネルをタップしてベットしてください！');
+      return;
+    }
+    const segCount = bsState.ruleMode === 'num1to10' ? 10 : BIGSIX_SEGMENTS.length;
+    const winIdx = Math.floor(Math.random() * segCount);
+    const roundId = 'bs_spin_' + Date.now();
+    onlineRoomState.processedRoundId = roundId;
+    const myBetTotal = getBigSixTotalBet();
+    if (myBetTotal > 0) {
+      state.chips = Math.max(0, state.chips - myBetTotal);
+      saveState();
+      pushMyChipsToOnlineSeat();
+    }
+    pushOnlineRoomPatch({
+      bigsix: {
+        roundId,
+        phase: 'spinning',
+        ruleMode: bsState.ruleMode,
+        num1to10Mults: bsState.num1to10Mults,
+        winIdx,
+        playerBets: bsState.playerBets,
+        readyFlags: bsState.readyFlags
+      }
+    });
+    runBigSixWheelAnimation(winIdx, myBetTotal);
+    return;
+  }
+
   const totalBet = getBigSixTotalBet();
   if (totalBet <= 0) {
     showToast('🎡 先に下の番号パネルをタップしてベットしてください！');
     return;
   }
-  bsState.spinning = true;
-  state.chips -= totalBet;
-  saveState();
+  if (state.playMode === 'local') {
+    bsState.playerBets[bsState.betTurnIdx] = { ...bsState.bets };
+    getActivePlayers().forEach((_, idx) => {
+      const bTot = getBigSixTotalBet(bsState.playerBets[idx]);
+      if (bTot > 0) adjustPlayerChipsByIdx(idx, -bTot);
+    });
+  } else {
+    state.chips -= totalBet;
+    saveState();
+  }
 
   const segCount = bsState.ruleMode === 'num1to10' ? 10 : BIGSIX_SEGMENTS.length;
   const winIdx = Math.floor(Math.random() * segCount);
+  runBigSixWheelAnimation(winIdx, totalBet);
+}
+
+function runBigSixWheelAnimation(winIdx, totalBet) {
+  bsState.spinning = true;
+  document.getElementById('bsMultiResultsList').style.display = 'none';
+  updateGameBackLockUI();
+
+  const segCount = bsState.ruleMode === 'num1to10' ? 10 : BIGSIX_SEGMENTS.length;
   const arc = (Math.PI * 2) / segCount;
   const targetAngle = (Math.PI * 2 * 6) - (winIdx * arc + arc / 2);
 
@@ -6657,38 +8289,68 @@ function spinBigSix() {
 }
 
 function settleBigSix(winIdx, totalBet) {
-  if (bsState.ruleMode === 'num1to10') {
-    const winNum = winIdx + 1;
-    const mult = bsState.num1to10Mults[winIdx];
-    const betOnWin = bsState.bets[winNum] || 0;
-    if (betOnWin > 0) {
-      const reward = betOnWin * mult;
-      state.chips += reward;
-      state.totalWins++;
-      playSE('win');
-      document.getElementById('bsResultText').textContent = `🎉 【 ${winNum}番 (×${mult}倍) 】に停止！大当たり ➔ +${reward} 🪙 獲得！`;
-    } else {
-      playSE('lose');
-      document.getElementById('bsResultText').textContent = `💨 【 ${winNum}番 (×${mult}倍) 】に停止… ハズレ (-${totalBet} 🪙)`;
-    }
+  const hitLabel = bsState.ruleMode === 'num1to10'
+    ? `【 ${winIdx + 1}番 (×${bsState.num1to10Mults[winIdx]}倍) 】`
+    : `【 ${BIGSIX_SEGMENTS[winIdx]} 】 (${BIGSIX_SEGMENTS[winIdx]}倍)`;
+
+  if (state.playMode !== 'ai') {
+    const players = getActivePlayers();
+    const resBox = document.getElementById('bsMultiResultsList');
+    resBox.style.display = 'grid';
+    resBox.className = 'multi-seats-grid';
+    resBox.innerHTML = '';
+
+    players.forEach((p, idx) => {
+      const bObj = bsState.playerBets[idx] || {};
+      const bTot = getBigSixTotalBet(bObj);
+      const pay = calcBigSixReward(bObj, winIdx);
+      if (state.playMode === 'local' && pay > 0) {
+        adjustPlayerChipsByIdx(idx, pay);
+      } else if (state.playMode === 'online' && idx === getMyOnlineSeatIdx() && pay > 0) {
+        adjustPlayerChipsByIdx(idx, pay);
+      }
+      const card = document.createElement('div');
+      card.className = 'multi-seat-card ' + (pay > 0 ? 'done-seat' : '');
+      card.style.borderColor = p.color;
+      card.innerHTML = `
+        <div class="seat-name-row" style="color:${p.color};">${p.name}</div>
+        <div class="seat-sub-row">賭:${bTot}🪙</div>
+        <div class="seat-result-row" style="color:${pay > 0 ? '#4ade80' : '#f87171'};">${bTot === 0 ? '見送り' : (pay > 0 ? `🎉 +${pay}🪙` : `💨 -${bTot}🪙`)}</div>
+      `;
+      resBox.appendChild(card);
+    });
+
+    const myIdx = state.playMode === 'online' ? getMyOnlineSeatIdx() : 0;
+    const myPay = calcBigSixReward(bsState.playerBets[myIdx] || {}, winIdx);
+    playSE(myPay > 0 ? 'win' : 'lose');
+    document.getElementById('bsResultText').textContent = `🎡 ${hitLabel} に停止！`;
+
+    bsState.bets = {};
+    bsState.playerBets = players.map(() => ({}));
+    bsState.readyFlags = players.map(() => false);
+    bsState.betTurnIdx = 0;
+    updateBigSixMultiBar();
+    renderBigSixBoard();
+    updateGameBackLockUI();
+    checkBankruptNotice();
+    return;
+  }
+
+  const reward = calcBigSixReward(bsState.bets, winIdx);
+  if (reward > 0) {
+    state.chips += reward;
+    state.totalWins++;
+    playSE('win');
+    document.getElementById('bsResultText').textContent = `🎉 ${hitLabel} に停止！大当たり ➔ +${reward} 🪙 獲得！`;
   } else {
-    const winNum = BIGSIX_SEGMENTS[winIdx];
-    const betOnWin = bsState.bets[winNum] || 0;
-    if (betOnWin > 0) {
-      const reward = betOnWin + betOnWin * winNum;
-      state.chips += reward;
-      state.totalWins++;
-      playSE('win');
-      document.getElementById('bsResultText').textContent = `🎉 【 ${winNum} 】に停止！ (${winNum}倍的中) ➔ +${reward} 🪙 獲得！`;
-    } else {
-      playSE('lose');
-      document.getElementById('bsResultText').textContent = `💨 【 ${winNum} 】に停止… ハズレ (-${totalBet} 🪙)`;
-    }
+    playSE('lose');
+    document.getElementById('bsResultText').textContent = `💨 ${hitLabel} に停止… ハズレ (-${totalBet} 🪙)`;
   }
 
   bsState.bets = {};
   saveState();
   renderBigSixBoard();
+  updateGameBackLockUI();
   checkBankruptNotice();
 }
 
@@ -7465,10 +9127,13 @@ function settleSlotSpin() {
    🤝 フレンド機能 ＆ 📜 チップ貸し借り（デジタル借用書）エンジン
 ============================================================================ */
 let friendCache = {
-  friends: {},   // { [code]: { code, name, addedAt } }
-  requests: {},  // { [code]: { code, name, sentAt } }
-  loans: {}      // { [loanId]: { id, fromCode, fromName, toCode, toName, amount, remaining, status, collectedAmount, ... } }
+  friends: {},     // { [code]: { code, name, addedAt } }
+  requests: {},    // { [code]: { code, name, sentAt } }
+  roomInvites: {}, // { [fromCode]: { fromCode, fromName, roomCode, sentAt } }
+  loans: {}        // { [loanId]: { id, fromCode, fromName, toCode, toName, amount, remaining, status, collectedAmount, ... } }
 };
+let friendUserUnsub = null;
+let friendLedgerUnsub = null;
 
 function getCasinoUserDocRef(code) {
   if (!db || !code) return null;
@@ -7478,6 +9143,60 @@ function getCasinoUserDocRef(code) {
 function getCasinoLoansLedgerRef() {
   if (!db) return null;
   return db.collection('players').doc('CASINO_LOANS_LEDGER');
+}
+
+function startFriendRealtimeListener() {
+  if (!db || !state.friendCode) return;
+  if (friendUserUnsub) {
+    try { friendUserUnsub(); } catch (e) {}
+  }
+  if (friendLedgerUnsub) {
+    try { friendLedgerUnsub(); } catch (e) {}
+  }
+  registerMyFriendProfileToCloud();
+
+  friendUserUnsub = getCasinoUserDocRef(state.friendCode).onSnapshot(snap => {
+    if (!snap || !snap.exists) return;
+    const uData = snap.data() || {};
+    const prevReqCnt = Object.keys(friendCache.requests || {}).length;
+    const prevInvCnt = Object.keys(friendCache.roomInvites || {}).length;
+
+    friendCache.friends = uData.friends || {};
+    friendCache.requests = uData.requests || {};
+
+    // 古い招待(30分以上前)は除外
+    const now = Date.now();
+    const rawInvites = uData.roomInvites || {};
+    const freshInvites = {};
+    Object.entries(rawInvites).forEach(([k, v]) => {
+      if (v && v.roomCode && (now - (v.sentAt || 0) < 1000 * 60 * 30)) {
+        freshInvites[k] = v;
+      }
+    });
+    friendCache.roomInvites = freshInvites;
+
+    const newReqCnt = Object.keys(friendCache.requests).length;
+    const newInvCnt = Object.keys(friendCache.roomInvites).length;
+    if (newInvCnt > prevInvCnt) {
+      playSE('win');
+      showToast('🎮 フレンドから対戦ルームへの招待が届きました！「🤝 フレンド」から参加できます！');
+    } else if (newReqCnt > prevReqCnt) {
+      playSE('coin');
+      showToast('📩 新しいフレンド申請が届きました！');
+    }
+
+    updateFriendNotificationBadges();
+    renderCasinoFriendListUI();
+    renderOnlineInviteFriendsBar();
+  }, () => {});
+
+  friendLedgerUnsub = getCasinoLoansLedgerRef().onSnapshot(snap => {
+    if (!snap || !snap.exists) return;
+    const lData = snap.data() || {};
+    friendCache.loans = lData.loans || {};
+    updateFriendNotificationBadges();
+    renderCasinoLoanUI();
+  }, () => {});
 }
 
 function openFriendHubScreen() {
@@ -7523,6 +9242,7 @@ async function registerMyFriendProfileToCloud() {
       friendCode: state.friendCode,
       playerId: state.playerId,
       name: check.cleanName,
+      chips: state.chips,
       updatedAt: Date.now()
     }, { merge: true });
   } catch (e) {}
@@ -7542,13 +9262,22 @@ async function syncFriendAndLoanData(showNotice = false) {
         getCasinoUserDocRef(state.friendCode).get(),
         getCasinoLoansLedgerRef().get()
       ]),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3500))
     ]);
 
     if (userSnap && userSnap.exists) {
       const uData = userSnap.data() || {};
       friendCache.friends = uData.friends || {};
       friendCache.requests = uData.requests || {};
+      const now = Date.now();
+      const rawInvites = uData.roomInvites || {};
+      const freshInvites = {};
+      Object.entries(rawInvites).forEach(([k, v]) => {
+        if (v && v.roomCode && (now - (v.sentAt || 0) < 1000 * 60 * 30)) {
+          freshInvites[k] = v;
+        }
+      });
+      friendCache.roomInvites = freshInvites;
     }
     if (ledgerSnap && ledgerSnap.exists) {
       const lData = ledgerSnap.data() || {};
@@ -7616,6 +9345,7 @@ async function syncFriendAndLoanData(showNotice = false) {
     updateFriendNotificationBadges();
     renderCasinoFriendListUI();
     renderCasinoLoanUI();
+    renderOnlineInviteFriendsBar();
     if (showNotice) showToast('🔄 フレンド・借用書データを最新に同期しました！');
   } catch (e) {
     if (showNotice) showToast('⚠️ 通信タイムアウト：ネット接続を確認してください');
@@ -7624,6 +9354,7 @@ async function syncFriendAndLoanData(showNotice = false) {
 
 function updateFriendNotificationBadges() {
   const reqCount = Object.keys(friendCache.requests || {}).length;
+  const invCount = Object.keys(friendCache.roomInvites || {}).length;
   let incomingLoanCount = 0;
   let activeBorrowCount = 0;
   Object.values(friendCache.loans || {}).forEach(l => {
@@ -7632,7 +9363,7 @@ function updateFriendNotificationBadges() {
     if (l.status === 'active') activeBorrowCount++;
   });
 
-  const totalBadge = reqCount + incomingLoanCount;
+  const totalBadge = reqCount + invCount + incomingLoanCount;
   const titleBadge = document.getElementById('titleFriendBadge');
   if (titleBadge) {
     titleBadge.style.display = totalBadge > 0 ? 'inline-block' : 'none';
@@ -7640,8 +9371,9 @@ function updateFriendNotificationBadges() {
   }
   const hubReq = document.getElementById('hubReqBadge');
   if (hubReq) {
-    hubReq.style.display = reqCount > 0 ? 'inline-block' : 'none';
-    hubReq.textContent = reqCount + '件';
+    const reqAndInv = reqCount + invCount;
+    hubReq.style.display = reqAndInv > 0 ? 'inline-block' : 'none';
+    hubReq.textContent = invCount > 0 ? `招待${invCount}` : `${reqCount}件`;
   }
   const hubLoan = document.getElementById('hubLoanBadge');
   if (hubLoan) {
@@ -7651,9 +9383,17 @@ function updateFriendNotificationBadges() {
   }
 }
 
+function normalizeFriendCodeInput(raw) {
+  let c = String(raw || '').trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  if (c && !c.startsWith('CL-') && c.length === 4) {
+    c = 'CL-' + c;
+  }
+  return c;
+}
+
 async function sendCasinoFriendRequest() {
   const inp = document.getElementById('casinoFriendCodeInput');
-  const rawCode = (inp ? inp.value : '').trim().toUpperCase();
+  const rawCode = normalizeFriendCodeInput(inp ? inp.value : '');
   if (!rawCode) {
     showToast('⚠️ 友達のフレンドコードを入力してください！');
     return;
@@ -7698,6 +9438,83 @@ async function sendCasinoFriendRequest() {
   }
 }
 
+async function inviteFriendToOnlineRoom(targetCode, targetName) {
+  if (!db || !targetCode) return;
+  let roomCode = (onlineRoomState.active && onlineRoomState.code) ? onlineRoomState.code : '';
+  if (!roomCode) {
+    setPlayMode('online');
+    roomCode = await createOnlineRoom();
+    navigateTo('screen-category');
+  }
+  if (!roomCode) return;
+
+  try {
+    const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ホスト');
+    await getCasinoUserDocRef(targetCode).set({
+      roomInvites: {
+        [state.friendCode]: {
+          fromCode: state.friendCode,
+          fromName: mySafeName,
+          roomCode,
+          sentAt: Date.now()
+        }
+      }
+    }, { merge: true });
+    playSE('win');
+    showToast(`🎮 ${sanitizeDisplayPlayerName(targetName || targetCode)} さんに部屋【${roomCode}】の招待を送りました！`);
+  } catch (e) {
+    showToast('❌ ルーム招待の送信に失敗しました');
+  }
+}
+
+async function acceptRoomInvite(roomCode, fromCode) {
+  playSE('click');
+  await declineRoomInvite(fromCode, true);
+  state.playMode = 'online';
+  syncModeSelectorUI();
+  navigateTo('screen-category');
+  await joinOnlineRoom(roomCode);
+}
+
+async function declineRoomInvite(fromCode, silent = false) {
+  if (db && fromCode && state.friendCode) {
+    try {
+      const fvDel = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
+        ? firebase.firestore.FieldValue.delete()
+        : null;
+      if (fvDel) {
+        await getCasinoUserDocRef(state.friendCode).update({ [`roomInvites.${fromCode}`]: fvDel });
+      }
+    } catch (e) {}
+  }
+  delete friendCache.roomInvites[fromCode];
+  updateFriendNotificationBadges();
+  renderCasinoFriendListUI();
+  if (!silent) showToast('招待を閉じました');
+}
+
+async function removeCasinoFriend(targetCode, targetName) {
+  if (!db || !targetCode) return;
+  if (!confirm(`「${targetName || targetCode}」をフレンドリストから解除しますか？`)) return;
+  try {
+    const fvDel = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
+      ? firebase.firestore.FieldValue.delete()
+      : null;
+    if (fvDel) {
+      await getCasinoUserDocRef(state.friendCode).update({ [`friends.${targetCode}`]: fvDel });
+      await getCasinoUserDocRef(targetCode).update({ [`friends.${state.friendCode}`]: fvDel }).catch(() => {});
+    }
+    delete friendCache.friends[targetCode];
+    playSE('click');
+    showToast(`🗑️ ${targetName || targetCode} をフレンドから解除しました`);
+    renderCasinoFriendListUI();
+    renderCasinoLoanUI();
+    renderOnlineInviteFriendsBar();
+  } catch (e) {
+    showToast('❌ 解除に失敗しました');
+  }
+}
+
 async function acceptCasinoFriendRequest(fromCode, fromName) {
   if (!db || !fromCode) return;
   try {
@@ -7730,6 +9547,7 @@ async function acceptCasinoFriendRequest(fromCode, fromName) {
     updateFriendNotificationBadges();
     renderCasinoFriendListUI();
     renderCasinoLoanUI();
+    renderOnlineInviteFriendsBar();
   } catch (e) {
     showToast('❌ 承認処理に失敗しました');
   }
@@ -7755,6 +9573,32 @@ async function declineCasinoFriendRequest(fromCode) {
 function renderCasinoFriendListUI() {
   const codeEl = document.getElementById('myCasinoFriendCodeText');
   if (codeEl) codeEl.textContent = state.friendCode || 'CL-XXXX';
+
+  // 🎮 届いている対戦ルーム招待
+  const invBox = document.getElementById('casinoIncomingRoomInvitesBox');
+  const invList = document.getElementById('casinoIncomingRoomInvitesList');
+  const invites = Object.values(friendCache.roomInvites || {});
+  if (invBox && invList) {
+    invBox.style.display = invites.length > 0 ? 'block' : 'none';
+    invList.innerHTML = '';
+    invites.forEach(inv => {
+      const safeName = sanitizeDisplayPlayerName(inv.fromName || inv.fromCode);
+      const row = document.createElement('div');
+      row.className = 'friend-card-item';
+      row.style.borderColor = '#4ade80';
+      row.innerHTML = `
+        <div>
+          <div style="font-weight:900; font-size:0.94rem; color:#a7f3d0;">🎮 ${safeName} から対戦の招待！</div>
+          <div style="font-size:0.74rem; color:#e2e8f0;">通信ルーム【${inv.roomCode}】に誘われています</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="action-btn btn-green" style="padding:7px 12px; font-size:0.82rem;" onclick="acceptRoomInvite('${inv.roomCode}', '${inv.fromCode}')">🚪 参加する！</button>
+          <button class="chip-bet-btn c-clear" onclick="declineRoomInvite('${inv.fromCode}')">✕</button>
+        </div>
+      `;
+      invList.appendChild(row);
+    });
+  }
 
   const reqBox = document.getElementById('casinoIncomingReqBox');
   const reqList = document.getElementById('casinoIncomingReqList');
@@ -7795,14 +9639,19 @@ function renderCasinoFriendListUI() {
 
   friends.forEach(f => {
     const safeName = sanitizeDisplayPlayerName(f.name || f.code);
+    const escaped = safeName.replace(/'/g, "\\'");
     const card = document.createElement('div');
     card.className = 'friend-card-item';
     card.innerHTML = `
-      <div>
-        <div style="font-weight:900; font-size:0.98rem; color:#fef08a;">🤝 ${safeName}</div>
-        <div style="font-size:0.74rem; color:#94a3b8;">フレンドコード: ${f.code}</div>
+      <div style="min-width:120px;">
+        <div style="font-weight:900; font-size:0.96rem; color:#fef08a;">🤝 ${safeName}</div>
+        <div style="font-size:0.72rem; color:#94a3b8;">コード: ${f.code}</div>
       </div>
-      <button class="chip-bet-btn c-10" onclick="jumpToLoanWithFriend('${f.code}')">📜 チップを貸す</button>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+        <button class="chip-bet-btn c-25" onclick="inviteFriendToOnlineRoom('${f.code}', '${escaped}')">🎮 対戦に誘う</button>
+        <button class="chip-bet-btn c-10" onclick="jumpToLoanWithFriend('${f.code}')">📜 貸す</button>
+        <button class="chip-bet-btn c-clear" onclick="removeCasinoFriend('${f.code}', '${escaped}')">🗑️</button>
+      </div>
     `;
     listEl.appendChild(card);
   });
@@ -8133,8 +9982,10 @@ function renderCasinoLoanUI() {
 function resetP2Chips() {
   playSE('coin');
   state.p2Chips = 100;
+  state.localChips = [state.chips, 100, 100, 100];
   saveState();
-  showToast('👥 フレンド(2P)のチップを100枚にリセットしました！');
+  if (typeof renderLocalPlayersSummary === 'function') renderLocalPlayersSummary();
+  showToast('👥 フレンド(2P〜4P)のチップを100枚にリセットしました！');
 }
 
 async function resetAllCasinoData() {
