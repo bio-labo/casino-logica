@@ -438,6 +438,58 @@ html, body {
   box-shadow: 0 7px 0 #500724, 0 10px 20px rgba(0,0,0,0.5);
 }
 
+.yokai-btn-friend {
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+  border-color: #bbf7d0;
+  box-shadow: 0 7px 0 #14532d, 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.yokai-btn-loan {
+  background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);
+  border-color: #bae6fd;
+  box-shadow: 0 7px 0 #0c4a6e, 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.back-btn.locked-back {
+  background: #334155 !important;
+  border-color: #64748b !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed !important;
+  opacity: 0.78;
+}
+
+.friend-card-item {
+  background: rgba(15, 23, 42, 0.92);
+  border: 2.5px solid #38bdf8;
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 0 #0c4a6e;
+}
+
+.loan-card-item {
+  background: rgba(15, 23, 42, 0.94);
+  border: 2.5px solid #facc15;
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 0 #713f12;
+}
+.loan-card-item.borrow-card {
+  border-color: #f43f5e;
+  box-shadow: 0 4px 0 #881337;
+}
+.loan-card-item.offer-card {
+  border-color: #38bdf8;
+  box-shadow: 0 4px 0 #075985;
+}
+
 /* 🏆 ランキング画面用スタイル */
 .ranking-list-wrap {
   display: flex;
@@ -1576,7 +1628,19 @@ html, body {
         <div class="yokai-btn-arrow">▶</div>
       </button>
 
-      <!-- ② ランキングボタン（チップ数ランキング＆賭けバトル） -->
+      <!-- ② フレンドボタン（申請＆チップ貸し借り） -->
+      <button class="yokai-btn yokai-btn-friend" onclick="openFriendHubScreen()">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🤝</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">フレンド <span id="titleFriendBadge" style="display:none; font-size:0.75rem; background:#ef4444; color:#fff; padding:2px 8px; border-radius:999px; vertical-align:middle;">0</span></div>
+            <div class="yokai-btn-desc">フレンド申請・一覧 ＆ チップ貸し借り（借用書）</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <!-- ③ ランキングボタン（チップ数ランキング＆賭けバトル） -->
       <button class="yokai-btn yokai-btn-ranking" onclick="openRankingScreen()">
         <div class="yokai-btn-left">
           <div class="yokai-btn-icon">🏆</div>
@@ -1588,7 +1652,7 @@ html, body {
         <div class="yokai-btn-arrow">▶</div>
       </button>
 
-      <!-- ③ 勉強でチップ稼ぎ（0チップの人専用！） -->
+      <!-- ④ 勉強でチップ稼ぎ（0チップ・借金返済ノルマ専用！） -->
       <button id="titleStudyBtn" class="yokai-btn yokai-btn-study-locked" onclick="handleStudyEarnClick()">
         <div class="yokai-btn-left">
           <div class="yokai-btn-icon" id="titleStudyIcon">🔒</div>
@@ -1600,7 +1664,7 @@ html, body {
         <div class="yokai-btn-arrow" id="titleStudyArrow">🔒</div>
       </button>
 
-      <!-- ④ メニューボタン -->
+      <!-- ⑤ メニューボタン -->
       <button class="yokai-btn yokai-btn-menu" onclick="navigateTo('screen-menu')">
         <div class="yokai-btn-left">
           <div class="yokai-btn-icon">⚙️</div>
@@ -1611,6 +1675,151 @@ html, body {
         </div>
         <div class="yokai-btn-arrow">▶</div>
       </button>
+    </div>
+
+    <!-- ⚠️ 借金返済ノルマ警告バナー（借りたチップを溶かして破産中のみ表示） -->
+    <div id="titleDebtLockNotice" style="display:none; max-width:520px; width:100%; margin:14px auto 0; background:rgba(127,29,29,0.92); border:3px solid #fca5a5; border-radius:18px; padding:12px 14px; text-align:center; font-size:0.84rem; font-weight:900; color:#fef2f2; box-shadow:0 6px 18px rgba(0,0,0,0.6);">
+      ⚠️ <strong>借金返済ノルマ発動中！</strong><br>
+      借りたチップを溶かして破産したため、「📝 勉強でチップ稼ぎ」で稼いで「🤝 フレンド ➔ チップ貸し借り」で借金（残り <span id="titleDebtLockAmtText" style="color:#fde047;">0</span> 🪙）を完済するまでカジノはロックされます！
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       1.5 🤝 フレンド機能 選択ハブ画面 (#screen-friend-hub)
+  ======================================================================== -->
+  <section id="screen-friend-hub" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🤝 フレンドメニュー</div>
+      <button class="back-btn" onclick="navigateTo('screen-title')">⬅️ タイトルへ</button>
+    </div>
+
+    <div class="yokai-menu-stack" style="margin-top:8px;">
+      <!-- 📩 フレンド申請・一覧 -->
+      <button class="yokai-btn yokai-btn-friend" onclick="openFriendListScreen()">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">📩</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">フレンド申請・一覧 <span id="hubReqBadge" style="display:none; font-size:0.74rem; background:#ef4444; color:#fff; padding:2px 8px; border-radius:999px;">0</span></div>
+            <div class="yokai-btn-desc">コードでフレンド申請・承認・フレンド一覧の確認</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <!-- 📜 チップ貸し借り（借用書・借金） -->
+      <button class="yokai-btn yokai-btn-loan" onclick="openFriendLoanScreen()">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">📜</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">チップ貸し借り（借用書） <span id="hubLoanBadge" style="display:none; font-size:0.74rem; background:#facc15; color:#422006; padding:2px 8px; border-radius:999px;">0</span></div>
+            <div class="yokai-btn-desc">友達にチップを貸す・借りる・貸出中/借入中＆返済管理</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       1.6 📩 フレンド申請・一覧画面 (#screen-friend-list)
+  ======================================================================== -->
+  <section id="screen-friend-list" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">📩 フレンド申請・一覧</div>
+      <button class="back-btn" onclick="navigateTo('screen-friend-hub')">⬅️ フレンドメニューへ</button>
+    </div>
+
+    <!-- 自分のフレンドコード表示 -->
+    <div style="background:rgba(15,23,42,0.94); border:3px solid #22c55e; border-radius:20px; padding:14px; margin-bottom:12px; box-shadow:0 6px 0 #14532d;">
+      <div style="font-size:0.8rem; font-weight:900; color:#86efac; margin-bottom:4px;">🎫 あなたのフレンドコード（友達に教えよう！）</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <div id="myCasinoFriendCodeText" style="font-size:1.45rem; font-weight:900; color:#fef08a; letter-spacing:0.1em;">CL-XXXX</div>
+        <div style="display:flex; gap:6px;">
+          <button class="chip-bet-btn c-25" onclick="copyMyCasinoFriendCode()">📋 コピー</button>
+          <button class="chip-bet-btn c-10" onclick="syncFriendAndLoanData(true)">🔄 最新更新</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- フレンド申請フォーム -->
+    <div style="background:rgba(15,23,42,0.92); border:2.5px solid #38bdf8; border-radius:20px; padding:14px; margin-bottom:12px;">
+      <div style="font-size:0.9rem; font-weight:900; color:#7dd3fc; margin-bottom:8px;">🔍 友達のコードを入力して申請を送る</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input id="casinoFriendCodeInput" type="text" maxlength="12" placeholder="例: CL-7A3K" style="flex:1; min-width:160px; padding:10px 12px; border-radius:12px; border:2.5px solid #38bdf8; background:#020617; color:#ffffff; font-weight:900; font-size:1rem; text-transform:uppercase; outline:none;">
+        <button class="action-btn btn-green" style="padding:10px 18px; font-size:0.92rem;" onclick="sendCasinoFriendRequest()">📩 申請を送る</button>
+      </div>
+    </div>
+
+    <!-- 届いているフレンド申請 -->
+    <div id="casinoIncomingReqBox" style="display:none; background:rgba(80,7,36,0.85); border:2.5px solid #f472b6; border-radius:20px; padding:14px; margin-bottom:12px;">
+      <div style="font-size:0.92rem; font-weight:900; color:#fbcfe8; margin-bottom:8px;">📬 届いているフレンド申請</div>
+      <div id="casinoIncomingReqList" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <!-- フレンド一覧 -->
+    <div style="background:rgba(15,23,42,0.92); border:2.5px solid #64748b; border-radius:20px; padding:14px;">
+      <div style="font-size:0.92rem; font-weight:900; color:#fef08a; margin-bottom:8px;">
+        👥 フレンドリスト（<span id="casinoFriendCountText">0</span>人）
+      </div>
+      <div id="casinoFriendListContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       1.7 📜 チップ貸し借り（デジタル借用書・借金制度）画面 (#screen-friend-loan)
+  ======================================================================== -->
+  <section id="screen-friend-loan" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">📜 チップ貸し借り（借用書）</div>
+      <button class="back-btn" onclick="navigateTo('screen-friend-hub')">⬅️ フレンドメニューへ</button>
+    </div>
+
+    <!-- 借金と信用教育ガイド -->
+    <div style="background:rgba(15,23,42,0.94); border:2.5px solid #0ea5e9; border-radius:18px; padding:12px 14px; margin-bottom:12px; font-size:0.8rem; color:#e2e8f0; line-height:1.55;">
+      💡 <strong>デジタル借用書（マーカー）制度：</strong>フレンドにチップを貸して、相手が「借りる！」を承諾すると<strong>借用書</strong>が発行されます！<br>
+      ※借りたチップを溶かして破産した場合、<strong>『バイオ・ロジカ』で勉強して返済分を稼ぐまでカジノがロック</strong>されます！
+      <div style="margin-top:6px; display:flex; justify-content:flex-end;">
+        <button class="chip-bet-btn c-10" onclick="syncFriendAndLoanData(true)">🔄 最新借用書を同期</button>
+      </div>
+    </div>
+
+    <!-- ① フレンドにチップを貸すフォーム -->
+    <div style="background:rgba(15,23,42,0.92); border:2.5px solid #facc15; border-radius:20px; padding:14px; margin-bottom:12px;">
+      <div style="font-size:0.94rem; font-weight:900; color:#fef08a; margin-bottom:8px;">💸 フレンドにチップを貸す</div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+        <select id="loanTargetFriendSelect" style="width:100%; padding:10px 12px; border-radius:12px; border:2px solid #facc15; background:#020617; color:#ffffff; font-weight:900; font-size:0.92rem;">
+          <option value="">-- 貸すフレンドを選んでください --</option>
+        </select>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <input id="loanAmountInput" type="number" min="1" step="1" value="50" style="flex:1; min-width:110px; padding:10px 12px; border-radius:12px; border:2px solid #facc15; background:#020617; color:#fef08a; font-weight:900; font-size:1rem; outline:none;">
+          <button class="chip-bet-btn c-5" onclick="setLoanQuickAmount(10)">10🪙</button>
+          <button class="chip-bet-btn c-25" onclick="setLoanQuickAmount(50)">50🪙</button>
+          <button class="chip-bet-btn c-50" onclick="setLoanQuickAmount(100)">100🪙</button>
+          <button class="action-btn" style="padding:10px 18px; font-size:0.92rem;" onclick="sendChipLoanOffer()">📜 貸出オファーを送る</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② あなたに届いている借入オファー（承諾/断る） -->
+    <div id="loanIncomingOffersSection" style="display:none; background:rgba(8,47,73,0.9); border:2.5px solid #38bdf8; border-radius:20px; padding:14px; margin-bottom:12px;">
+      <div style="font-size:0.94rem; font-weight:900; color:#bae6fd; margin-bottom:8px;">📩 届いているチップ貸出オファー</div>
+      <div id="loanIncomingOffersList" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <!-- ③ 借入中（借金返済義務あり）一覧 -->
+    <div style="background:rgba(15,23,42,0.92); border:2.5px solid #f43f5e; border-radius:20px; padding:14px; margin-bottom:12px;">
+      <div style="font-size:0.94rem; font-weight:900; color:#fda4af; margin-bottom:8px;">
+        🚨 借りているチップ（借金返済義務あり）
+      </div>
+      <div id="loanBorrowedList" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <!-- ④ 貸出中（未返済・オファー中）一覧 -->
+    <div style="background:rgba(15,23,42,0.92); border:2.5px solid #4ade80; border-radius:20px; padding:14px;">
+      <div style="font-size:0.94rem; font-weight:900; color:#86efac; margin-bottom:8px;">
+        🤝 貸しているチップ（貸出中リスト）
+      </div>
+      <div id="loanLentList" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
   </section>
 
@@ -2770,6 +2979,7 @@ const WORK_SESSION_KEY = 'casino_logica_work_session';
 
 let state = {
   playerId: '',
+  friendCode: '',
   playerName: '',
   chips: 100,
   p2Chips: 100,
@@ -2781,7 +2991,9 @@ let state = {
   soundOn: true,
   playMode: 'ai', // 'ai' | 'local' | 'online'
   isTestAccount: false,
-  infiniteChips: false
+  infiniteChips: false,
+  activeDebtTotal: 0,
+  debtStudyLock: false
 };
 
 /* --- 👑 管理者専用テストモード（本番データ自動保護 ＆ チップ無限 ＆ ランキング完全非反映） --- */
@@ -3242,6 +3454,15 @@ function saveState() {
   syncMyScoreToCloud();
 }
 
+function generateCasinoFriendCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'CL-';
+  for (let i = 0; i < 4; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -3253,6 +3474,9 @@ function loadState() {
 
   if (!state.playerId) {
     state.playerId = 'cl_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+  }
+  if (!state.friendCode) {
+    state.friendCode = generateCasinoFriendCode();
   }
 
   // 保存されている名前が万一NGワードに該当していたらリセット
@@ -3282,6 +3506,11 @@ function loadState() {
     updateHeaderUI();
     syncMyScoreToCloud();
   }
+
+  // 起動時にフレンド＆借用書データを静かに同期（返金回収や通知バッジ更新）
+  setTimeout(() => {
+    if (typeof syncFriendAndLoanData === 'function') syncFriendAndLoanData(false);
+  }, 600);
 }
 
 let isFirstStartupNameSetup = false;
@@ -3408,11 +3637,15 @@ function checkStudyReturnReward() {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       setTimeout(() => {
+        const hasDebtLock = state.debtStudyLock && state.activeDebtTotal > 0;
+        const debtHint = hasDebtLock
+          ? `<br><span style="color:#fda4af; font-size:0.86rem;">🚨 現在 <strong>${state.activeDebtTotal} チップ</strong> の借金返済ノルマがあります！<br>「🤝 フレンド ➔ 📜 チップ貸し借り」から返済してロックを解除しよう！</span>`
+          : '';
         showRewardModal(
           '📝',
           '勉強バイト報酬獲得！',
-          `『バイオ・ロジカ』での学習お疲れ様でした！<br>正解報酬として<br><span style="font-size:1.7rem; color:#4ade80; font-weight:900;">🪙 +${totalEarned} チップ</span><br>を獲得して復活しました！`,
-          '🎰 カジノへ戻る！'
+          `『バイオ・ロジカ』での学習お疲れ様でした！<br>正解報酬として<br><span style="font-size:1.7rem; color:#4ade80; font-weight:900;">🪙 +${totalEarned} チップ</span><br>を獲得しました！${debtHint}`,
+          hasDebtLock ? '📜 借金返済へ行く！' : '🎰 カジノへ戻る！'
         );
       }, 200);
     }
@@ -3421,11 +3654,12 @@ function checkStudyReturnReward() {
 
 function handleStudyEarnClick() {
   playSE('click');
-  if (state.chips > 0) {
+  const isDebtLocked = state.debtStudyLock && state.activeDebtTotal > 0;
+  if (state.chips > 0 && !isDebtLocked) {
     showToast('🔒 まだチップが残っています！「勉強でチップ稼ぎ」は0チップ（破産）になった人専用の救済所です！');
     return;
   }
-  // 0チップのときだけバイオ・ロジカへ出稼ぎセッションを開始してジャンプ！
+  // 0チップまたは借金返済ノルマ発動中のとき、バイオ・ロジカへ出稼ぎセッションを開始してジャンプ！
   const currentCorrect = getBioLogicaTotalCorrect() || 0;
   const sessionData = {
     active: true,
@@ -3473,18 +3707,21 @@ function updateHeaderUI() {
   const bjPl = document.getElementById('bjPlayerTitle');
   if (bjPl) bjPl.textContent = `🧑 ${safeName}`;
 
-  // タイトル画面の「勉強でチップ稼ぎ」ボタン状態（0チップの人だけ解放！）
+  // タイトル画面の「勉強でチップ稼ぎ」ボタン状態（0チップ または 借金返済ノルマ発動中のみ解放！）
   const studyBtn = document.getElementById('titleStudyBtn');
   const studyIcon = document.getElementById('titleStudyIcon');
   const studyTitle = document.getElementById('titleStudyTitle');
   const studyDesc = document.getElementById('titleStudyDesc');
   const studyArrow = document.getElementById('titleStudyArrow');
+  const isDebtLocked = state.debtStudyLock && state.activeDebtTotal > 0;
 
-  if (state.chips <= 0) {
+  if (state.chips <= 0 || isDebtLocked) {
     studyBtn.className = 'yokai-btn yokai-btn-study-active';
     studyIcon.textContent = '📝';
-    studyTitle.textContent = '勉強でチップ稼ぎ (解放中！)';
-    studyDesc.textContent = '0チップ破産救済！バイオ・ロジカで3問解くごとに+10チップ！';
+    studyTitle.textContent = isDebtLocked ? '勉強で借金返済稼ぎ (発動中！)' : '勉強でチップ稼ぎ (解放中！)';
+    studyDesc.textContent = isDebtLocked
+      ? `借金あと ${state.activeDebtTotal} 🪙！バイオ・ロジカで勉強して返済しよう！`
+      : '0チップ破産救済！バイオ・ロジカで3問解くごとに+10チップ！';
     studyArrow.textContent = '▶';
   } else {
     studyBtn.className = 'yokai-btn yokai-btn-study-locked';
@@ -3493,6 +3730,13 @@ function updateHeaderUI() {
     studyDesc.textContent = `現在 ${state.chips} チップ所持中（0チップになった時だけ解放）`;
     studyArrow.textContent = '🔒';
   }
+
+  const debtNotice = document.getElementById('titleDebtLockNotice');
+  const debtAmtEl = document.getElementById('titleDebtLockAmtText');
+  if (debtNotice) debtNotice.style.display = isDebtLocked ? 'block' : 'none';
+  if (debtAmtEl) debtAmtEl.textContent = state.activeDebtTotal.toLocaleString();
+
+  if (typeof updateGameBackLockUI === 'function') updateGameBackLockUI();
 
   // メニュー戦績更新
   const mc = document.getElementById('menuCurrentChips');
@@ -3741,7 +3985,65 @@ function challengeRanker(targetId) {
   }
 }
 
+function isActiveGameLocked() {
+  const activeScreen = document.querySelector('.screen.active');
+  if (!activeScreen) return false;
+  const id = activeScreen.id;
+  if (id === 'screen-game-chinchiro' && typeof ccState !== 'undefined') {
+    return ccState.phase !== 'idle';
+  }
+  if (id === 'screen-game-yacht' && typeof ytState !== 'undefined') {
+    return !ytState.matchOver && (
+      ytState.hasRolledThisTurn ||
+      Object.keys(ytState.scores.p1 || {}).length > 0 ||
+      Object.keys(ytState.scores.p2 || {}).length > 0
+    );
+  }
+  if (id === 'screen-game-blackjack' && typeof bjState !== 'undefined') {
+    return bjState.phase === 'playing';
+  }
+  if (id === 'screen-game-poker' && typeof pkState !== 'undefined') {
+    return pkState.phase === 'draw';
+  }
+  if (id === 'screen-game-roulette' && typeof rlState !== 'undefined') {
+    return !!rlState.spinning;
+  }
+  if (id === 'screen-game-bigsix' && typeof bsState !== 'undefined') {
+    return !!bsState.spinning;
+  }
+  if (id === 'screen-game-slot' && typeof slotState !== 'undefined') {
+    return slotState.spinning.some(Boolean);
+  }
+  return false;
+}
+
+function updateGameBackLockUI() {
+  const locked = isActiveGameLocked();
+  const activeScreen = document.querySelector('.screen.active');
+  if (!activeScreen) return;
+  const backBtns = activeScreen.querySelectorAll('.back-btn');
+  backBtns.forEach(btn => {
+    if (!btn.dataset.origLabel) {
+      btn.dataset.origLabel = btn.textContent;
+    }
+    if (locked) {
+      btn.classList.add('locked-back');
+      btn.textContent = '🔒 勝負中は戻れません';
+    } else {
+      btn.classList.remove('locked-back');
+      btn.textContent = btn.dataset.origLabel;
+    }
+  });
+}
+
 function navigateTo(screenId) {
+  const curScreen = document.querySelector('.screen.active');
+  if (curScreen && curScreen.id !== screenId && isActiveGameLocked()) {
+    playSE('lose');
+    showToast('🔒 勝負中は退席できません！1ゲーム終わるまで戻れません！');
+    updateGameBackLockUI();
+    return;
+  }
   playSE('click');
   if (screenId !== 'screen-game-slot' && typeof slotState !== 'undefined') {
     if (typeof clearSlotStopAllTimers === 'function') clearSlotStopAllTimers();
@@ -3761,7 +4063,9 @@ function navigateTo(screenId) {
 }
 
 function openCasinoCategoryScreen() {
-  if (state.chips <= 0) {
+  if (state.debtStudyLock && state.activeDebtTotal > 0) {
+    showToast(`⚠️ 借金返済ノルマ発動中！バイオ・ロジカで稼いで借金（${state.activeDebtTotal}🪙）を返済してください！`);
+  } else if (state.chips <= 0) {
     showToast('⚠️ チップが0枚です！「📝 勉強でチップ稼ぎ」からバイオ・ロジカへ行ってチップを稼いでこよう！');
   }
   navigateTo('screen-category');
@@ -4241,6 +4545,11 @@ function getOpponentDisplayName() {
 }
 
 function openGame(gameKey, fromRemoteSync = false) {
+  if (state.debtStudyLock && state.activeDebtTotal > 0) {
+    playSE('lose');
+    showToast(`🚨 借金返済ノルマ発動中！「📝 勉強でチップ稼ぎ」で稼いで「🤝 フレンド ➔ チップ貸し借り」から借金(${state.activeDebtTotal}🪙)を返済するまでカジノは遊べません！`);
+    return;
+  }
   if (state.chips <= 0) {
     showToast('💸 チップが0枚です！タイトル画面の「📝 勉強でチップ稼ぎ」で稼いできてください！');
     return;
@@ -4302,14 +4611,27 @@ function openGame(gameKey, fromRemoteSync = false) {
 function checkBankruptNotice() {
   if (state.chips <= 0) {
     state.chips = 0;
+    const hasDebt = state.activeDebtTotal > 0;
+    if (hasDebt) {
+      state.debtStudyLock = true;
+    }
     saveState();
     setTimeout(() => {
-      showRewardModal(
-        '💸',
-        'チップが0枚になりました…！',
-        '手持ちのチップをすべて使い切りました！<br>タイトル画面の<strong style="color:#f87171;">「📝 勉強でチップ稼ぎ」</strong>が解放されました！<br>『バイオ・ロジカ』で問題を解いてチップを稼ぎ直そう！',
-        '🏠 タイトル画面へ戻る'
-      );
+      if (hasDebt) {
+        showRewardModal(
+          '🚨',
+          '借金抱えて破産しました…！',
+          `フレンドから借りていたチップを使い切って <strong>0枚</strong> になりました！<br>借金返済ノルマ（<strong style="color:#fde047;">残り ${state.activeDebtTotal.toLocaleString()} チップ</strong>）を完済するまでカジノはロックされます！<br>タイトル画面の<strong style="color:#f87171;">「📝 勉強で借金返済稼ぎ」</strong>から『バイオ・ロジカ』で勉強して返済しよう！`,
+          '📝 タイトル画面へ戻る'
+        );
+      } else {
+        showRewardModal(
+          '💸',
+          'チップが0枚になりました…！',
+          '手持ちのチップをすべて使い切りました！<br>タイトル画面の<strong style="color:#f87171;">「📝 勉強でチップ稼ぎ」</strong>が解放されました！<br>『バイオ・ロジカ』で問題を解いてチップを稼ぎ直そう！',
+          '🏠 タイトル画面へ戻る'
+        );
+      }
       navigateTo('screen-title');
     }, 600);
   }
@@ -4506,6 +4828,7 @@ function startChinchiroRound() {
     ccState.roundId = newRoundId;
     ccState.phase = 'dealer_manual';
     ccState.rollsLeft = 3;
+    updateGameBackLockUI();
     pushOnlineRoomPatch({
       chinchiro: {
         roundId: newRoundId,
@@ -4527,6 +4850,7 @@ function startChinchiroRound() {
   if (state.playMode === 'local') {
     ccState.phase = 'dealer_manual';
     ccState.rollsLeft = 3;
+    updateGameBackLockUI();
     const rollBtn = document.getElementById('ccRollBtn');
     rollBtn.style.display = 'inline-block';
     rollBtn.textContent = `🥣 親(2P)が振る！ (残り3回)`;
@@ -4535,6 +4859,7 @@ function startChinchiroRound() {
   }
 
   ccState.phase = 'rolling';
+  updateGameBackLockUI();
 
   // AI対戦時は親（AI）が最大3回自動で振る
   let dealerTries = 0;
@@ -4913,6 +5238,7 @@ function rollYachtDice() {
 
   ytState.rollsLeft--;
   ytState.hasRolledThisTurn = true;
+  updateGameBackLockUI();
   playSE('dice');
 
   for (let i = 0; i < 5; i++) {
@@ -6805,6 +7131,7 @@ function startSlotSpin() {
       if (i === 0) playSE('tick');
     }, 82 + i * 12);
   }
+  updateGameBackLockUI();
 }
 
 function stopSlotReel(reelIdx) {
@@ -7061,6 +7388,672 @@ function settleSlotSpin() {
   }
   if (!slotState.isOverdrive) {
     checkBankruptNotice();
+  }
+}
+
+/* ============================================================================
+   🤝 フレンド機能 ＆ 📜 チップ貸し借り（デジタル借用書）エンジン
+============================================================================ */
+let friendCache = {
+  friends: {},   // { [code]: { code, name, addedAt } }
+  requests: {},  // { [code]: { code, name, sentAt } }
+  loans: {}      // { [loanId]: { id, fromCode, fromName, toCode, toName, amount, remaining, status, collectedAmount, ... } }
+};
+
+function getCasinoUserDocRef(code) {
+  if (!db || !code) return null;
+  return db.collection('players').doc('CASINO_USER_' + code);
+}
+
+function getCasinoLoansLedgerRef() {
+  if (!db) return null;
+  return db.collection('players').doc('CASINO_LOANS_LEDGER');
+}
+
+function openFriendHubScreen() {
+  navigateTo('screen-friend-hub');
+  syncFriendAndLoanData(false);
+}
+
+function openFriendListScreen() {
+  navigateTo('screen-friend-list');
+  document.getElementById('myCasinoFriendCodeText').textContent = state.friendCode || 'CL-XXXX';
+  renderCasinoFriendListUI();
+  syncFriendAndLoanData(false);
+}
+
+function openFriendLoanScreen() {
+  navigateTo('screen-friend-loan');
+  renderCasinoLoanUI();
+  syncFriendAndLoanData(false);
+}
+
+function copyMyCasinoFriendCode() {
+  const code = state.friendCode || '';
+  if (!code) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(() => {
+      playSE('coin');
+      showToast(`📋 フレンドコード「${code}」をコピーしました！`);
+    }).catch(() => {
+      showToast(`あなたのコード: ${code}`);
+    });
+  } else {
+    showToast(`あなたのコード: ${code}`);
+  }
+}
+
+async function registerMyFriendProfileToCloud() {
+  if (!db || !state.friendCode || !state.playerName || state.isTestAccount) return;
+  const check = validatePlayerName(state.playerName);
+  if (!check.ok) return;
+  try {
+    await getCasinoUserDocRef(state.friendCode).set({
+      isSystemDoc: true,
+      friendCode: state.friendCode,
+      playerId: state.playerId,
+      name: check.cleanName,
+      updatedAt: Date.now()
+    }, { merge: true });
+  } catch (e) {}
+}
+
+async function syncFriendAndLoanData(showNotice = false) {
+  if (!db || !state.friendCode) {
+    renderCasinoFriendListUI();
+    renderCasinoLoanUI();
+    return;
+  }
+  try {
+    await registerMyFriendProfileToCloud();
+
+    const [userSnap, ledgerSnap] = await Promise.race([
+      Promise.all([
+        getCasinoUserDocRef(state.friendCode).get(),
+        getCasinoLoansLedgerRef().get()
+      ]),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
+    ]);
+
+    if (userSnap && userSnap.exists) {
+      const uData = userSnap.data() || {};
+      friendCache.friends = uData.friends || {};
+      friendCache.requests = uData.requests || {};
+    }
+    if (ledgerSnap && ledgerSnap.exists) {
+      const lData = ledgerSnap.data() || {};
+      friendCache.loans = lData.loans || {};
+    }
+
+    // 貸出側：返済済み・断られたチップの自動回収チェック
+    let totalCollectedNow = 0;
+    const collectedMessages = [];
+    const ledgerUpdates = {};
+
+    Object.entries(friendCache.loans).forEach(([id, loan]) => {
+      if (!loan || loan.fromCode !== state.friendCode) return;
+      if (loan.status === 'declined' && !loan.lenderCollected) {
+        totalCollectedNow += Number(loan.amount) || 0;
+        loan.lenderCollected = true;
+        ledgerUpdates[`loans.${id}.lenderCollected`] = true;
+        collectedMessages.push(`${sanitizeDisplayPlayerName(loan.toName)} が貸出オファーを辞退（${loan.amount}🪙返却）`);
+      } else if (loan.status === 'active' || loan.status === 'repaid') {
+        const repaidTotal = (Number(loan.amount) || 0) - (Number(loan.remaining) || 0);
+        const alreadyCollected = Number(loan.collectedAmount) || 0;
+        const deltaCollect = repaidTotal - alreadyCollected;
+        if (deltaCollect > 0) {
+          totalCollectedNow += deltaCollect;
+          loan.collectedAmount = repaidTotal;
+          ledgerUpdates[`loans.${id}.collectedAmount`] = repaidTotal;
+          if (loan.status === 'repaid') {
+            loan.lenderCollected = true;
+            ledgerUpdates[`loans.${id}.lenderCollected`] = true;
+          }
+          collectedMessages.push(`${sanitizeDisplayPlayerName(loan.toName)} から ${deltaCollect.toLocaleString()}🪙 返済回収！`);
+        }
+      }
+    });
+
+    if (totalCollectedNow > 0 && !state.isTestAccount) {
+      state.chips += totalCollectedNow;
+      saveState();
+      try {
+        await getCasinoLoansLedgerRef().update(ledgerUpdates);
+      } catch (e) {}
+      playSE('win');
+      showRewardModal(
+        '💰',
+        '貸出チップが戻ってきました！',
+        collectedMessages.join('<br>') + `<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${totalCollectedNow.toLocaleString()} チップ</span>`,
+        '✨ 受け取る！'
+      );
+    }
+
+    // 借入側：現在の借金合計額を再計算＆借金ロック解除判定
+    let myDebtTotal = 0;
+    Object.values(friendCache.loans).forEach(loan => {
+      if (loan && loan.toCode === state.friendCode && loan.status === 'active') {
+        myDebtTotal += Number(loan.remaining) || 0;
+      }
+    });
+    const prevDebtLock = !!state.debtStudyLock;
+    state.activeDebtTotal = myDebtTotal;
+    if (myDebtTotal <= 0 && prevDebtLock) {
+      state.debtStudyLock = false;
+    }
+    saveState();
+
+    updateFriendNotificationBadges();
+    renderCasinoFriendListUI();
+    renderCasinoLoanUI();
+    if (showNotice) showToast('🔄 フレンド・借用書データを最新に同期しました！');
+  } catch (e) {
+    if (showNotice) showToast('⚠️ 通信タイムアウト：ネット接続を確認してください');
+  }
+}
+
+function updateFriendNotificationBadges() {
+  const reqCount = Object.keys(friendCache.requests || {}).length;
+  let incomingLoanCount = 0;
+  let activeBorrowCount = 0;
+  Object.values(friendCache.loans || {}).forEach(l => {
+    if (!l || l.toCode !== state.friendCode) return;
+    if (l.status === 'pending') incomingLoanCount++;
+    if (l.status === 'active') activeBorrowCount++;
+  });
+
+  const totalBadge = reqCount + incomingLoanCount;
+  const titleBadge = document.getElementById('titleFriendBadge');
+  if (titleBadge) {
+    titleBadge.style.display = totalBadge > 0 ? 'inline-block' : 'none';
+    titleBadge.textContent = totalBadge;
+  }
+  const hubReq = document.getElementById('hubReqBadge');
+  if (hubReq) {
+    hubReq.style.display = reqCount > 0 ? 'inline-block' : 'none';
+    hubReq.textContent = reqCount + '件';
+  }
+  const hubLoan = document.getElementById('hubLoanBadge');
+  if (hubLoan) {
+    const loanNotif = incomingLoanCount + activeBorrowCount;
+    hubLoan.style.display = loanNotif > 0 ? 'inline-block' : 'none';
+    hubLoan.textContent = incomingLoanCount > 0 ? `オファー${incomingLoanCount}` : `借入${activeBorrowCount}`;
+  }
+}
+
+async function sendCasinoFriendRequest() {
+  const inp = document.getElementById('casinoFriendCodeInput');
+  const rawCode = (inp ? inp.value : '').trim().toUpperCase();
+  if (!rawCode) {
+    showToast('⚠️ 友達のフレンドコードを入力してください！');
+    return;
+  }
+  if (rawCode === state.friendCode) {
+    showToast('⚠️ 自分自身のコードには申請できません！');
+    return;
+  }
+  if (friendCache.friends[rawCode]) {
+    showToast('ℹ️ すでにフレンド登録済みです！');
+    return;
+  }
+  if (!db) {
+    showToast('⚠️ クラウド通信がオフラインのため送信できません');
+    return;
+  }
+
+  try {
+    await registerMyFriendProfileToCloud();
+    const targetSnap = await getCasinoUserDocRef(rawCode).get();
+    if (!targetSnap.exists) {
+      playSE('lose');
+      showToast('❌ そのフレンドコードが見つかりません！相手に一度カジノ・ロジカを開いてもらってください');
+      return;
+    }
+    const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
+    await getCasinoUserDocRef(rawCode).set({
+      requests: {
+        [state.friendCode]: {
+          code: state.friendCode,
+          name: mySafeName,
+          sentAt: Date.now()
+        }
+      }
+    }, { merge: true });
+
+    playSE('win');
+    if (inp) inp.value = '';
+    showToast(`📩 【${rawCode}】へフレンド申請を送りました！`);
+  } catch (e) {
+    showToast('❌ 申請の送信に失敗しました');
+  }
+}
+
+async function acceptCasinoFriendRequest(fromCode, fromName) {
+  if (!db || !fromCode) return;
+  try {
+    const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
+    const targetSafeName = sanitizeDisplayPlayerName(fromName || fromCode);
+    const fvDel = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
+      ? firebase.firestore.FieldValue.delete()
+      : null;
+
+    const myRef = getCasinoUserDocRef(state.friendCode);
+    await myRef.set({
+      friends: {
+        [fromCode]: { code: fromCode, name: targetSafeName, addedAt: Date.now() }
+      }
+    }, { merge: true });
+    if (fvDel) {
+      await myRef.update({ [`requests.${fromCode}`]: fvDel });
+    }
+
+    await getCasinoUserDocRef(fromCode).set({
+      friends: {
+        [state.friendCode]: { code: state.friendCode, name: mySafeName, addedAt: Date.now() }
+      }
+    }, { merge: true });
+
+    delete friendCache.requests[fromCode];
+    friendCache.friends[fromCode] = { code: fromCode, name: targetSafeName, addedAt: Date.now() };
+    playSE('win');
+    showToast(`🤝 ${targetSafeName} さんとフレンドになりました！`);
+    updateFriendNotificationBadges();
+    renderCasinoFriendListUI();
+    renderCasinoLoanUI();
+  } catch (e) {
+    showToast('❌ 承認処理に失敗しました');
+  }
+}
+
+async function declineCasinoFriendRequest(fromCode) {
+  if (!db || !fromCode) return;
+  try {
+    const fvDel = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
+      ? firebase.firestore.FieldValue.delete()
+      : null;
+    if (fvDel) {
+      await getCasinoUserDocRef(state.friendCode).update({ [`requests.${fromCode}`]: fvDel });
+    }
+    delete friendCache.requests[fromCode];
+    playSE('click');
+    showToast('申請を拒否しました');
+    updateFriendNotificationBadges();
+    renderCasinoFriendListUI();
+  } catch (e) {}
+}
+
+function renderCasinoFriendListUI() {
+  const codeEl = document.getElementById('myCasinoFriendCodeText');
+  if (codeEl) codeEl.textContent = state.friendCode || 'CL-XXXX';
+
+  const reqBox = document.getElementById('casinoIncomingReqBox');
+  const reqList = document.getElementById('casinoIncomingReqList');
+  const reqs = Object.values(friendCache.requests || {});
+  if (reqBox && reqList) {
+    reqBox.style.display = reqs.length > 0 ? 'block' : 'none';
+    reqList.innerHTML = '';
+    reqs.forEach(r => {
+      const safeName = sanitizeDisplayPlayerName(r.name || r.code);
+      const row = document.createElement('div');
+      row.className = 'friend-card-item';
+      row.style.borderColor = '#f472b6';
+      row.innerHTML = `
+        <div>
+          <div style="font-weight:900; font-size:0.95rem; color:#fff;">👤 ${safeName}</div>
+          <div style="font-size:0.74rem; color:#fbcfe8;">コード: ${r.code}</div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="chip-bet-btn c-25" onclick="acceptCasinoFriendRequest('${r.code}', '${safeName.replace(/'/g, "\\'")}')">✅ 承認</button>
+          <button class="chip-bet-btn c-clear" onclick="declineCasinoFriendRequest('${r.code}')">✕ 拒否</button>
+        </div>
+      `;
+      reqList.appendChild(row);
+    });
+  }
+
+  const listEl = document.getElementById('casinoFriendListContainer');
+  const countEl = document.getElementById('casinoFriendCountText');
+  const friends = Object.values(friendCache.friends || {});
+  if (countEl) countEl.textContent = friends.length;
+  if (!listEl) return;
+  listEl.innerHTML = '';
+
+  if (friends.length === 0) {
+    listEl.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.84rem; padding:12px;">まだフレンドがいません。上のコード入力から申請してみよう！</div>';
+    return;
+  }
+
+  friends.forEach(f => {
+    const safeName = sanitizeDisplayPlayerName(f.name || f.code);
+    const card = document.createElement('div');
+    card.className = 'friend-card-item';
+    card.innerHTML = `
+      <div>
+        <div style="font-weight:900; font-size:0.98rem; color:#fef08a;">🤝 ${safeName}</div>
+        <div style="font-size:0.74rem; color:#94a3b8;">フレンドコード: ${f.code}</div>
+      </div>
+      <button class="chip-bet-btn c-10" onclick="jumpToLoanWithFriend('${f.code}')">📜 チップを貸す</button>
+    `;
+    listEl.appendChild(card);
+  });
+}
+
+function jumpToLoanWithFriend(targetCode) {
+  openFriendLoanScreen();
+  const sel = document.getElementById('loanTargetFriendSelect');
+  if (sel) sel.value = targetCode;
+}
+
+function setLoanQuickAmount(amt) {
+  playSE('click');
+  const inp = document.getElementById('loanAmountInput');
+  if (inp) inp.value = amt;
+}
+
+async function sendChipLoanOffer() {
+  if (state.isTestAccount) {
+    showToast('🔧 管理者テストモード中はフレンドへのチップ貸出はできません');
+    return;
+  }
+  const sel = document.getElementById('loanTargetFriendSelect');
+  const inp = document.getElementById('loanAmountInput');
+  const targetCode = sel ? sel.value : '';
+  const amt = Math.floor(Number(inp ? inp.value : 0));
+
+  if (!targetCode || !friendCache.friends[targetCode]) {
+    showToast('⚠️ 貸す相手のフレンドを選んでください！');
+    return;
+  }
+  if (!amt || amt <= 0) {
+    showToast('⚠️ 1チップ以上の正しい数を入力してください！');
+    return;
+  }
+  if (amt > state.chips) {
+    showToast('⚠️ 所持チップを超える額は貸せません！');
+    return;
+  }
+  if (!db) {
+    showToast('⚠️ クラウド通信がオフラインです');
+    return;
+  }
+
+  const targetFriend = friendCache.friends[targetCode];
+  const targetSafeName = sanitizeDisplayPlayerName(targetFriend.name || targetCode);
+  const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
+  const loanId = 'loan_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+
+  const loanObj = {
+    id: loanId,
+    fromCode: state.friendCode,
+    fromName: mySafeName,
+    toCode: targetCode,
+    toName: targetSafeName,
+    amount: amt,
+    remaining: amt,
+    collectedAmount: 0,
+    status: 'pending',
+    lenderCollected: false,
+    createdAt: Date.now()
+  };
+
+  try {
+    state.chips -= amt;
+    saveState();
+
+    await getCasinoLoansLedgerRef().set({
+      isSystemDoc: true,
+      loans: { [loanId]: loanObj },
+      updatedAt: Date.now()
+    }, { merge: true });
+
+    friendCache.loans[loanId] = loanObj;
+    playSE('coin');
+    showToast(`📜 ${targetSafeName} さんに ${amt.toLocaleString()} チップの貸出オファーを送りました！`);
+    renderCasinoLoanUI();
+    updateFriendNotificationBadges();
+  } catch (e) {
+    state.chips += amt;
+    saveState();
+    showToast('❌ 貸出オファーの送信に失敗しました');
+  }
+}
+
+async function acceptChipLoanOffer(loanId) {
+  const loan = friendCache.loans[loanId];
+  if (!loan || loan.status !== 'pending' || loan.toCode !== state.friendCode) return;
+  try {
+    const amt = Number(loan.amount) || 0;
+    loan.status = 'active';
+    loan.acceptedAt = Date.now();
+    await getCasinoLoansLedgerRef().update({
+      [`loans.${loanId}.status`]: 'active',
+      [`loans.${loanId}.acceptedAt`]: loan.acceptedAt
+    });
+
+    state.chips += amt;
+    state.activeDebtTotal = (state.activeDebtTotal || 0) + amt;
+    saveState();
+
+    playSE('win');
+    showRewardModal(
+      '📜',
+      'デジタル借用書 発行！',
+      `<strong>${sanitizeDisplayPlayerName(loan.fromName)}</strong> さんから<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 +${amt.toLocaleString()} チップ</span><br>を借りました！<br><span style="font-size:0.82rem; color:#fda4af;">※返済義務が発生しています！勝ったら忘れずに返済しよう！</span>`,
+      '🤝 了解！（大切に使う）'
+    );
+    renderCasinoLoanUI();
+    updateFriendNotificationBadges();
+  } catch (e) {
+    showToast('❌ 借入承諾に失敗しました');
+  }
+}
+
+async function declineChipLoanOffer(loanId) {
+  const loan = friendCache.loans[loanId];
+  if (!loan || loan.status !== 'pending' || loan.toCode !== state.friendCode) return;
+  try {
+    loan.status = 'declined';
+    await getCasinoLoansLedgerRef().update({
+      [`loans.${loanId}.status`]: 'declined'
+    });
+    playSE('click');
+    showToast('貸出オファーを断りました（相手の元へチップが戻ります）');
+    renderCasinoLoanUI();
+    updateFriendNotificationBadges();
+  } catch (e) {}
+}
+
+async function cancelChipLoanOffer(loanId) {
+  const loan = friendCache.loans[loanId];
+  if (!loan || loan.status !== 'pending' || loan.fromCode !== state.friendCode) return;
+  try {
+    loan.status = 'cancelled';
+    loan.lenderCollected = true;
+    await getCasinoLoansLedgerRef().update({
+      [`loans.${loanId}.status`]: 'cancelled',
+      [`loans.${loanId}.lenderCollected`]: true
+    });
+    state.chips += Number(loan.amount) || 0;
+    saveState();
+    playSE('coin');
+    showToast(`↩️ 貸出オファーを取り消し、${loan.amount}🪙 を回収しました`);
+    renderCasinoLoanUI();
+  } catch (e) {}
+}
+
+async function repayChipLoan(loanId) {
+  const loan = friendCache.loans[loanId];
+  if (!loan || loan.status !== 'active' || loan.toCode !== state.friendCode) return;
+  const rem = Number(loan.remaining) || 0;
+  if (state.chips <= 0) {
+    showToast('⚠️ 返済するチップがありません！「📝 勉強でチップ稼ぎ」からバイオ・ロジカで稼いできてください！');
+    return;
+  }
+
+  const payAmt = Math.min(state.chips, rem);
+  const newRem = rem - payAmt;
+  const isFullRepay = newRem <= 0;
+
+  try {
+    state.chips -= payAmt;
+    loan.remaining = newRem;
+    if (isFullRepay) {
+      loan.status = 'repaid';
+      loan.repaidAt = Date.now();
+    }
+
+    const updates = {
+      [`loans.${loanId}.remaining`]: newRem
+    };
+    if (isFullRepay) {
+      updates[`loans.${loanId}.status`] = 'repaid';
+      updates[`loans.${loanId}.repaidAt`] = loan.repaidAt;
+    }
+    await getCasinoLoansLedgerRef().update(updates);
+
+    // 借入総額を再集計して完済なら借金ロック解除！
+    let nextDebt = 0;
+    Object.values(friendCache.loans).forEach(l => {
+      if (l && l.toCode === state.friendCode && l.status === 'active') {
+        nextDebt += Number(l.remaining) || 0;
+      }
+    });
+    state.activeDebtTotal = nextDebt;
+    if (nextDebt <= 0) {
+      state.debtStudyLock = false;
+    }
+    saveState();
+
+    playSE('win');
+    if (isFullRepay) {
+      showRewardModal(
+        '✨',
+        '借金 完済おめでとう！！',
+        `<strong>${sanitizeDisplayPlayerName(loan.fromName)}</strong> さんへの借金<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 ${payAmt.toLocaleString()} チップ</span><br>をきっちり返済して完済しました！<br>信用度がアップしました！`,
+        '👑 気持ちいい！！'
+      );
+    } else {
+      showToast(`🪙 ${payAmt.toLocaleString()} チップ一部返済！（借金残りあと ${newRem.toLocaleString()} 🪙）`);
+    }
+    renderCasinoLoanUI();
+    updateFriendNotificationBadges();
+  } catch (e) {
+    state.chips += payAmt;
+    saveState();
+    showToast('❌ 返済処理に失敗しました');
+  }
+}
+
+function renderCasinoLoanUI() {
+  const sel = document.getElementById('loanTargetFriendSelect');
+  if (sel) {
+    const prevVal = sel.value;
+    sel.innerHTML = '<option value="">-- 貸すフレンドを選んでください --</option>';
+    Object.values(friendCache.friends || {}).forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f.code;
+      opt.textContent = `🤝 ${sanitizeDisplayPlayerName(f.name || f.code)} (${f.code})`;
+      sel.appendChild(opt);
+    });
+    if (prevVal && friendCache.friends[prevVal]) sel.value = prevVal;
+  }
+
+  const allLoans = Object.values(friendCache.loans || {}).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  // ① 届いている借入オファー（自分宛の pending）
+  const offersSec = document.getElementById('loanIncomingOffersSection');
+  const offersList = document.getElementById('loanIncomingOffersList');
+  const incomingOffers = allLoans.filter(l => l && l.toCode === state.friendCode && l.status === 'pending');
+  if (offersSec && offersList) {
+    offersSec.style.display = incomingOffers.length > 0 ? 'block' : 'none';
+    offersList.innerHTML = '';
+    incomingOffers.forEach(l => {
+      const card = document.createElement('div');
+      card.className = 'loan-card-item offer-card';
+      card.innerHTML = `
+        <div style="font-weight:900; font-size:0.95rem; color:#bae6fd;">
+          📩 <strong>${sanitizeDisplayPlayerName(l.fromName)}</strong> さんから <span style="color:#facc15; font-size:1.1rem;">${Number(l.amount).toLocaleString()} 🪙</span> の貸出オファー！
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="action-btn btn-green" style="padding:7px 14px; font-size:0.86rem;" onclick="acceptChipLoanOffer('${l.id}')">🤝 借りる！（借用書発行）</button>
+          <button class="chip-bet-btn c-clear" onclick="declineChipLoanOffer('${l.id}')">✕ 断る</button>
+        </div>
+      `;
+      offersList.appendChild(card);
+    });
+  }
+
+  // ② 自分が借りている一覧（借入中）
+  const borrowList = document.getElementById('loanBorrowedList');
+  const myBorrows = allLoans.filter(l => l && l.toCode === state.friendCode && (l.status === 'active' || l.status === 'repaid'));
+  if (borrowList) {
+    borrowList.innerHTML = '';
+    if (myBorrows.length === 0) {
+      borrowList.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.82rem; padding:10px;">現在借りているチップはありません</div>';
+    } else {
+      myBorrows.slice(0, 10).forEach(l => {
+        const isRepaid = l.status === 'repaid';
+        const card = document.createElement('div');
+        card.className = 'loan-card-item borrow-card';
+        card.style.opacity = isRepaid ? '0.68' : '1';
+        card.style.borderColor = isRepaid ? '#4ade80' : '#f43f5e';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+            <div style="font-weight:900; font-size:0.94rem; color:${isRepaid ? '#86efac' : '#fda4af'};">
+              👤 ${sanitizeDisplayPlayerName(l.fromName)} から <strong>${Number(l.amount).toLocaleString()}チップ</strong> ${isRepaid ? '借入（✅ 完済済）' : '借入中（借金返済義務あり）'}
+            </div>
+            ${!isRepaid ? `<span style="background:#9f1239; color:#fff; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">残り ${Number(l.remaining).toLocaleString()} 🪙</span>` : ''}
+          </div>
+          ${!isRepaid ? `
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="action-btn btn-green" style="padding:7px 14px; font-size:0.84rem;" onclick="repayChipLoan('${l.id}')">
+                🪙 ${state.chips >= l.remaining ? '全額返済する' : '手持ちで一部返済する'}
+              </button>
+            </div>
+          ` : ''}
+        `;
+        borrowList.appendChild(card);
+      });
+    }
+  }
+
+  // ③ 自分が貸している一覧（貸出中）
+  const lentList = document.getElementById('loanLentList');
+  const myLents = allLoans.filter(l => l && l.fromCode === state.friendCode && l.status !== 'cancelled');
+  if (lentList) {
+    lentList.innerHTML = '';
+    if (myLents.length === 0) {
+      lentList.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.82rem; padding:10px;">現在貸しているチップはありません</div>';
+    } else {
+      myLents.slice(0, 10).forEach(l => {
+        const card = document.createElement('div');
+        card.className = 'loan-card-item';
+        let statusBadge = '';
+        let actionHtml = '';
+        if (l.status === 'pending') {
+          statusBadge = '<span style="background:#0284c7; color:#fff; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">⏳ 相手承諾待ち</span>';
+          actionHtml = `<button class="chip-bet-btn c-clear" onclick="cancelChipLoanOffer('${l.id}')">↩️ 取り消す</button>`;
+        } else if (l.status === 'active') {
+          statusBadge = `<span style="background:#b45309; color:#fef08a; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">未返済（残り ${Number(l.remaining).toLocaleString()}🪙）</span>`;
+        } else if (l.status === 'repaid') {
+          statusBadge = '<span style="background:#065f46; color:#a7f3d0; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">✅ 完済！</span>';
+        } else {
+          statusBadge = '<span style="background:#334155; color:#cbd5e1; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">辞退済</span>';
+        }
+
+        card.style.opacity = (l.status === 'repaid' || l.status === 'declined') ? '0.72' : '1';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+            <div style="font-weight:900; font-size:0.94rem; color:#fef08a;">
+              👤 ${sanitizeDisplayPlayerName(l.toName)} に <strong>${Number(l.amount).toLocaleString()}チップ</strong> ${l.status === 'active' ? '貸出中（未返済）' : (l.status === 'pending' ? '貸出オファー中' : '')}
+            </div>
+            ${statusBadge}
+          </div>
+          ${actionHtml ? `<div style="display:flex; justify-content:flex-end;">${actionHtml}</div>` : ''}
+        `;
+        lentList.appendChild(card);
+      });
+    }
   }
 }
 
