@@ -3671,7 +3671,13 @@ function handleStudyEarnClick() {
     localStorage.setItem(WORK_SESSION_KEY, JSON.stringify(sessionData));
   } catch (e) {}
 
-  window.location.href = '../バイオ・ロジカ/大事/index.html?from=casino';
+  const isWebHosted = /^https?:$/i.test(window.location.protocol) &&
+                      !/^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname);
+  if (isWebHosted) {
+    window.location.href = 'https://bio-labo.github.io/biologica/?from=casino';
+  } else {
+    window.location.href = '../バイオ・ロジカ/大事/index.html?from=casino';
+  }
 }
 
 /* --- 🖥️ UI更新＆画面遷移 --- */
