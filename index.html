@@ -1727,6 +1727,418 @@ html, body {
   .yokai-btn { padding: 12px 12px; }
   .yokai-btn-title { font-size: 1rem; }
 }
+
+/* ============================================================================
+   🀄 麻雀 (MAHJONG) 専用スタイル & レスポンシブ牌UI
+============================================================================ */
+.yokai-btn-mahjong {
+  background: linear-gradient(180deg, #10b981 0%, #059669 55%, #065f46 100%);
+  border-color: #a7f3d0;
+  box-shadow: 0 7px 0 #064e3b, 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.mj-config-box {
+  background: rgba(15, 23, 42, 0.94);
+  border: 2.5px solid #10b981;
+  border-radius: 18px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.mj-opt-group {
+  margin-bottom: 10px;
+}
+.mj-opt-label {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #a7f3d0;
+  margin-bottom: 5px;
+}
+.mj-opt-pills {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.mj-opt-pills.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.mj-opt-btn {
+  padding: 7px 4px;
+  border-radius: 10px;
+  border: 2px solid #475569;
+  background: #020617;
+  color: #cbd5e1;
+  font-weight: 900;
+  font-size: 0.76rem;
+  cursor: pointer;
+  transition: all 0.14s;
+  text-align: center;
+  line-height: 1.25;
+}
+.mj-opt-btn.active {
+  background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+  color: #422006;
+  border-color: #ffffff;
+  box-shadow: 0 2px 0 #854d0e;
+}
+.mj-opt-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 卓（雀卓マット） */
+.mj-table-felt {
+  background: radial-gradient(circle at 50% 45%, #047857 0%, #065f46 58%, #022c22 100%);
+  border: 5px solid #78350f;
+  border-radius: 20px;
+  padding: 8px;
+  box-shadow: inset 0 0 26px rgba(0,0,0,0.65), 0 6px 20px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.mj-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+  background: rgba(2, 6, 23, 0.72);
+  border: 1.5px solid rgba(250, 204, 21, 0.45);
+  border-radius: 12px;
+  padding: 5px 8px;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.mj-opponent-top {
+  background: rgba(2, 6, 23, 0.62);
+  border: 1.5px solid #475569;
+  border-radius: 12px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+}
+.mj-opponent-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.mj-seat-box {
+  background: rgba(2, 6, 23, 0.66);
+  border: 1.5px solid #475569;
+  border-radius: 12px;
+  padding: 5px 7px;
+  min-width: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.mj-seat-box.active-turn {
+  border-color: #facc15;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.55);
+}
+.mj-seat-box.riichi-on {
+  border-color: #f43f5e;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.5);
+}
+
+.mj-seat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  margin-bottom: 3px;
+}
+.mj-seat-wind {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: #1e293b;
+  color: #fde047;
+  font-size: 0.68rem;
+  margin-right: 3px;
+}
+.mj-seat-wind.is-dealer {
+  background: #dc2626;
+  color: #fff;
+}
+
+/* 捨て牌（河）エリア */
+.mj-river-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  min-height: 28px;
+  align-items: center;
+}
+
+/* 牌コンポーネント */
+.mj-tile {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 82%, #cbd5e1 100%);
+  border: 1.5px solid #94a3b8;
+  border-bottom: 4px solid #16a34a;
+  border-radius: 5px;
+  color: #0f172a;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.45);
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, opacity 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+/* 自分の手牌（14枚がスマホ横幅に必ず収まるサイズ） */
+.mj-hand-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  padding: 12px 2px 4px;
+  min-height: 68px;
+  width: 100%;
+  overflow-x: hidden;
+}
+.mj-hand-row .mj-tile {
+  width: calc((100% - 34px) / 14);
+  max-width: 42px;
+  min-width: 21px;
+  height: 52px;
+  font-size: 0.95rem;
+}
+.mj-hand-row .mj-tile.drawn-gap {
+  margin-left: 6px;
+}
+.mj-hand-row .mj-tile.selected {
+  transform: translateY(-10px);
+  border-color: #facc15;
+  box-shadow: 0 6px 14px rgba(250, 204, 21, 0.8);
+  z-index: 5;
+}
+.mj-hand-row .mj-tile.assist-dim {
+  opacity: 0.62;
+}
+.mj-hand-row .mj-tile.assist-best {
+  box-shadow: 0 0 0 2px #38bdf8, 0 2px 6px rgba(56,189,248,0.8);
+}
+.mj-hand-row .mj-tile.riichi-locked {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+.mj-hand-row .mj-tile.win-flash {
+  animation: mjWinPulse 0.55s infinite alternate;
+  border-color: #facc15;
+}
+
+@keyframes mjWinPulse {
+  from { box-shadow: 0 0 8px #facc15; transform: translateY(-2px); }
+  to { box-shadow: 0 0 22px #fef08a, 0 0 32px #f43f5e; transform: translateY(-6px); }
+}
+
+/* 小サイズ牌（捨て牌・ドラ・晒し牌・結果表示） */
+.mj-tile.mj-tile-sm {
+  width: 22px;
+  height: 30px;
+  font-size: 0.68rem;
+  border-bottom-width: 2.5px;
+  border-radius: 3px;
+  cursor: default;
+}
+.mj-tile.mj-tile-md {
+  width: 28px;
+  height: 38px;
+  font-size: 0.82rem;
+  border-bottom-width: 3px;
+  border-radius: 4px;
+  cursor: default;
+}
+.mj-tile.mj-tile-riichi {
+  transform: rotate(90deg);
+  margin: 0 4px;
+}
+.mj-tile.mj-tile-back {
+  background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+  border-color: #86efac;
+  border-bottom-color: #064e3b;
+}
+
+.mj-t-sub {
+  font-size: 0.56em;
+  line-height: 0.9;
+  margin-top: 1px;
+}
+.mj-suit-m { color: #b91c1c; }
+.mj-suit-p { color: #1d4ed8; }
+.mj-suit-s { color: #15803d; }
+.mj-suit-z-dragon-r { color: #dc2626; }
+.mj-suit-z-dragon-g { color: #16a34a; }
+.mj-suit-z-dragon-w { color: #64748b; border: 1.5px solid #94a3b8; padding: 1px 3px; border-radius: 2px; }
+.mj-suit-z-wind { color: #0f172a; }
+
+/* 副露（ポン・チー・カン）晒しエリア */
+.mj-melds-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+.mj-meld-group {
+  display: inline-flex;
+  gap: 1px;
+  background: rgba(2,6,23,0.45);
+  padding: 2px 3px;
+  border-radius: 5px;
+}
+
+/* 中央インフォバー */
+.mj-center-info {
+  background: rgba(2, 6, 23, 0.82);
+  border: 2px solid #facc15;
+  border-radius: 14px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 初心者アシストテンパイバー */
+.mj-assist-bar {
+  background: rgba(14, 116, 144, 0.9);
+  border: 1.5px solid #38bdf8;
+  border-radius: 10px;
+  padding: 5px 8px;
+  margin-top: 4px;
+  font-size: 0.74rem;
+  font-weight: 900;
+  color: #e0f2fe;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* アクションバー */
+.mj-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.mj-act-btn {
+  padding: 9px 14px;
+  border-radius: 12px;
+  border: 2.5px solid #ffffff;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 0.86rem;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.45);
+  transition: transform 0.1s;
+}
+.mj-act-btn:active { transform: translateY(2px); }
+.mj-act-btn.btn-win { background: linear-gradient(180deg, #ef4444, #b91c1c); border-color: #fef08a; animation: pulseGlow 1s infinite; }
+.mj-act-btn.btn-riichi { background: linear-gradient(180deg, #f59e0b, #d97706); border-color: #fef08a; }
+.mj-act-btn.btn-call { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+.mj-act-btn.btn-pass { background: linear-gradient(180deg, #64748b, #334155); }
+.mj-act-btn.btn-discard { background: linear-gradient(180deg, #10b981, #059669); }
+
+/* ルール図解モーダルタブ */
+.mj-rule-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.mj-rule-tab-btn {
+  padding: 7px 4px;
+  border-radius: 10px;
+  border: 2px solid #475569;
+  background: #0f172a;
+  color: #cbd5e1;
+  font-weight: 900;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+.mj-rule-tab-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #7dd3fc;
+}
+
+@media (max-width: 520px) {
+  .mj-hand-row .mj-tile {
+    height: 44px;
+    font-size: 0.78rem;
+  }
+  .mj-hand-row .mj-tile.drawn-gap { margin-left: 4px; }
+  .mj-tile.mj-tile-sm { width: 19px; height: 26px; font-size: 0.6rem; }
+  .mj-act-btn { padding: 8px 11px; font-size: 0.8rem; }
+}
+
+/* 全役一覧カードUI */
+.mj-yaku-sec {
+  margin-bottom: 12px;
+}
+.mj-yaku-sec-head {
+  font-size: 0.82rem;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mj-yaku-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.mj-yaku-card {
+  background: rgba(2, 6, 23, 0.78);
+  border: 1.5px solid #334155;
+  border-radius: 10px;
+  padding: 6px 9px;
+}
+.mj-yaku-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+.mj-yaku-name {
+  font-weight: 900;
+  font-size: 0.82rem;
+  color: #fef08a;
+}
+.mj-yaku-tag {
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.mj-yaku-tag.tag-menzen { background: #7f1d1d; color: #fecaca; border: 1px solid #ef4444; }
+.mj-yaku-tag.tag-open { background: #064e3b; color: #a7f3d0; border: 1px solid #10b981; }
+.mj-yaku-tag.tag-kui { background: #1e3a8a; color: #bfdbfe; border: 1px solid #3b82f6; }
+.mj-yaku-desc {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
 </style>
 </head>
 <body>
@@ -2139,6 +2551,18 @@ html, body {
           <div class="yokai-btn-text-wrap">
             <div class="yokai-btn-title">スロット (BIO-SLOT)</div>
             <div class="yokai-btn-desc">🥚卵 ➔ 🧪ATP ➔ 🦠シャーレ ➔ 🌈LR ➔ 🧬二重らせんDNAでJACKPOT！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
+
+      <!-- 🀄 麻雀 (MAHJONG：東風戦4人対局！) -->
+      <button class="yokai-btn yokai-btn-mahjong" onclick="openGame('mahjong')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🀄</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">麻雀 (MAHJONG) <span style="font-size:0.72rem; background:#facc15; color:#422006; padding:2px 8px; border-radius:999px; vertical-align:middle;">NEW!</span></div>
+            <div class="yokai-btn-desc">東風戦4局＆トビ終了！初心者アシスト・難易度3段階・フレンド通信対応！</div>
           </div>
         </div>
         <div class="yokai-btn-arrow">▶</div>
@@ -2954,6 +3378,151 @@ html, body {
   </section>
 
   <!-- ========================================================================
+       🀄 ゲーム8：麻雀 - 東風戦4人対局 (#screen-game-mahjong)
+  ======================================================================== -->
+  <section id="screen-game-mahjong" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🀄 麻雀 <span id="mjModeBadge" style="font-size:0.74rem; background:#059669; padding:2px 8px; border-radius:999px;">🤖 AI戦</span></div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button class="chip-bet-btn c-10" onclick="openMahjongRulesModal()" style="padding:5px 10px; font-size:0.76rem;">📖 ルール・役</button>
+        <button class="back-btn" onclick="navigateTo('screen-category')">⬅️ フロアへ</button>
+      </div>
+    </div>
+
+    <!-- ① 対局設定パネル (#mjSetupPanel) -->
+    <div id="mjSetupPanel" class="mj-config-box">
+      <div style="font-size:1rem; font-weight:900; color:#fef08a; margin-bottom:6px; text-align:center;">
+        🀄 東風戦（4局勝負・25,000点持ち・トビ終了あり）
+      </div>
+      <div style="font-size:0.75rem; color:#cbd5e1; text-align:center; margin-bottom:10px; line-height:1.45;">
+        終了時の持ち点差をレート換算して精算！開始時に保証金（デポジット）を預けます。
+      </div>
+
+      <!-- レート選択 -->
+      <div class="mj-opt-group">
+        <div class="mj-opt-label">💰 チップレート ＆ 参加保証金（デポジット）</div>
+        <div class="mj-opt-pills">
+          <button class="mj-opt-btn active" id="mjRateBtn10" onclick="setMahjongOption('rate', 10)">
+            🔰 低レート<br><span style="font-size:0.66rem;">1000点=10🪙<br>(保証250🪙)</span>
+          </button>
+          <button class="mj-opt-btn" id="mjRateBtn100" onclick="setMahjongOption('rate', 100)">
+            ⚖️ 標準レート<br><span style="font-size:0.66rem;">1000点=100🪙<br>(保証2,500🪙)</span>
+          </button>
+          <button class="mj-opt-btn" id="mjRateBtn1000" onclick="setMahjongOption('rate', 1000)">
+            🔥 高レート<br><span style="font-size:0.66rem;">1000点=1000🪙<br>(保証25,000🪙)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 順位ウマ -->
+      <div class="mj-opt-group">
+        <div class="mj-opt-label">🏆 順位ウマ（1位 +10,000点 / 4位 -10,000点）</div>
+        <div class="mj-opt-pills cols-2">
+          <button class="mj-opt-btn active" id="mjUmaBtnOn" onclick="setMahjongOption('uma', true)">✨ ウマあり（白熱！）</button>
+          <button class="mj-opt-btn" id="mjUmaBtnOff" onclick="setMahjongOption('uma', false)">⚖️ ウマなし（点数差のみ）</button>
+        </div>
+      </div>
+
+      <!-- AI難易度 -->
+      <div class="mj-opt-group" id="mjAiDiffGroup">
+        <div class="mj-opt-label">🤖 AIの強さ（CPU戦 / 空席AI補充時）</div>
+        <div class="mj-opt-pills">
+          <button class="mj-opt-btn" id="mjDiffBtnEasy" onclick="setMahjongOption('aiDiff', 'easy')">🌱 優しい</button>
+          <button class="mj-opt-btn active" id="mjDiffBtnNormal" onclick="setMahjongOption('aiDiff', 'normal')">⚔️ 普通</button>
+          <button class="mj-opt-btn" id="mjDiffBtnHard" onclick="setMahjongOption('aiDiff', 'hard')">🔥 難しい</button>
+        </div>
+      </div>
+
+      <!-- AI速度 ＆ 初心者アシスト -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+        <div id="mjAiSpeedGroup">
+          <div class="mj-opt-label">⚡ AI思考スピード</div>
+          <div class="mj-opt-pills cols-2">
+            <button class="mj-opt-btn active" id="mjSpeedBtnNormal" onclick="setMahjongOption('aiFast', false)">🐢 標準</button>
+            <button class="mj-opt-btn" id="mjSpeedBtnFast" onclick="setMahjongOption('aiFast', true)">⚡ 爆速</button>
+          </div>
+        </div>
+        <div>
+          <div class="mj-opt-label">💡 初心者アシスト</div>
+          <div class="mj-opt-pills cols-2">
+            <button class="mj-opt-btn active" id="mjAssistBtnOn" onclick="setMahjongOption('assist', true)">ON</button>
+            <button class="mj-opt-btn" id="mjAssistBtnOff" onclick="setMahjongOption('assist', false)">OFF</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="mjSetupNotice" style="font-size:0.75rem; color:#fde047; font-weight:800; text-align:center; margin-bottom:8px;">
+        現在の保証金：250 🪙（対局終了時に持ち点に応じて精算返還されます）
+      </div>
+
+      <button class="action-btn btn-green" id="mjStartMatchBtn" onclick="startMahjongMatch()" style="width:100%; font-size:1.05rem;">
+        🀄 保証金を預けて対局スタート！
+      </button>
+    </div>
+
+    <!-- ② 麻雀卓メインエリア (#mjTablePanel) -->
+    <div id="mjTablePanel" style="display:none;">
+      <div class="mj-table-felt">
+        <!-- 上部コントロール＆場況 -->
+        <div class="mj-top-bar">
+          <div style="color:#fef08a;" id="mjRoundStatusText">東1局 0本場</div>
+          <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+            <button class="chip-bet-btn c-10" id="mjLiveAssistToggle" onclick="toggleMahjongAssistLive()" style="font-size:0.68rem; padding:3px 8px;">💡 アシスト: ON</button>
+            <button class="chip-bet-btn c-25" id="mjLiveFastToggle" onclick="toggleMahjongFastLive()" style="font-size:0.68rem; padding:3px 8px;">⚡ 爆速: OFF</button>
+          </div>
+        </div>
+
+        <!-- 対面（2個先のプレイヤー） -->
+        <div class="mj-opponent-top" id="mjSeatBox2"></div>
+
+        <!-- 左（上家）・右（下家） -->
+        <div class="mj-opponent-sides">
+          <div class="mj-seat-box" id="mjSeatBox3"></div>
+          <div class="mj-seat-box" id="mjSeatBox1"></div>
+        </div>
+
+        <!-- 中央場情報（ドラ・残り牌・供託） -->
+        <div class="mj-center-info">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:0.74rem; font-weight:900; color:#fde047;">✨ ドラ表示:</span>
+            <div id="mjDoraDisplayRow" style="display:flex; gap:3px;"></div>
+          </div>
+          <div style="font-size:0.74rem; font-weight:900; color:#bae6fd;" id="mjWallRemainText">残り 70 枚</div>
+          <div style="font-size:0.72rem; font-weight:900; color:#fda4af;" id="mjRiichiPoolText">供託: 0本</div>
+        </div>
+
+        <!-- 自分の情報＆河 -->
+        <div class="mj-seat-box" id="mjSeatBox0" style="margin-bottom:6px;"></div>
+
+        <!-- 初心者アシストナビ（テンパイ・シャンテン・操作ヒント） -->
+        <div class="mj-assist-bar" id="mjAssistBar" style="display:none;"></div>
+
+        <!-- 自分の手牌（自動理牌・2タップ捨て） -->
+        <div class="mj-hand-row" id="mjMyHandRow"></div>
+
+        <!-- アクションバー（ロン・ツモ・リーチ・ポン・チー・パス・捨てる） -->
+        <div class="mj-action-bar" id="mjActionBar"></div>
+      </div>
+    </div>
+
+    <!-- ③ 局結果パネル（アガリ / 流局） -->
+    <div id="mjRoundResultBox" style="display:none; background:rgba(15,23,42,0.96); border:3px solid #facc15; border-radius:20px; padding:14px; margin-top:10px; text-align:center;">
+      <div id="mjRoundResultTitle" style="font-size:1.2rem; font-weight:900; color:#fef08a; margin-bottom:6px;">🎉 ツモ！</div>
+      <div id="mjRoundResultTiles" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2px; margin-bottom:8px;"></div>
+      <div id="mjRoundResultYaku" style="font-size:0.84rem; font-weight:800; color:#bae6fd; line-height:1.55; margin-bottom:8px;"></div>
+      <div id="mjRoundResultScores" style="font-size:0.8rem; color:#e2e8f0; margin-bottom:12px;"></div>
+      <button class="action-btn btn-green" id="mjNextRoundBtn" onclick="proceedMahjongNextRound()" style="width:100%;">▶ 次の局へ進む</button>
+    </div>
+
+    <!-- ④ 最終試合精算パネル（東風戦終了 / トビ終了） -->
+    <div id="mjMatchResultBox" style="display:none; background:linear-gradient(135deg, rgba(15,23,42,0.98), rgba(30,27,75,0.98)); border:3.5px solid #facc15; border-radius:22px; padding:16px; margin-top:10px; text-align:center;">
+      <div id="mjMatchResultTitle" style="font-size:1.35rem; font-weight:900; color:#fef08a; margin-bottom:8px;">🏆 対局終了！最終精算</div>
+      <div id="mjMatchResultList" style="display:flex; flex-direction:column; gap:6px; margin-bottom:12px;"></div>
+      <button class="action-btn" onclick="resetMahjongToSetup()" style="width:100%;">🔄 設定画面へ戻る</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
        ⚙️ メニュー画面 (#screen-menu)
   ======================================================================== -->
   <section id="screen-menu" class="screen">
@@ -3012,7 +3581,8 @@ html, body {
       <div style="margin-bottom:8px;"><strong>👑 ポーカー</strong>：5枚の手札から残したいカードをHOLDして1回交換。相手より強い役を作れば勝利＋高役ボーナス倍率！</div>
       <div style="margin-bottom:8px;"><strong>🎯 ルーレット</strong>：0〜36の回転盤。赤黒・偶数奇数(2倍)、ダズン(3倍)、数字ピンポイント当て(36倍)に自由ベット！</div>
       <div style="margin-bottom:8px;"><strong>🎡 ビッグシックス</strong>：1〜10の番号を選んで中に書かれた5〜9倍をもらうモードと、1〜40倍の54マス標準モードを切替可能！</div>
-      <div><strong>🎰 バイオ・スロット</strong>：『バイオ・ロジカ』仕様の3リールスロット！🥚卵(3倍) ➔ 🧪ATP(5倍) ➔ 🦠シャーレ(10倍) ➔ 🌈LR(BAR枠・30倍) ➔ 🧬二重らせんDNA(JACKPOT・100倍)！</div>
+      <div style="margin-bottom:8px;"><strong>🎰 バイオ・スロット</strong>：『バイオ・ロジカ』仕様の3リールスロット！🥚卵(3倍) ➔ 🧪ATP(5倍) ➔ 🦠シャーレ(10倍) ➔ 🌈LR(BAR枠・30倍) ➔ 🧬二重らせんDNA(JACKPOT・100倍)！</div>
+      <div><strong>🀄 麻雀 (MAHJONG)</strong>：25,000点持ち・東風戦4局勝負（トビ終了あり）！終了時の点差をレート換算してチップ精算！初心者アシストON/OFF・AI難易度3段階・爆速モード・通信対局対応！</div>
     </div>
 
     <!-- フレンド(2P)チップリセット・データ管理 -->
@@ -3174,6 +3744,196 @@ html, body {
     <button class="action-btn" id="bigWinCloseBtn" onclick="closeSlotBigWinOverlay()" style="width:100%; font-size:1.1rem;">
       ✨ チップを受け取る！
     </button>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     📖 麻雀 ルール＆役一覧モーダル (#mahjongRulesModal)
+========================================================================== -->
+<div class="modal-overlay" id="mahjongRulesModal" onclick="if(event.target===this) closeMahjongRulesModal()">
+  <div class="modal-box" style="max-width:540px; max-height:86vh; overflow-y:auto; text-align:left; padding:16px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h2 style="font-size:1.15rem; font-weight:900; color:#fef08a;">📖 麻雀ルール ＆ 役一覧ガイド</h2>
+      <button class="back-btn" onclick="closeMahjongRulesModal()" style="padding:4px 10px; font-size:0.78rem;">✖ 閉じる</button>
+    </div>
+
+    <div class="mj-rule-tabs">
+      <button class="mj-rule-tab-btn active" id="mjRuleTab0" onclick="switchMahjongRuleTab(0)">🀄 基本ルール</button>
+      <button class="mj-rule-tab-btn" id="mjRuleTab1" onclick="switchMahjongRuleTab(1)">⭐ おすすめ役</button>
+      <button class="mj-rule-tab-btn" id="mjRuleTab2" onclick="switchMahjongRuleTab(2)">📜 全役一覧</button>
+    </div>
+
+    <div id="mjRuleBody0" style="font-size:0.8rem; color:#e2e8f0; line-height:1.6;">
+      <div style="background:rgba(2,6,23,0.7); border:1.5px solid #10b981; border-radius:12px; padding:10px; margin-bottom:8px;">
+        <strong style="color:#6ee7b7;">① 勝利の基本形（14枚を揃える！）</strong><br>
+        手元の13枚＋引いた1枚＝<strong>14枚</strong>を<br>
+        <strong>【3枚セット × 4組】＋【同じ牌2枚（アタマ）】</strong>に揃えたらアガリ！<br>
+        ・<strong>3枚セット</strong>：階段（1-2-3等）または 同じ牌3枚（7-7-7等）
+      </div>
+      <div style="background:rgba(2,6,23,0.7); border:1.5px solid #38bdf8; border-radius:12px; padding:10px; margin-bottom:8px;">
+        <strong style="color:#7dd3fc;">② カンタン操作（誤タップ防止＆自動整列）</strong><br>
+        ・手牌は自動で綺麗に整列（理牌）されます。<br>
+        ・捨てたい牌を<strong>1回タップで選択（浮き上がる）</strong> ➔ <strong>もう1回タップで捨てる</strong>！<br>
+        ・<strong>初心者アシストON</strong>なら、不要な牌が薄暗くなり、あと1枚でアガリ（テンパイ）になると当たり牌が表示されます！
+      </div>
+      <div style="background:rgba(2,6,23,0.7); border:1.5px solid #facc15; border-radius:12px; padding:10px;">
+        <strong style="color:#fef08a;">③ 東風戦＆チップ換算の仕組み</strong><br>
+        ・全員<strong>25,000点持ち</strong>でスタートし、<strong>東1局〜東4局</strong>の4局（誰かが0点未満になったらトビ即終了）で決着！<br>
+        ・<strong>保証金（デポジット）</strong>を預けて開始し、終了時の増減 <code>(最終点 - 25,000) ÷ 1,000 × レート</code> ＋ 順位ウマ(設定時：1位+10,000 / 4位-10,000) を精算します！
+      </div>
+    </div>
+
+    <div id="mjRuleBody1" style="display:none; font-size:0.79rem; color:#e2e8f0; line-height:1.55;">
+      <div style="margin-bottom:8px; color:#fde047; font-weight:900;">⚠️ 超重要：形が揃っても「役」が最低1つないとアガれません！まずはこの5つだけでOK！</div>
+      <div style="background:rgba(2,6,23,0.75); border:1.5px solid #f59e0b; border-radius:10px; padding:8px 10px; margin-bottom:6px;">
+        <strong style="color:#fef08a;">1. リーチ（立直）〔1飜・鳴きNG〕</strong><br>
+        誰からも牌をもらわず「あと1枚で完成」になったら宣言！一番カンタンで強い基本役！
+      </div>
+      <div style="background:rgba(2,6,23,0.75); border:1.5px solid #4ade80; border-radius:10px; padding:8px 10px; margin-bottom:6px;">
+        <strong style="color:#86efac;">2. タンヤオ（断幺九）〔1飜・鳴きOK〕</strong><br>
+        「1・9・字牌」を使わず、<strong>2〜8の数字だけ</strong>で揃える！ポン・チーしてもOK！
+      </div>
+      <div style="background:rgba(2,6,23,0.75); border:1.5px solid #38bdf8; border-radius:10px; padding:8px 10px; margin-bottom:6px;">
+        <strong style="color:#7dd3fc;">3. 役牌（ヤクハイ）〔1飜・鳴きOK〕</strong><br>
+        <strong>白・發・中</strong>や、自分の風（東・南…）、場の風（東）を<strong>3枚揃えるだけ</strong>で役確定！
+      </div>
+      <div style="background:rgba(2,6,23,0.75); border:1.5px solid #c084fc; border-radius:10px; padding:8px 10px; margin-bottom:6px;">
+        <strong style="color:#e9d5ff;">4. ピンフ（平和）〔1飜・鳴きNG〕</strong><br>
+        3枚組がすべて数字の階段で、アタマが役牌以外、最後が両面待ち（例: 4-5で3か6待ち）。
+      </div>
+      <div style="background:rgba(2,6,23,0.75); border:1.5px solid #f472b6; border-radius:10px; padding:8px 10px;">
+        <strong style="color:#fbcfe8;">5. トイトイ（対々和）〔2飜・鳴きOK〕</strong><br>
+        3枚組4つをすべて「同じ牌3枚（ポンでもOK）」で揃える高得点役！
+      </div>
+    </div>
+
+    <div id="mjRuleBody2" style="display:none; color:#e2e8f0;">
+      <!-- ドラ -->
+      <div style="background:rgba(120,53,15,0.45); border:1.5px solid #facc15; border-radius:10px; padding:7px 10px; margin-bottom:10px; font-size:0.75rem; line-height:1.45;">
+        <strong style="color:#fef08a;">✨ ドラ（ボーナス牌：1枚につき+1飜）</strong><br>
+        中央「ドラ表示牌」の<strong>次の牌</strong>（例: 2萬表示なら3萬）。※ドラだけではアガれません。
+      </div>
+
+      <!-- 1飜 -->
+      <div class="mj-yaku-sec">
+        <div class="mj-yaku-sec-head" style="background:#065f46; color:#a7f3d0;">
+          <span>🟢 1飜（基本の役）</span><span style="font-size:0.7rem;">一番狙いやすい！</span>
+        </div>
+        <div class="mj-yaku-list">
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">立直（リーチ）</span><span class="mj-yaku-tag tag-menzen">門前のみ</span></div>
+            <div class="mj-yaku-desc">鳴かずにあと1枚で完成（テンパイ）になったら宣言！</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">門前清自摸和（ツモ）</span><span class="mj-yaku-tag tag-menzen">門前のみ</span></div>
+            <div class="mj-yaku-desc">鳴かずに自分のツモ番で当たり牌を引いてアガリ！</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">断幺九（タンヤオ）</span><span class="mj-yaku-tag tag-open">鳴きOK</span></div>
+            <div class="mj-yaku-desc">「1・9・字牌」を一切使わず、2〜8の数字だけで揃える。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">役牌（ヤクハイ）</span><span class="mj-yaku-tag tag-open">鳴きOK</span></div>
+            <div class="mj-yaku-desc">白・發・中、または自分の風・場の風（東）を3枚揃える。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">平和（ピンフ）</span><span class="mj-yaku-tag tag-menzen">門前のみ</span></div>
+            <div class="mj-yaku-desc">全部階段＋アタマが役牌以外＋最後が両面待ち。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">一盃口（イーペーコー）</span><span class="mj-yaku-tag tag-menzen">門前のみ</span></div>
+            <div class="mj-yaku-desc">同じ種類・同じ数字の階段を2組作る（例: 234 234）。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">一発 / 海底・河底 / 嶺上開花</span><span class="mj-yaku-tag tag-open">特殊ボーナス</span></div>
+            <div class="mj-yaku-desc">リーチ後1巡以内アガリ(一発)／山最後の1枚でアガリ(海底・河底)。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2飜 -->
+      <div class="mj-yaku-sec">
+        <div class="mj-yaku-sec-head" style="background:#1e40af; color:#bfdbfe;">
+          <span>🔵 2飜（中級・高打点）</span><span style="font-size:0.7rem;">一気に点数が跳ねる！</span>
+        </div>
+        <div class="mj-yaku-list">
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">七対子（チートイツ）</span><span class="mj-yaku-tag tag-menzen">門前のみ</span></div>
+            <div class="mj-yaku-desc">同じ牌2枚ペアを7種類集める特殊なアガリ形！</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">対々和（トイトイ）</span><span class="mj-yaku-tag tag-open">鳴きOK</span></div>
+            <div class="mj-yaku-desc">3枚組4つをすべて「同じ牌3枚（刻子）」で揃える。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">三暗刻（サンアンコウ）</span><span class="mj-yaku-tag tag-open">鳴きOK</span></div>
+            <div class="mj-yaku-desc">ポンせずに自分で揃えた「同じ牌3枚」を3組作る。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">三色同順（サンショク）</span><span class="mj-yaku-tag tag-kui">鳴き1飜</span></div>
+            <div class="mj-yaku-desc">萬子・筒子・索子の3種類で同じ数字の階段を作る（例: 123×3色）。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">一気通貫（イッツー）</span><span class="mj-yaku-tag tag-kui">鳴き1飜</span></div>
+            <div class="mj-yaku-desc">同じ種類で「123」「456」「789」の9枚を揃える。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">チャンタ（混全帯幺九）</span><span class="mj-yaku-tag tag-kui">鳴き1飜</span></div>
+            <div class="mj-yaku-desc">すべての組とアタマに「1・9・字牌」が含まれる。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">小三元 / 混老頭 / ダブル立直</span><span class="mj-yaku-tag tag-open">複合チャンス</span></div>
+            <div class="mj-yaku-desc">白發中の2つ3枚＋1つアタマ(小三元)／1・9・字牌のみ(混老頭)。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3飜〜6飜 -->
+      <div class="mj-yaku-sec">
+        <div class="mj-yaku-sec-head" style="background:#6b21a8; color:#e9d5ff;">
+          <span>🟣 3飜〜6飜（大物手！）</span><span style="font-size:0.7rem;">満貫〜倍満級！</span>
+        </div>
+        <div class="mj-yaku-list">
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">混一色（ホンイツ）〔3飜〕</span><span class="mj-yaku-tag tag-kui">鳴き2飜</span></div>
+            <div class="mj-yaku-desc">「1種類の数字（例: 筒子だけ）」＋「字牌」だけで揃える！</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">純チャン / 二盃口〔3飜〕</span><span class="mj-yaku-tag tag-kui">二盃口は門前</span></div>
+            <div class="mj-yaku-desc">字牌なし全組1・9絡み(純チャン)／一盃口を2つ作る(二盃口)。</div>
+          </div>
+          <div class="mj-yaku-card">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">清一色（チンイツ）〔6飜〕</span><span class="mj-yaku-tag tag-kui">鳴き5飜</span></div>
+            <div class="mj-yaku-desc">14枚すべて「1種類の数字（例: 萬子だけ）」で揃える超強力役！</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 役満 -->
+      <div class="mj-yaku-sec" style="margin-bottom:2px;">
+        <div class="mj-yaku-sec-head" style="background:linear-gradient(90deg,#991b1b,#b45309); color:#fef08a;">
+          <span>👑 役満（子 32,000点 / 親 48,000点）</span><span style="font-size:0.7rem;">一撃トビ級！</span>
+        </div>
+        <div class="mj-yaku-list">
+          <div class="mj-yaku-card" style="border-color:#f59e0b;">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">国士無双（コクシムソウ）</span><span class="mj-yaku-tag tag-menzen">門前のみ</span></div>
+            <div class="mj-yaku-desc">1・9・字牌 全13種類を1枚ずつ＋どれか1枚を2枚にする。</div>
+          </div>
+          <div class="mj-yaku-card" style="border-color:#f59e0b;">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">四暗刻（スーアンコウ）</span><span class="mj-yaku-tag tag-menzen">門前のみ</span></div>
+            <div class="mj-yaku-desc">鳴かずに「同じ牌3枚」を4組自力で揃える！</div>
+          </div>
+          <div class="mj-yaku-card" style="border-color:#f59e0b;">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">大三元 / 字一色 / 小四喜・大四喜</span><span class="mj-yaku-tag tag-open">鳴きOK</span></div>
+            <div class="mj-yaku-desc">白發中すべて3枚(大三元)／字牌のみ(字一色)／東西南北すべて揃える(四喜)。</div>
+          </div>
+          <div class="mj-yaku-card" style="border-color:#f59e0b;">
+            <div class="mj-yaku-top"><span class="mj-yaku-name">清老頭 / 緑一色 / 九蓮宝燈</span><span class="mj-yaku-tag tag-open">伝説の役満</span></div>
+            <div class="mj-yaku-desc">1・9のみ(清老頭)／緑の索子・發のみ(緑一色)／1112345678999+α(九蓮)。</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -4314,6 +5074,9 @@ function isActiveGameLocked() {
   if (id === 'screen-game-slot' && typeof slotState !== 'undefined') {
     return slotState.spinning.some(Boolean);
   }
+  if (id === 'screen-game-mahjong' && typeof mjState !== 'undefined') {
+    return mjState.phase !== 'setup' && mjState.phase !== 'matchEnd';
+  }
   return false;
 }
 
@@ -4774,6 +5537,7 @@ async function createOnlineRoom() {
     poker: null,
     roulette: null,
     bigsix: null,
+    mahjong: null,
     toastEvent: null,
     updatedAt: Date.now()
   };
@@ -5061,7 +5825,8 @@ function handleOnlineRoomDocUpdate(data) {
       poker: 'screen-game-poker',
       roulette: 'screen-game-roulette',
       bigsix: 'screen-game-bigsix',
-      slot: 'screen-game-slot'
+      slot: 'screen-game-slot',
+      mahjong: 'screen-game-mahjong'
     };
     const targetScreen = screenMap[data.activeGame];
     if (targetScreen && !document.getElementById(targetScreen).classList.contains('active')) {
@@ -5088,6 +5853,12 @@ function handleOnlineRoomDocUpdate(data) {
   }
   if (data.bigsix && document.getElementById('screen-game-bigsix').classList.contains('active')) {
     syncBigSixFromOnline(data.bigsix);
+  }
+  if (data.mahjong && document.getElementById('screen-game-mahjong').classList.contains('active')) {
+    syncMahjongFromOnline(data.mahjong);
+  }
+  if (data.mahjongAction && onlineRoomState.role === 'host' && typeof mjHandleGuestAction === 'function') {
+    mjHandleGuestAction(data.mahjongAction);
   }
 }
 
@@ -5168,6 +5939,11 @@ function openGame(gameKey, fromRemoteSync = false) {
     document.getElementById('slModeBadge').textContent = state.playMode === 'ai' ? '🧬 1人プレイ' : modeLabel;
     initSlotUI();
     navigateTo('screen-game-slot');
+  } else if (gameKey === 'mahjong') {
+    const mjBadge = document.getElementById('mjModeBadge');
+    if (mjBadge) mjBadge.textContent = state.playMode === 'local' ? '🤖 1人＋CPU3人戦' : modeLabel;
+    initMahjongUI(fromRemoteSync);
+    navigateTo('screen-game-mahjong');
   }
 }
 
@@ -9121,6 +9897,1684 @@ function settleSlotSpin() {
   if (!slotState.isOverdrive) {
     checkBankruptNotice();
   }
+}
+
+/* ============================================================================
+   🀄 麻雀 (MAHJONG) エンジン Ver 1.0
+   東風戦4局・トビ終了・保証金＆ウマ精算・AI 3段階＆爆速・初心者アシスト・オンライン同期
+============================================================================ */
+const MJ_WINDS = ['東', '南', '西', '北'];
+const MJ_AI_NAMES = ['🤖 ケンジ', '🤖 ミサキ', '🤖 マスター'];
+
+let mjOpts = {
+  rate: 10,         // 10 (保証250) | 100 (保証2500) | 1000 (保証25000)
+  uma: true,        // 1位 +10000 / 4位 -10000
+  aiDiff: 'normal', // 'easy' | 'normal' | 'hard'
+  aiFast: false,    // true = 90ms爆速
+  assist: true      // 初心者アシスト ON/OFF
+};
+
+let mjState = {
+  phase: 'setup',   // 'setup' | 'playing' | 'claim' | 'roundEnd' | 'matchEnd'
+  matchId: '',
+  roundWind: 0,     // 0=東
+  roundNum: 0,      // 0..3 (東1〜東4局)
+  honba: 0,
+  riichiPool: 0,
+  dealerIdx: 0,
+  turnIdx: 0,
+  wall: [],
+  deadWall: [],
+  doraCount: 1,
+  seats: [],        // 4人 [{ id, name, isHuman, score, hand, melds, river, riichi, riichiTurn, ippatsu, doubleRiichi, furiten }]
+  drawnTile: null,  // 現在手番プレイヤーがツモった直後の牌（handの末尾扱い）
+  lastDiscard: null,// { tile, fromIdx, isRinshan }
+  claimQueue: [],   // 鳴き/ロン可能なプレイヤーと選択肢
+  selectedHandPos: -1, // 2タップ捨て用の選択インデックス
+  riichiSelectMode: false, // リーチ宣言後の捨て牌待ち
+  guaranteePaid: 0,
+  lastActionTick: 0,
+  roundResult: null,
+  matchResult: null,
+  aiTimer: null
+};
+
+function mjTileInfo(t) {
+  if (t >= 0 && t <= 8) return { suit: 'm', num: t + 1, label: String(t + 1), sub: '萬', cls: 'mj-suit-m', text: `${t + 1}萬` };
+  if (t >= 9 && t <= 17) return { suit: 'p', num: t - 8, label: String(t - 8), sub: '筒', cls: 'mj-suit-p', text: `${t - 8}筒` };
+  if (t >= 18 && t <= 26) return { suit: 's', num: t - 17, label: String(t - 17), sub: '索', cls: 'mj-suit-s', text: `${t - 17}索` };
+  const zNames = ['東', '南', '西', '北', '白', '發', '中'];
+  const zIdx = t - 27;
+  let cls = 'mj-suit-z-wind';
+  if (t === 31) cls = 'mj-suit-z-dragon-w';
+  else if (t === 32) cls = 'mj-suit-z-dragon-g';
+  else if (t === 33) cls = 'mj-suit-z-dragon-r';
+  return { suit: 'z', num: zIdx + 1, label: zNames[zIdx] || '?', sub: '', cls, text: zNames[zIdx] || '?' };
+}
+
+function mjGetDoraFromIndicator(ind) {
+  if (ind >= 0 && ind <= 8) return (ind + 1) % 9;
+  if (ind >= 9 && ind <= 17) return 9 + ((ind - 9 + 1) % 9);
+  if (ind >= 18 && ind <= 26) return 18 + ((ind - 18 + 1) % 9);
+  if (ind >= 27 && ind <= 30) return 27 + ((ind - 27 + 1) % 4);
+  if (ind >= 31 && ind <= 33) return 31 + ((ind - 31 + 1) % 3);
+  return ind;
+}
+
+function mjIsTerminalOrHonor(t) {
+  if (t >= 27) return true;
+  const n = t % 9;
+  return n === 0 || n === 8;
+}
+
+function mjRenderTileHtml(t, extraClass = '', clickAttr = '') {
+  if (t < 0) {
+    return `<div class="mj-tile mj-tile-back ${extraClass}"></div>`;
+  }
+  const info = mjTileInfo(t);
+  const inner = info.sub
+    ? `<span class="${info.cls}">${info.label}</span><span class="mj-t-sub ${info.cls}">${info.sub}</span>`
+    : `<span class="${info.cls}">${info.label}</span>`;
+  return `<div class="mj-tile ${extraClass}" ${clickAttr}>${inner}</div>`;
+}
+
+/* --- 🧮 シャンテン数高速計算エンジン --- */
+function mjCalcShanten(counts34, meldCount = 0) {
+  const c = counts34.slice();
+  let best = 8;
+
+  // 1. 通常手（4面子1雀頭）
+  const maxMentsu = 4 - meldCount;
+  function dfs(idx, mentsu, tatsu, hasPair) {
+    // 枝刈り
+    if (mentsu + tatsu > maxMentsu) tatsu = maxMentsu - mentsu;
+    const sh = 8 - mentsu * 2 - tatsu - (hasPair ? 1 : 0) - meldCount * 2;
+    if (sh < best) best = sh;
+    if (best <= -1) return;
+
+    while (idx < 34 && c[idx] === 0) idx++;
+    if (idx >= 34) return;
+
+    // 雀頭候補
+    if (!hasPair && c[idx] >= 2) {
+      c[idx] -= 2;
+      dfs(idx, mentsu, tatsu, true);
+      c[idx] += 2;
+    }
+    // 刻子
+    if (c[idx] >= 3) {
+      c[idx] -= 3;
+      dfs(idx, mentsu + 1, tatsu, hasPair);
+      c[idx] += 3;
+    }
+    // 順子
+    if (idx < 27 && (idx % 9) <= 6 && c[idx + 1] > 0 && c[idx + 2] > 0) {
+      c[idx]--; c[idx + 1]--; c[idx + 2]--;
+      dfs(idx, mentsu + 1, tatsu, hasPair);
+      c[idx]++; c[idx + 1]++; c[idx + 2]++;
+    }
+    // 対子ターツ
+    if (mentsu + tatsu < maxMentsu && c[idx] >= 2) {
+      c[idx] -= 2;
+      dfs(idx, mentsu, tatsu + 1, hasPair);
+      c[idx] += 2;
+    }
+    // 両面・辺張ターツ
+    if (mentsu + tatsu < maxMentsu && idx < 27 && (idx % 9) <= 7 && c[idx + 1] > 0) {
+      c[idx]--; c[idx + 1]--;
+      dfs(idx, mentsu, tatsu + 1, hasPair);
+      c[idx]++; c[idx + 1]++;
+    }
+    // 嵌張ターツ
+    if (mentsu + tatsu < maxMentsu && idx < 27 && (idx % 9) <= 6 && c[idx + 2] > 0) {
+      c[idx]--; c[idx + 2]--;
+      dfs(idx, mentsu, tatsu + 1, hasPair);
+      c[idx]++; c[idx + 2]++;
+    }
+    // 孤立牌としてスキップ
+    dfs(idx + 1, mentsu, tatsu, hasPair);
+  }
+  dfs(0, 0, 0, false);
+
+  // 2. 七対子 & 国士無双（門前のみ）
+  if (meldCount === 0) {
+    let pairs = 0, kinds = 0;
+    for (let i = 0; i < 34; i++) {
+      if (counts34[i] >= 2) pairs++;
+      if (counts34[i] >= 1) kinds++;
+    }
+    const chiitoi = 6 - pairs + Math.max(0, 7 - kinds);
+    if (chiitoi < best) best = chiitoi;
+
+    const yaochu = [0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33];
+    let yKinds = 0, yPair = 0;
+    yaochu.forEach(idx => {
+      if (counts34[idx] >= 1) yKinds++;
+      if (counts34[idx] >= 2) yPair = 1;
+    });
+    const kokushi = 13 - yKinds - yPair;
+    if (kokushi < best) best = kokushi;
+  }
+
+  return best;
+}
+
+function mjHandToCounts(handArr) {
+  const c = new Array(34).fill(0);
+  handArr.forEach(t => { if (t >= 0 && t < 34) c[t]++; });
+  return c;
+}
+
+function mjGetWaitingTiles(hand13, melds = []) {
+  const counts = mjHandToCounts(hand13);
+  if (mjCalcShanten(counts, melds.length) > 0) return [];
+  const waits = [];
+  for (let t = 0; t < 34; t++) {
+    if (counts[t] >= 4) continue;
+    counts[t]++;
+    if (mjCalcShanten(counts, melds.length) === -1) {
+      waits.push(t);
+    }
+    counts[t]--;
+  }
+  return waits;
+}
+
+/* --- 🏆 役判定 ＆ 符飜・点数計算エンジン --- */
+function mjFindStandardDecompositions(counts34, needMentsu) {
+  const results = [];
+  const c = counts34.slice();
+
+  function searchMentsu(startIdx, current) {
+    if (current.length === needMentsu) {
+      results.push(current.slice());
+      return;
+    }
+    let idx = startIdx;
+    while (idx < 34 && c[idx] === 0) idx++;
+    if (idx >= 34) return;
+
+    if (c[idx] >= 3) {
+      c[idx] -= 3;
+      current.push({ type: 'kotsu', tiles: [idx, idx, idx], open: false });
+      searchMentsu(idx, current);
+      current.pop();
+      c[idx] += 3;
+    }
+    if (idx < 27 && (idx % 9) <= 6 && c[idx + 1] > 0 && c[idx + 2] > 0) {
+      c[idx]--; c[idx + 1]--; c[idx + 2]--;
+      current.push({ type: 'shuntsu', tiles: [idx, idx + 1, idx + 2], open: false });
+      searchMentsu(idx, current);
+      current.pop();
+      c[idx]++; c[idx + 1]++; c[idx + 2]++;
+    }
+  }
+
+  const out = [];
+  for (let p = 0; p < 34; p++) {
+    if (c[p] >= 2) {
+      c[p] -= 2;
+      results.length = 0;
+      searchMentsu(0, []);
+      results.forEach(mList => out.push({ pair: p, mentsu: mList }));
+      c[p] += 2;
+    }
+  }
+  return out;
+}
+
+function mjCalcScoreFromHanFu(han, fu, isDealer, isTsumo, isYakuman = false, yakumanMult = 1) {
+  let base = 0;
+  let rankName = '';
+  if (isYakuman) {
+    base = 8000 * yakumanMult;
+    rankName = yakumanMult >= 2 ? 'ダブル役満' : '役満';
+  } else if (han >= 13) {
+    base = 8000; rankName = '数え役満';
+  } else if (han >= 11) {
+    base = 6000; rankName = '三倍満';
+  } else if (han >= 8) {
+    base = 4000; rankName = '倍満';
+  } else if (han >= 6) {
+    base = 3000; rankName = '跳満';
+  } else if (han >= 5 || (han === 4 && fu >= 40) || (han === 3 && fu >= 70)) {
+    base = 2000; rankName = '満貫';
+  } else {
+    base = fu * Math.pow(2, han + 2);
+    if (base > 2000) {
+      base = 2000; rankName = '満貫';
+    }
+  }
+
+  const ceil100 = v => Math.ceil(v / 100) * 100;
+  if (isTsumo) {
+    if (isDealer) {
+      const eachPay = ceil100(base * 2);
+      return { total: eachPay * 3, eachPay, dealerPay: 0, nonDealerPay: eachPay, rankName };
+    } else {
+      const dealerPay = ceil100(base * 2);
+      const nonDealerPay = ceil100(base);
+      return { total: dealerPay + nonDealerPay * 2, eachPay: 0, dealerPay, nonDealerPay, rankName };
+    }
+  } else {
+    const ronPay = ceil100(base * (isDealer ? 6 : 4));
+    return { total: ronPay, ronPay, rankName };
+  }
+}
+
+function mjEvaluateWin(hand13, winTile, melds = [], ctx = {}) {
+  const all14 = hand13.concat([winTile]);
+  const counts = mjHandToCounts(all14);
+  const fullCounts = counts.slice();
+  melds.forEach(m => m.tiles.forEach(t => { fullCounts[t]++; }));
+
+  const isMenzen = melds.every(m => m.type === 'ankan');
+  const isDealer = ctx.seatWind === 0;
+  const doraTargets = (ctx.doraIndicators || []).map(mjGetDoraFromIndicator);
+  let doraCount = 0;
+  all14.forEach(t => doraTargets.forEach(d => { if (t === d) doraCount++; }));
+  melds.forEach(m => m.tiles.forEach(t => doraTargets.forEach(d => { if (t === d) doraCount++; })));
+
+  let bestEval = null;
+
+  // A. 国士無双チェック
+  if (melds.length === 0) {
+    const yaochu = [0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33];
+    if (yaochu.every(idx => counts[idx] >= 1) && all14.every(mjIsTerminalOrHonor)) {
+      const sc = mjCalcScoreFromHanFu(13, 30, isDealer, ctx.isTsumo, true, 1);
+      bestEval = { yaku: [{ name: '国士無双', han: 13 }], han: 13, fu: 30, dora: 0, isYakuman: true, ...sc };
+    }
+  }
+
+  // B. 七対子チェック
+  if (melds.length === 0) {
+    let pairCount = 0;
+    let validChiitoi = true;
+    for (let i = 0; i < 34; i++) {
+      if (counts[i] === 2) pairCount++;
+      else if (counts[i] !== 0) { validChiitoi = false; break; }
+    }
+    if (validChiitoi && pairCount === 7) {
+      const yaku = [{ name: '七対子', han: 2 }];
+      if (ctx.isDoubleRiichi) yaku.push({ name: 'ダブル立直', han: 2 });
+      else if (ctx.isRiichi) yaku.push({ name: '立直', han: 1 });
+      if (ctx.isIppatsu && (ctx.isRiichi || ctx.isDoubleRiichi)) yaku.push({ name: '一発', han: 1 });
+      if (ctx.isTsumo) yaku.push({ name: '門前清自摸和', han: 1 });
+      if (ctx.isHaitei) yaku.push({ name: ctx.isTsumo ? '海底摸月' : '河底撈魚', han: 1 });
+      if (all14.every(t => !mjIsTerminalOrHonor(t))) yaku.push({ name: '断幺九(タンヤオ)', han: 1 });
+      if (all14.every(t => t >= 27)) {
+        const scY = mjCalcScoreFromHanFu(13, 25, isDealer, ctx.isTsumo, true, 1);
+        bestEval = { yaku: [{ name: '字一色', han: 13 }], han: 13, fu: 25, dora: 0, isYakuman: true, ...scY };
+      } else {
+        const suitsUsed = new Set(all14.filter(t => t < 27).map(t => Math.floor(t / 9)));
+        const hasHonors = all14.some(t => t >= 27);
+        if (suitsUsed.size === 1 && !hasHonors) yaku.push({ name: '清一色', han: 6 });
+        else if (suitsUsed.size === 1 && hasHonors) yaku.push({ name: '混一色', han: 3 });
+        if (all14.every(mjIsTerminalOrHonor)) yaku.push({ name: '混老頭', han: 2 });
+        if (doraCount > 0) yaku.push({ name: `ドラ ${doraCount}`, han: doraCount });
+        const totalHan = yaku.reduce((a, b) => a + b.han, 0);
+        const sc = mjCalcScoreFromHanFu(totalHan, 25, isDealer, ctx.isTsumo, false);
+        if (!bestEval || sc.total > bestEval.total) {
+          bestEval = { yaku, han: totalHan, fu: 25, dora: doraCount, isYakuman: false, ...sc };
+        }
+      }
+    }
+  }
+
+  // C. 通常手（4面子1雀頭）
+  const decomps = mjFindStandardDecompositions(counts, 4 - melds.length);
+  decomps.forEach(dec => {
+    const allMentsu = dec.mentsu.map(m => ({ ...m })).concat(
+      melds.map(m => ({
+        type: m.type === 'chi' ? 'shuntsu' : 'kotsu',
+        tiles: m.tiles,
+        open: m.type !== 'ankan',
+        isKan: m.type === 'kan' || m.type === 'ankan'
+      }))
+    );
+
+    const yaku = [];
+    let yakumanList = [];
+
+    // ロン和了時、手牌内のアガリ牌を含む刻子は明刻扱い
+    let closedKotsu = 0;
+    allMentsu.forEach(m => {
+      if (m.type === 'kotsu') {
+        const isWinTileInThis = !m.open && !ctx.isTsumo && m.tiles[0] === winTile && dec.pair !== winTile;
+        if (!m.open && !isWinTileInThis) closedKotsu++;
+      }
+    });
+
+    // 役満判定
+    if (isMenzen && closedKotsu === 4) yakumanList.push({ name: '四暗刻', han: 13 });
+    const dragonKotsu = [31, 32, 33].filter(d => allMentsu.some(m => m.type === 'kotsu' && m.tiles[0] === d)).length;
+    if (dragonKotsu === 3) yakumanList.push({ name: '大三元', han: 13 });
+    const windKotsu = [27, 28, 29, 30].filter(w => allMentsu.some(m => m.type === 'kotsu' && m.tiles[0] === w)).length;
+    if (windKotsu === 4) yakumanList.push({ name: '大四喜', han: 13 });
+    else if (windKotsu === 3 && dec.pair >= 27 && dec.pair <= 30) yakumanList.push({ name: '小四喜', han: 13 });
+
+    const allTilesFlat = all14.concat(melds.flatMap(m => m.tiles));
+    if (allTilesFlat.every(t => t >= 27)) yakumanList.push({ name: '字一色', han: 13 });
+    if (allTilesFlat.every(t => t < 27 && (t % 9 === 0 || t % 9 === 8))) yakumanList.push({ name: '清老頭', han: 13 });
+    const greenSet = new Set([19, 20, 21, 23, 25, 32]); // 2,3,4,6,8s + 發
+    if (allTilesFlat.every(t => greenSet.has(t))) yakumanList.push({ name: '緑一色', han: 13 });
+
+    if (yakumanList.length > 0) {
+      const sc = mjCalcScoreFromHanFu(13 * yakumanList.length, 30, isDealer, ctx.isTsumo, true, yakumanList.length);
+      if (!bestEval || sc.total > bestEval.total) {
+        bestEval = { yaku: yakumanList, han: 13 * yakumanList.length, fu: 30, dora: 0, isYakuman: true, ...sc };
+      }
+      return;
+    }
+
+    // 通常役判定
+    if (isMenzen) {
+      if (ctx.isDoubleRiichi) yaku.push({ name: 'ダブル立直', han: 2 });
+      else if (ctx.isRiichi) yaku.push({ name: '立直', han: 1 });
+      if (ctx.isIppatsu && (ctx.isRiichi || ctx.isDoubleRiichi)) yaku.push({ name: '一発', han: 1 });
+      if (ctx.isTsumo) yaku.push({ name: '門前清自摸和', han: 1 });
+    }
+    if (ctx.isHaitei) yaku.push({ name: ctx.isTsumo ? '海底摸月' : '河底撈魚', han: 1 });
+    if (ctx.isRinshan && ctx.isTsumo) yaku.push({ name: '嶺上開花', han: 1 });
+    if (ctx.isChankan && !ctx.isTsumo) yaku.push({ name: '槍槓', han: 1 });
+
+    // タンヤオ
+    if (allTilesFlat.every(t => !mjIsTerminalOrHonor(t))) {
+      yaku.push({ name: '断幺九(タンヤオ)', han: 1 });
+    }
+
+    // 役牌
+    const windNameMap = ['東', '南', '西', '北'];
+    allMentsu.forEach(m => {
+      if (m.type === 'kotsu') {
+        const t = m.tiles[0];
+        if (t === 31) yaku.push({ name: '役牌(白)', han: 1 });
+        if (t === 32) yaku.push({ name: '役牌(發)', han: 1 });
+        if (t === 33) yaku.push({ name: '役牌(中)', han: 1 });
+        if (t === 27 + (ctx.roundWind || 0)) yaku.push({ name: `場風(${windNameMap[ctx.roundWind || 0]})`, han: 1 });
+        if (t === 27 + (ctx.seatWind || 0)) yaku.push({ name: `自風(${windNameMap[ctx.seatWind || 0]})`, han: 1 });
+      }
+    });
+
+    // 平和（門前・すべて順子・アタマが役牌でない・両面待ち）
+    const isAllShuntsu = allMentsu.every(m => m.type === 'shuntsu');
+    const isYakuhaiPair = dec.pair >= 31 || dec.pair === 27 + (ctx.roundWind || 0) || dec.pair === 27 + (ctx.seatWind || 0);
+    let isRyanmenWait = false;
+    if (isAllShuntsu) {
+      dec.mentsu.forEach(m => {
+        if (m.type === 'shuntsu') {
+          const [a, , c2] = m.tiles;
+          if ((winTile === a && (a % 9) !== 6) || (winTile === c2 && (c2 % 9) !== 2)) {
+            isRyanmenWait = true;
+          }
+        }
+      });
+    }
+    const isPinfu = isMenzen && isAllShuntsu && !isYakuhaiPair && isRyanmenWait;
+    if (isPinfu) yaku.push({ name: '平和(ピンフ)', han: 1 });
+
+    // 一盃口 / 二盃口（門前のみ）
+    if (isMenzen) {
+      const shuntsuKeys = {};
+      allMentsu.filter(m => m.type === 'shuntsu').forEach(m => {
+        const k = m.tiles[0];
+        shuntsuKeys[k] = (shuntsuKeys[k] || 0) + 1;
+      });
+      let ipekoPairs = 0;
+      Object.values(shuntsuKeys).forEach(cnt => { ipekoPairs += Math.floor(cnt / 2); });
+      if (ipekoPairs === 2) yaku.push({ name: '二盃口', han: 3 });
+      else if (ipekoPairs === 1) yaku.push({ name: '一盃口', han: 1 });
+    }
+
+    // 対々和・三暗刻
+    if (allMentsu.every(m => m.type === 'kotsu')) {
+      yaku.push({ name: '対々和(トイトイ)', han: 2 });
+    }
+    if (closedKotsu === 3) {
+      yaku.push({ name: '三暗刻', han: 2 });
+    }
+
+    // 小三元・混老頭
+    if (dragonKotsu === 2 && dec.pair >= 31 && dec.pair <= 33) {
+      yaku.push({ name: '小三元', han: 2 });
+    }
+    if (allTilesFlat.every(mjIsTerminalOrHonor) && allTilesFlat.some(t => t >= 27) && allTilesFlat.some(t => t < 27)) {
+      yaku.push({ name: '混老頭', han: 2 });
+    }
+
+    // 三色同順・一気通貫
+    const shuntsuList = allMentsu.filter(m => m.type === 'shuntsu');
+    if (shuntsuList.length >= 3) {
+      for (let n = 0; n <= 6; n++) {
+        if ([0, 1, 2].every(s => shuntsuList.some(m => m.tiles[0] === s * 9 + n))) {
+          yaku.push({ name: '三色同順', han: isMenzen ? 2 : 1 });
+          break;
+        }
+      }
+      for (let s = 0; s < 3; s++) {
+        if ([0, 3, 6].every(n => shuntsuList.some(m => m.tiles[0] === s * 9 + n))) {
+          yaku.push({ name: '一気通貫', han: isMenzen ? 2 : 1 });
+          break;
+        }
+      }
+    }
+
+    // チャンタ・純チャン
+    const allHaveTerminalOrHonor = allMentsu.every(m => m.tiles.some(mjIsTerminalOrHonor)) && mjIsTerminalOrHonor(dec.pair);
+    const allHaveTerminalOnly = allMentsu.every(m => m.tiles.some(t => t < 27 && (t % 9 === 0 || t % 9 === 8))) && (dec.pair < 27 && (dec.pair % 9 === 0 || dec.pair % 9 === 8));
+    if (allHaveTerminalOnly && !allMentsu.every(m => m.type === 'kotsu')) {
+      yaku.push({ name: '純全帯幺九', han: isMenzen ? 3 : 2 });
+    } else if (allHaveTerminalOrHonor && allTilesFlat.some(t => t >= 27) && !allMentsu.every(m => m.type === 'kotsu')) {
+      yaku.push({ name: '混全帯幺九(チャンタ)', han: isMenzen ? 2 : 1 });
+    }
+
+    // 混一色・清一色
+    const suitsUsed = new Set(allTilesFlat.filter(t => t < 27).map(t => Math.floor(t / 9)));
+    const hasHonors = allTilesFlat.some(t => t >= 27);
+    if (suitsUsed.size === 1 && !hasHonors) {
+      yaku.push({ name: '清一色', han: isMenzen ? 6 : 5 });
+    } else if (suitsUsed.size === 1 && hasHonors) {
+      yaku.push({ name: '混一色', han: isMenzen ? 3 : 2 });
+    }
+
+    // 役が1つもない場合（ドラのみ）はアガれない
+    if (yaku.length === 0) return;
+
+    if (doraCount > 0) yaku.push({ name: `ドラ ${doraCount}`, han: doraCount });
+
+    // 符計算
+    let fu = 20;
+    if (isPinfu) {
+      fu = ctx.isTsumo ? 20 : 30;
+    } else {
+      if (isMenzen && !ctx.isTsumo) fu += 10;
+      if (ctx.isTsumo) fu += 2;
+      if (dec.pair >= 31 || dec.pair === 27 + (ctx.roundWind || 0) || dec.pair === 27 + (ctx.seatWind || 0)) fu += 2;
+      allMentsu.forEach(m => {
+        if (m.type === 'kotsu') {
+          let f = 2;
+          if (!m.open) f *= 2;
+          if (mjIsTerminalOrHonor(m.tiles[0])) f *= 2;
+          if (m.isKan) f *= 4;
+          fu += f;
+        }
+      });
+      if (!isRyanmenWait) fu += 2;
+      fu = Math.max(30, Math.ceil(fu / 10) * 10);
+    }
+
+    const totalHan = yaku.reduce((a, b) => a + b.han, 0);
+    const sc = mjCalcScoreFromHanFu(totalHan, fu, isDealer, ctx.isTsumo, false);
+    if (!bestEval || sc.total > bestEval.total) {
+      bestEval = { yaku, han: totalHan, fu, dora: doraCount, isYakuman: false, ...sc };
+    }
+  });
+
+  return bestEval;
+}
+
+/* --- ⚙️ オプション・設定UI制御 --- */
+function getMahjongGuarantee(rate) {
+  return rate * 25; // 10->250, 100->2500, 1000->25000
+}
+
+function setMahjongOption(key, val) {
+  playSE('click');
+  mjOpts[key] = val;
+  syncMahjongOptionUI();
+}
+
+function syncMahjongOptionUI() {
+  [10, 100, 1000].forEach(r => {
+    const b = document.getElementById('mjRateBtn' + r);
+    if (b) {
+      b.classList.toggle('active', mjOpts.rate === r);
+      b.disabled = !state.infiniteChips && state.chips < getMahjongGuarantee(r);
+    }
+  });
+  const uOn = document.getElementById('mjUmaBtnOn');
+  const uOff = document.getElementById('mjUmaBtnOff');
+  if (uOn) uOn.classList.toggle('active', !!mjOpts.uma);
+  if (uOff) uOff.classList.toggle('active', !mjOpts.uma);
+
+  ['easy', 'normal', 'hard'].forEach(d => {
+    const cap = d.charAt(0).toUpperCase() + d.slice(1);
+    const b = document.getElementById('mjDiffBtn' + cap);
+    if (b) b.classList.toggle('active', mjOpts.aiDiff === d);
+  });
+
+  const sNorm = document.getElementById('mjSpeedBtnNormal');
+  const sFast = document.getElementById('mjSpeedBtnFast');
+  if (sNorm) sNorm.classList.toggle('active', !mjOpts.aiFast);
+  if (sFast) sFast.classList.toggle('active', !!mjOpts.aiFast);
+
+  const aOn = document.getElementById('mjAssistBtnOn');
+  const aOff = document.getElementById('mjAssistBtnOff');
+  if (aOn) aOn.classList.toggle('active', !!mjOpts.assist);
+  if (aOff) aOff.classList.toggle('active', !mjOpts.assist);
+
+  const notice = document.getElementById('mjSetupNotice');
+  const guar = getMahjongGuarantee(mjOpts.rate);
+  if (notice) {
+    notice.textContent = `現在の保証金：${guar.toLocaleString()} 🪙（1,000点=${mjOpts.rate}🪙 ／ ウマ:${mjOpts.uma ? 'あり' : 'なし'}）`;
+  }
+  const liveAssist = document.getElementById('mjLiveAssistToggle');
+  if (liveAssist) liveAssist.textContent = `💡 アシスト: ${mjOpts.assist ? 'ON' : 'OFF'}`;
+  const liveFast = document.getElementById('mjLiveFastToggle');
+  if (liveFast) liveFast.textContent = `⚡ 爆速: ${mjOpts.aiFast ? 'ON' : 'OFF'}`;
+}
+
+function toggleMahjongAssistLive() {
+  playSE('click');
+  mjOpts.assist = !mjOpts.assist;
+  syncMahjongOptionUI();
+  renderMahjongTable();
+}
+
+function toggleMahjongFastLive() {
+  playSE('click');
+  mjOpts.aiFast = !mjOpts.aiFast;
+  syncMahjongOptionUI();
+}
+
+function openMahjongRulesModal() {
+  playSE('click');
+  switchMahjongRuleTab(0);
+  document.getElementById('mahjongRulesModal').classList.add('active');
+}
+function closeMahjongRulesModal() {
+  playSE('click');
+  document.getElementById('mahjongRulesModal').classList.remove('active');
+}
+function switchMahjongRuleTab(idx) {
+  playSE('click');
+  [0, 1, 2].forEach(i => {
+    const btn = document.getElementById('mjRuleTab' + i);
+    const body = document.getElementById('mjRuleBody' + i);
+    if (btn) btn.classList.toggle('active', i === idx);
+    if (body) body.style.display = i === idx ? 'block' : 'none';
+  });
+}
+
+/* --- 🎴 麻雀ゲーム進行・初期化 --- */
+function initMahjongUI(fromRemoteSync = false) {
+  if (mjState.aiTimer) { clearTimeout(mjState.aiTimer); mjState.aiTimer = null; }
+  if (!fromRemoteSync || mjState.phase === 'setup') {
+    resetMahjongToSetup();
+  }
+  syncMahjongOptionUI();
+}
+
+function resetMahjongToSetup() {
+  if (mjState.aiTimer) { clearTimeout(mjState.aiTimer); mjState.aiTimer = null; }
+  mjState.phase = 'setup';
+  mjState.guaranteePaid = 0;
+  document.getElementById('mjSetupPanel').style.display = 'block';
+  document.getElementById('mjTablePanel').style.display = 'none';
+  document.getElementById('mjRoundResultBox').style.display = 'none';
+  document.getElementById('mjMatchResultBox').style.display = 'none';
+  // 手持ちチップに合わせて初期レートを安全に選択
+  if (!state.infiniteChips && state.chips < getMahjongGuarantee(mjOpts.rate)) {
+    mjOpts.rate = 10;
+  }
+  syncMahjongOptionUI();
+  updateGameBackLockUI();
+}
+
+function mjGetMyViewOffset() {
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    const idx = mjState.seats.findIndex(s => s.id === onlineRoomState.mySeatId);
+    return idx >= 0 ? idx : 0;
+  }
+  return 0;
+}
+
+function startMahjongMatch() {
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'host') {
+    showToast('🌐 通信ルームではホスト（1P）が対局スタートを押します！');
+    return;
+  }
+  const guar = getMahjongGuarantee(mjOpts.rate);
+  if (!state.infiniteChips && state.chips < guar) {
+    playSE('lose');
+    showToast(`⚠️ このレートの保証金（${guar.toLocaleString()}🪙）が足りません！`);
+    return;
+  }
+  if (!state.infiniteChips) {
+    state.chips -= guar;
+    saveState();
+  }
+  mjState.guaranteePaid = guar;
+  mjState.matchId = 'MJ_' + Date.now();
+  mjState.roundWind = 0;
+  mjState.roundNum = 0;
+  mjState.honba = 0;
+  mjState.riichiPool = 0;
+  mjState.dealerIdx = 0;
+  mjState.roundResult = null;
+  mjState.matchResult = null;
+
+  const seats = [];
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.seats.length >= 2) {
+    for (let i = 0; i < 4; i++) {
+      const rs = onlineRoomState.seats[i];
+      if (rs) {
+        seats.push({ id: rs.id, name: sanitizeDisplayPlayerName(rs.name), isHuman: true, score: 25000 });
+      } else {
+        seats.push({ id: 'ai_' + i, name: MJ_AI_NAMES[(i - 1) % 3], isHuman: false, score: 25000 });
+      }
+    }
+  } else {
+    const myName = sanitizeDisplayPlayerName(state.playerName || 'あなた');
+    seats.push({ id: state.playerId || 'p1', name: myName, isHuman: true, score: 25000 });
+    for (let i = 0; i < 3; i++) {
+      seats.push({ id: 'ai_' + (i + 1), name: MJ_AI_NAMES[i], isHuman: false, score: 25000 });
+    }
+  }
+  mjState.seats = seats;
+
+  playSE('coin');
+  mjStartRound();
+}
+
+function mjStartRound() {
+  if (mjState.aiTimer) { clearTimeout(mjState.aiTimer); mjState.aiTimer = null; }
+  const deck = [];
+  for (let t = 0; t < 34; t++) {
+    for (let k = 0; k < 4; k++) deck.push(t);
+  }
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+
+  mjState.deadWall = deck.splice(0, 14);
+  mjState.wall = deck;
+  mjState.doraCount = 1;
+  mjState.lastDiscard = null;
+  mjState.claimQueue = [];
+  mjState.selectedHandPos = -1;
+  mjState.riichiSelectMode = false;
+  mjState.roundResult = null;
+
+  mjState.seats.forEach((s, i) => {
+    s.hand = mjState.wall.splice(0, 13).sort((a, b) => a - b);
+    s.melds = [];
+    s.river = [];
+    s.riichi = false;
+    s.riichiTurn = -1;
+    s.ippatsu = false;
+    s.doubleRiichi = false;
+    s.firstTurnDone = false;
+    s.wind = (i - mjState.dealerIdx + 4) % 4;
+  });
+
+  mjState.phase = 'playing';
+  mjState.turnIdx = mjState.dealerIdx;
+  mjState.drawnTile = mjState.wall.shift();
+
+  document.getElementById('mjSetupPanel').style.display = 'none';
+  document.getElementById('mjTablePanel').style.display = 'block';
+  document.getElementById('mjRoundResultBox').style.display = 'none';
+  document.getElementById('mjMatchResultBox').style.display = 'none';
+
+  mjSyncAndRender();
+  mjScheduleAiIfNeeded();
+}
+
+function mjSyncAndRender() {
+  renderMahjongTable();
+  updateGameBackLockUI();
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role === 'host') {
+    mjPushOnlineState();
+  }
+}
+
+function mjPushOnlineState() {
+  if (state.playMode !== 'online' || !onlineRoomState.active) return;
+  const payload = {
+    matchId: mjState.matchId,
+    phase: mjState.phase,
+    roundWind: mjState.roundWind,
+    roundNum: mjState.roundNum,
+    honba: mjState.honba,
+    riichiPool: mjState.riichiPool,
+    dealerIdx: mjState.dealerIdx,
+    turnIdx: mjState.turnIdx,
+    wall: mjState.wall,
+    deadWall: mjState.deadWall,
+    doraCount: mjState.doraCount,
+    seats: mjState.seats,
+    drawnTile: mjState.drawnTile,
+    lastDiscard: mjState.lastDiscard,
+    claimQueue: mjState.claimQueue,
+    roundResult: mjState.roundResult,
+    matchResult: mjState.matchResult,
+    rate: mjOpts.rate,
+    uma: mjOpts.uma,
+    tick: Date.now()
+  };
+  pushOnlineRoomPatch({ mahjong: payload });
+}
+
+function syncMahjongFromOnline(remote) {
+  if (!remote || !remote.matchId) return;
+  if (onlineRoomState.role === 'host') return; // ホストが進行権限を持つ
+
+  // ゲストがまだ保証金を払っていなければ自動で預ける
+  if (mjState.matchId !== remote.matchId) {
+    mjOpts.rate = remote.rate || 10;
+    mjOpts.uma = !!remote.uma;
+    const guar = getMahjongGuarantee(mjOpts.rate);
+    if (!state.infiniteChips && state.chips >= guar) {
+      state.chips -= guar;
+      saveState();
+    }
+    mjState.guaranteePaid = guar;
+  }
+
+  mjState.matchId = remote.matchId;
+  mjState.phase = remote.phase;
+  mjState.roundWind = remote.roundWind;
+  mjState.roundNum = remote.roundNum;
+  mjState.honba = remote.honba;
+  mjState.riichiPool = remote.riichiPool;
+  mjState.dealerIdx = remote.dealerIdx;
+  mjState.turnIdx = remote.turnIdx;
+  mjState.wall = remote.wall || [];
+  mjState.deadWall = remote.deadWall || [];
+  mjState.doraCount = remote.doraCount || 1;
+  mjState.seats = remote.seats || [];
+  mjState.drawnTile = remote.drawnTile;
+  mjState.lastDiscard = remote.lastDiscard;
+  mjState.claimQueue = remote.claimQueue || [];
+  mjState.roundResult = remote.roundResult;
+  mjState.matchResult = remote.matchResult;
+
+  document.getElementById('mjSetupPanel').style.display = 'none';
+  document.getElementById('mjTablePanel').style.display = mjState.phase === 'matchEnd' ? 'none' : 'block';
+  if (mjState.phase === 'roundEnd' && mjState.roundResult) {
+    renderMahjongRoundResult();
+  } else {
+    document.getElementById('mjRoundResultBox').style.display = 'none';
+  }
+  if (mjState.phase === 'matchEnd' && mjState.matchResult) {
+    renderMahjongMatchResult(true);
+  } else {
+    document.getElementById('mjMatchResultBox').style.display = 'none';
+  }
+  renderMahjongTable();
+  updateGameBackLockUI();
+}
+
+let mjProcessedGuestActionId = '';
+
+function mjIsGuestOnline() {
+  return state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role === 'guest';
+}
+
+function mjHandleGuestAction(act) {
+  if (!act || !act.id || act.id === mjProcessedGuestActionId) return;
+  mjProcessedGuestActionId = act.id;
+  const seatIdx = mjState.seats.findIndex(s => s.id === act.seatId);
+  if (seatIdx < 0) return;
+
+  if (act.type === 'discard' && mjState.phase === 'playing' && mjState.turnIdx === seatIdx) {
+    mjExecuteDiscard(seatIdx, act.pos, !!act.riichi);
+  } else if (act.type === 'tsumo' && mjState.phase === 'playing' && mjState.turnIdx === seatIdx && mjState.drawnTile !== null) {
+    const s = mjState.seats[seatIdx];
+    const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(seatIdx, true));
+    if (ev) mjExecuteWin(seatIdx, seatIdx, mjState.drawnTile, true, ev);
+  } else if (act.type === 'claim' && mjState.phase === 'claim') {
+    const claim = mjState.claimQueue.find(c => c.seatIdx === seatIdx);
+    if (!claim) return;
+    if (act.actionType === 'ron' && claim.canRon) {
+      mjExecuteWin(seatIdx, mjState.lastDiscard.fromIdx, mjState.lastDiscard.tile, false, claim.winEval);
+    } else if (act.actionType === 'pon' && claim.canPon) {
+      mjExecuteMeld(seatIdx, 'pon', claim.ponTiles);
+    } else if (act.actionType === 'chi' && claim.chiCombos[act.comboIdx || 0]) {
+      mjExecuteMeld(seatIdx, 'chi', claim.chiCombos[act.comboIdx || 0]);
+    } else if (act.actionType === 'pass') {
+      mjState.claimQueue = mjState.claimQueue.filter(c => c.seatIdx !== seatIdx);
+      mjResolveClaimQueue();
+    }
+  }
+}
+
+function mjSendGuestAction(actionObj) {
+  pushOnlineRoomPatch({
+    mahjongAction: {
+      ...actionObj,
+      seatId: onlineRoomState.mySeatId,
+      id: Math.random().toString(36).slice(2, 9)
+    }
+  });
+}
+
+/* --- 🎬 演出：リーチ稲妻カットイン ＆ 満貫以上金貨シャワー --- */
+function triggerMahjongCutin(type, playerName) {
+  const overlay = document.getElementById('slotLightningOverlay');
+  const flash = document.getElementById('slotLightningFlash');
+  const strip = document.getElementById('slotCutinStrip');
+  const b1 = document.getElementById('slotBoltMain1');
+  const b2 = document.getElementById('slotBoltMain2');
+  if (!overlay || !flash || !strip) return;
+
+  playSE('reach_super');
+  if (b1) b1.setAttribute('stroke', type === 'riichi' ? '#f59e0b' : '#ef4444');
+  if (b2) b2.setAttribute('stroke', '#38bdf8');
+  flash.style.background = type === 'riichi'
+    ? 'radial-gradient(circle, rgba(254,240,138,0.9) 0%, rgba(234,179,8,0.6) 70%)'
+    : 'radial-gradient(circle, rgba(254,202,202,0.92) 0%, rgba(220,38,38,0.65) 70%)';
+  strip.style.background = type === 'riichi'
+    ? 'linear-gradient(90deg, #b45309, #f59e0b, #fef08a, #f59e0b, #b45309)'
+    : 'linear-gradient(90deg, #991b1b, #ef4444, #f97316, #ef4444, #991b1b)';
+  strip.textContent = type === 'riichi'
+    ? `⚡ ${playerName} ：リーチ！！ ⚡`
+    : `🔥 ${playerName} ：ロン・ツモ炸裂！！ 🔥`;
+
+  overlay.classList.remove('active');
+  void overlay.offsetWidth;
+  overlay.classList.add('active');
+  setTimeout(() => overlay.classList.remove('active'), 880);
+}
+
+function showMahjongBigWin(rankLabel, points, winnerName) {
+  const overlay = document.getElementById('slotBigWinOverlay');
+  if (!overlay) return;
+  const isYakuman = rankLabel.includes('役満');
+  const card = document.getElementById('bigWinCenterCard');
+  const iconEl = document.getElementById('bigWinIconBadge');
+  const titleEl = document.getElementById('bigWinTitleText');
+  const subEl = document.getElementById('bigWinSubText');
+  const counterEl = document.getElementById('bigWinChipCounter');
+  const odPill = document.getElementById('bigWinOverdrivePill');
+  const closeBtn = document.getElementById('bigWinCloseBtn');
+
+  if (typeof showSlotBigWinOverlay === 'function') {
+    showSlotBigWinOverlay(isYakuman, points, { mult3: 1 }, false, null);
+    if (iconEl) iconEl.textContent = '🀄';
+    if (titleEl) titleEl.textContent = rankLabel + '!!';
+    if (subEl) subEl.textContent = `🔥 ${winnerName} が ${rankLabel} (${points.toLocaleString()}点) をアガりました！`;
+    if (counterEl) counterEl.textContent = `+${points.toLocaleString()} 点`;
+    if (odPill) odPill.style.display = 'none';
+    if (closeBtn) closeBtn.textContent = '✨ 次へ進む！';
+    if (card) card.classList.toggle('jackpot-theme', isYakuman);
+  }
+}
+
+/* --- 🎯 プレイヤー操作（2タップ捨て・リーチ・ツモ・ロン・鳴き） --- */
+function mjGetCurrentDoraIndicators() {
+  const list = [];
+  for (let i = 0; i < mjState.doraCount; i++) {
+    list.push(mjState.deadWall[4 + i * 2]);
+  }
+  return list;
+}
+
+function mjGetWinContext(seatIdx, isTsumo, isRinshan = false, isChankan = false) {
+  const s = mjState.seats[seatIdx];
+  return {
+    isTsumo,
+    isRiichi: s.riichi,
+    isDoubleRiichi: s.doubleRiichi,
+    isIppatsu: s.ippatsu,
+    isHaitei: mjState.wall.length === 0,
+    isRinshan,
+    isChankan,
+    seatWind: s.wind,
+    roundWind: mjState.roundWind,
+    doraIndicators: mjGetCurrentDoraIndicators()
+  };
+}
+
+function mjCanDeclareRiichi(seatIdx) {
+  const s = mjState.seats[seatIdx];
+  if (s.riichi || s.score < 1000 || mjState.wall.length < 4) return [];
+  if (!s.melds.every(m => m.type === 'ankan')) return [];
+  const full14 = s.hand.concat(mjState.drawnTile !== null ? [mjState.drawnTile] : []);
+  if (full14.length % 3 !== 2) return [];
+  const validDiscardTiles = new Set();
+  for (let i = 0; i < full14.length; i++) {
+    const rest13 = full14.slice(0, i).concat(full14.slice(i + 1));
+    if (mjGetWaitingTiles(rest13, s.melds).length > 0) {
+      validDiscardTiles.add(full14[i]);
+    }
+  }
+  return Array.from(validDiscardTiles);
+}
+
+function onTapMahjongTile(pos) {
+  const myIdx = mjGetMyViewOffset();
+  if (mjState.phase !== 'playing' || mjState.turnIdx !== myIdx) return;
+  const s = mjState.seats[myIdx];
+  const isDrawnPos = (pos === s.hand.length);
+  if (s.riichi && !mjState.riichiSelectMode && !isDrawnPos) {
+    showToast('⚡ リーチ中は引いた牌のみ捨てられます');
+    return;
+  }
+
+  if (mjState.riichiSelectMode) {
+    const full14 = s.hand.concat(mjState.drawnTile !== null ? [mjState.drawnTile] : []);
+    const tile = full14[pos];
+    const riichiTiles = mjCanDeclareRiichi(myIdx);
+    if (!riichiTiles.includes(tile)) {
+      playSE('lose');
+      showToast('⚠️ この牌を捨てるとテンパイが崩れます！');
+      return;
+    }
+    if (mjIsGuestOnline()) {
+      mjState.riichiSelectMode = false;
+      mjState.selectedHandPos = -1;
+      mjSendGuestAction({ type: 'discard', pos, riichi: true });
+      return;
+    }
+    mjExecuteDiscard(myIdx, pos, true);
+    return;
+  }
+
+  if (mjState.selectedHandPos === pos) {
+    if (mjIsGuestOnline()) {
+      mjState.selectedHandPos = -1;
+      mjSendGuestAction({ type: 'discard', pos, riichi: false });
+      return;
+    }
+    mjExecuteDiscard(myIdx, pos, false);
+  } else {
+    playSE('click');
+    mjState.selectedHandPos = pos;
+    renderMahjongTable();
+  }
+}
+
+function onClickMahjongDiscardSelected() {
+  const myIdx = mjGetMyViewOffset();
+  if (mjState.phase !== 'playing' || mjState.turnIdx !== myIdx) return;
+  if (mjState.selectedHandPos < 0) return;
+  const pos = mjState.selectedHandPos;
+  if (mjIsGuestOnline()) {
+    mjState.selectedHandPos = -1;
+    mjSendGuestAction({ type: 'discard', pos, riichi: false });
+    return;
+  }
+  mjExecuteDiscard(myIdx, pos, false);
+}
+
+function onClickMahjongRiichiBtn() {
+  const myIdx = mjGetMyViewOffset();
+  if (mjState.phase !== 'playing' || mjState.turnIdx !== myIdx) return;
+  const candidates = mjCanDeclareRiichi(myIdx);
+  if (candidates.length === 0) return;
+  playSE('click');
+  mjState.riichiSelectMode = !mjState.riichiSelectMode;
+  mjState.selectedHandPos = -1;
+  if (mjState.riichiSelectMode) {
+    showToast('⚡ リーチ！捨てる牌をタップしてください');
+  }
+  renderMahjongTable();
+}
+
+function onClickMahjongTsumo() {
+  const myIdx = mjGetMyViewOffset();
+  if (mjState.phase !== 'playing' || mjState.turnIdx !== myIdx || mjState.drawnTile === null) return;
+  const s = mjState.seats[myIdx];
+  const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(myIdx, true));
+  if (!ev) return;
+  if (mjIsGuestOnline()) {
+    mjSendGuestAction({ type: 'tsumo' });
+    return;
+  }
+  mjExecuteWin(myIdx, myIdx, mjState.drawnTile, true, ev);
+}
+
+function onClickMahjongClaim(actionType, comboIdx = 0) {
+  if (mjState.phase !== 'claim') return;
+  const myIdx = mjGetMyViewOffset();
+  const claim = mjState.claimQueue.find(c => c.seatIdx === myIdx);
+  if (!claim) return;
+
+  if (mjIsGuestOnline()) {
+    mjSendGuestAction({ type: 'claim', actionType, comboIdx });
+    return;
+  }
+
+  if (actionType === 'ron') {
+    const s = mjState.seats[myIdx];
+    const tile = mjState.lastDiscard.tile;
+    const ev = mjEvaluateWin(s.hand, tile, s.melds, mjGetWinContext(myIdx, false));
+    if (ev) mjExecuteWin(myIdx, mjState.lastDiscard.fromIdx, tile, false, ev);
+  } else if (actionType === 'pon') {
+    mjExecuteMeld(myIdx, 'pon', claim.ponTiles);
+  } else if (actionType === 'chi') {
+    const combo = claim.chiCombos[comboIdx];
+    if (combo) mjExecuteMeld(myIdx, 'chi', combo);
+  } else if (actionType === 'pass') {
+    playSE('click');
+    mjState.claimQueue = mjState.claimQueue.filter(c => c.seatIdx !== myIdx);
+    mjResolveClaimQueue();
+  }
+}
+
+/* --- 🔄 牌の進行コアロジック --- */
+function mjExecuteDiscard(seatIdx, pos, declareRiichi = false) {
+  const s = mjState.seats[seatIdx];
+  let tile;
+  if (pos === s.hand.length && mjState.drawnTile !== null) {
+    tile = mjState.drawnTile;
+    mjState.drawnTile = null;
+  } else {
+    tile = s.hand.splice(pos, 1)[0];
+    if (mjState.drawnTile !== null) {
+      s.hand.push(mjState.drawnTile);
+      mjState.drawnTile = null;
+      s.hand.sort((a, b) => a - b);
+    }
+  }
+
+  if (declareRiichi && !s.riichi) {
+    s.riichi = true;
+    s.riichiTurn = s.river.length;
+    s.ippatsu = true;
+    if (!s.firstTurnDone && mjState.seats.every(x => x.melds.length === 0)) {
+      s.doubleRiichi = true;
+    }
+    s.score -= 1000;
+    mjState.riichiPool += 1;
+    triggerMahjongCutin('riichi', s.name);
+  } else {
+    playSE('dice');
+  }
+
+  s.ippatsu = s.ippatsu && declareRiichi;
+  s.firstTurnDone = true;
+  s.river.push({ tile, isRiichiTile: declareRiichi });
+  mjState.selectedHandPos = -1;
+  mjState.riichiSelectMode = false;
+  mjState.lastDiscard = { tile, fromIdx: seatIdx };
+
+  // 他家のロン・ポン・チー判定
+  const claims = [];
+  for (let offset = 1; offset <= 3; offset++) {
+    const idx = (seatIdx + offset) % 4;
+    const os = mjState.seats[idx];
+    const opt = { seatIdx: idx, canRon: false, canPon: false, chiCombos: [], priority: 0 };
+
+    // ロンチェック（フリテン簡易回避：自分の捨て牌にある牌ではロン不可）
+    const isFuriten = os.river.some(r => r.tile === tile);
+    if (!isFuriten) {
+      const ev = mjEvaluateWin(os.hand, tile, os.melds, mjGetWinContext(idx, false));
+      if (ev) {
+        opt.canRon = true;
+        opt.winEval = ev;
+        opt.priority = 3;
+      }
+    }
+    // リーチ中はポン・チー不可
+    if (!os.riichi && mjState.wall.length > 0) {
+      const cntSame = os.hand.filter(x => x === tile).length;
+      if (cntSame >= 2) {
+        opt.canPon = true;
+        opt.ponTiles = [tile, tile];
+        if (opt.priority < 2) opt.priority = 2;
+      }
+      // 下家（offset === 1）のみチー可能
+      if (offset === 1 && tile < 27) {
+        const n = tile % 9;
+        const has = t => os.hand.includes(t);
+        if (n >= 2 && has(tile - 2) && has(tile - 1)) opt.chiCombos.push([tile - 2, tile - 1]);
+        if (n >= 1 && n <= 7 && has(tile - 1) && has(tile + 1)) opt.chiCombos.push([tile - 1, tile + 1]);
+        if (n <= 6 && has(tile + 1) && has(tile + 2)) opt.chiCombos.push([tile + 1, tile + 2]);
+        if (opt.chiCombos.length > 0 && opt.priority < 1) opt.priority = 1;
+      }
+    }
+    if (opt.canRon || opt.canPon || opt.chiCombos.length > 0) {
+      claims.push(opt);
+    }
+  }
+
+  mjState.claimQueue = claims;
+  if (claims.length > 0) {
+    mjState.phase = 'claim';
+    mjResolveClaimQueue();
+  } else {
+    mjAdvanceTurn((seatIdx + 1) % 4);
+  }
+}
+
+function mjResolveClaimQueue() {
+  if (mjState.phase !== 'claim') return;
+  if (mjState.claimQueue.length === 0) {
+    mjAdvanceTurn((mjState.lastDiscard.fromIdx + 1) % 4);
+    return;
+  }
+
+  // AIの自動判断を優先実行
+  const aiClaim = mjState.claimQueue.find(c => !mjState.seats[c.seatIdx].isHuman);
+  if (aiClaim) {
+    if (aiClaim.canRon) {
+      const s = mjState.seats[aiClaim.seatIdx];
+      mjExecuteWin(aiClaim.seatIdx, mjState.lastDiscard.fromIdx, mjState.lastDiscard.tile, false, aiClaim.winEval);
+      return;
+    }
+    // AIは役牌ポンや高難度時の鳴きのみ稀に実行、基本は門前リーチ重視でパス
+    const tile = mjState.lastDiscard.tile;
+    const s = mjState.seats[aiClaim.seatIdx];
+    const isYakuhai = tile >= 31 || tile === 27 + mjState.roundWind || tile === 27 + s.wind;
+    if (aiClaim.canPon && isYakuhai && mjOpts.aiDiff !== 'easy') {
+      mjExecuteMeld(aiClaim.seatIdx, 'pon', aiClaim.ponTiles);
+      return;
+    }
+    mjState.claimQueue = mjState.claimQueue.filter(c => c.seatIdx !== aiClaim.seatIdx);
+    mjResolveClaimQueue();
+    return;
+  }
+
+  // 人間プレイヤーの判断待ち
+  mjSyncAndRender();
+}
+
+function mjExecuteMeld(seatIdx, type, consumeTiles) {
+  const s = mjState.seats[seatIdx];
+  const targetTile = mjState.lastDiscard.tile;
+  const fromIdx = mjState.lastDiscard.fromIdx;
+
+  // 河から牌を1枚抜く
+  mjState.seats[fromIdx].river.pop();
+  consumeTiles.forEach(t => {
+    const idx = s.hand.indexOf(t);
+    if (idx >= 0) s.hand.splice(idx, 1);
+  });
+  const meldTiles = consumeTiles.concat([targetTile]).sort((a, b) => a - b);
+  s.melds.push({ type, tiles: meldTiles });
+
+  // 鳴きが入ったので全員の一発消滅
+  mjState.seats.forEach(x => { x.ippatsu = false; });
+
+  playSE('click');
+  showToast(`${s.name}：${type === 'pon' ? 'ポン！' : 'チー！'}`);
+  mjState.phase = 'playing';
+  mjState.claimQueue = [];
+  mjState.turnIdx = seatIdx;
+  mjState.drawnTile = null;
+  mjSyncAndRender();
+  mjScheduleAiIfNeeded();
+}
+
+function mjAdvanceTurn(nextIdx) {
+  if (mjState.wall.length === 0) {
+    mjExecuteDrawRound();
+    return;
+  }
+  mjState.phase = 'playing';
+  mjState.turnIdx = nextIdx;
+  mjState.drawnTile = mjState.wall.shift();
+  mjSyncAndRender();
+  mjScheduleAiIfNeeded();
+}
+
+/* --- 🤖 AI思考（優しい・普通・難しい） --- */
+function mjScheduleAiIfNeeded() {
+  if (mjState.aiTimer) { clearTimeout(mjState.aiTimer); mjState.aiTimer = null; }
+  if (mjState.phase !== 'playing') return;
+  const s = mjState.seats[mjState.turnIdx];
+  if (!s || s.isHuman) return;
+  if (state.playMode === 'online' && onlineRoomState.role !== 'host') return;
+
+  const delay = mjOpts.aiFast ? 90 : 620;
+  mjState.aiTimer = setTimeout(() => mjRunAiTurn(mjState.turnIdx), delay);
+}
+
+function mjRunAiTurn(seatIdx) {
+  if (mjState.phase !== 'playing' || mjState.turnIdx !== seatIdx) return;
+  const s = mjState.seats[seatIdx];
+
+  // 1. ツモアガリ判定
+  if (mjState.drawnTile !== null) {
+    const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(seatIdx, true));
+    if (ev) {
+      mjExecuteWin(seatIdx, seatIdx, mjState.drawnTile, true, ev);
+      return;
+    }
+  }
+
+  const full = s.hand.concat(mjState.drawnTile !== null ? [mjState.drawnTile] : []);
+  // リーチ中はツモ切り
+  if (s.riichi) {
+    mjExecuteDiscard(seatIdx, s.hand.length, false);
+    return;
+  }
+
+  // 2. リーチ宣言判定（普通・難しいはテンパイで即リーチ）
+  if (mjOpts.aiDiff !== 'easy') {
+    const rCandidates = mjCanDeclareRiichi(seatIdx);
+    if (rCandidates.length > 0) {
+      const pickTile = rCandidates[0];
+      const pos = full.indexOf(pickTile);
+      if (pos >= 0) {
+        mjExecuteDiscard(seatIdx, pos, true);
+        return;
+      }
+    }
+  }
+
+  // 3. 打牌選択
+  let discardPos = full.length - 1;
+  if (mjOpts.aiDiff === 'easy') {
+    discardPos = Math.floor(Math.random() * full.length);
+  } else {
+    const dangerSet = new Set();
+    if (mjOpts.aiDiff === 'hard') {
+      const anyRiichi = mjState.seats.some((os, idx) => idx !== seatIdx && os.riichi);
+      if (anyRiichi) {
+        // 他家の河にある現物を優先的に安全牌として残す評価
+        mjState.seats.forEach((os, idx) => {
+          if (idx !== seatIdx && os.riichi) {
+            os.river.forEach(r => dangerSet.add(r.tile));
+          }
+        });
+      }
+    }
+
+    let bestScore = -999999;
+    for (let i = 0; i < full.length; i++) {
+      const tile = full[i];
+      const rest = full.slice(0, i).concat(full.slice(i + 1));
+      const c = mjHandToCounts(rest);
+      const sh = mjCalcShanten(c, s.melds.length);
+      let evalScore = -sh * 1000;
+
+      // 難しいAI：リーチ者がいたら現物を最優先で切る（ベタ降り）
+      if (mjOpts.aiDiff === 'hard' && dangerSet.size > 0 && sh > 0) {
+        if (dangerSet.has(tile)) evalScore += 1500;
+        else if (tile >= 27) evalScore += 200;
+      }
+      // 孤立字牌・端牌を先に切る傾向
+      if (tile >= 27) evalScore += 15;
+      else if (tile % 9 === 0 || tile % 9 === 8) evalScore += 8;
+      evalScore += Math.random() * 2;
+
+      if (evalScore > bestScore) {
+        bestScore = evalScore;
+        discardPos = i;
+      }
+    }
+  }
+
+  mjExecuteDiscard(seatIdx, discardPos, false);
+}
+
+/* --- 🎉 アガリ精算・流局・東風戦＆トビ判定 --- */
+function mjExecuteWin(winnerIdx, loserIdx, winTile, isTsumo, ev) {
+  if (mjState.aiTimer) { clearTimeout(mjState.aiTimer); mjState.aiTimer = null; }
+  mjState.phase = 'roundEnd';
+
+  const winner = mjState.seats[winnerIdx];
+  const honbaBonus = mjState.honba * 300;
+  const poolBonus = mjState.riichiPool * 1000;
+  const deltas = [0, 0, 0, 0];
+
+  if (isTsumo) {
+    for (let i = 0; i < 4; i++) {
+      if (i === winnerIdx) continue;
+      let pay = 0;
+      if (winnerIdx === mjState.dealerIdx) pay = ev.eachPay + mjState.honba * 100;
+      else pay = (i === mjState.dealerIdx ? ev.dealerPay : ev.nonDealerPay) + mjState.honba * 100;
+      deltas[i] -= pay;
+      deltas[winnerIdx] += pay;
+    }
+  } else {
+    const pay = ev.ronPay + honbaBonus;
+    deltas[loserIdx] -= pay;
+    deltas[winnerIdx] += pay;
+  }
+  deltas[winnerIdx] += poolBonus;
+
+  for (let i = 0; i < 4; i++) mjState.seats[i].score += deltas[i];
+  mjState.riichiPool = 0;
+
+  mjState.roundResult = {
+    type: isTsumo ? 'tsumo' : 'ron',
+    winnerIdx,
+    loserIdx,
+    winTile,
+    hand: winner.hand.slice(),
+    melds: winner.melds.slice(),
+    yaku: ev.yaku,
+    han: ev.han,
+    fu: ev.fu,
+    totalPoints: ev.total + honbaBonus,
+    rankName: ev.rankName,
+    deltas,
+    isDealerKeep: winnerIdx === mjState.dealerIdx
+  };
+
+  if (ev.rankName) {
+    showMahjongBigWin(ev.rankName, ev.total + honbaBonus, winner.name);
+  } else {
+    triggerMahjongCutin('win', winner.name);
+  }
+
+  renderMahjongRoundResult();
+  mjSyncAndRender();
+}
+
+function mjExecuteDrawRound() {
+  if (mjState.aiTimer) { clearTimeout(mjState.aiTimer); mjState.aiTimer = null; }
+  mjState.phase = 'roundEnd';
+
+  const tenpaiList = mjState.seats.map(s => mjGetWaitingTiles(s.hand, s.melds).length > 0);
+  const tenpaiCount = tenpaiList.filter(Boolean).length;
+  const deltas = [0, 0, 0, 0];
+
+  if (tenpaiCount > 0 && tenpaiCount < 4) {
+    const gain = 3000 / tenpaiCount;
+    const pay = 3000 / (4 - tenpaiCount);
+    for (let i = 0; i < 4; i++) {
+      deltas[i] = tenpaiList[i] ? gain : -pay;
+      mjState.seats[i].score += deltas[i];
+    }
+  }
+
+  mjState.roundResult = {
+    type: 'draw',
+    tenpaiList,
+    deltas,
+    isDealerKeep: tenpaiList[mjState.dealerIdx]
+  };
+
+  playSE('click');
+  renderMahjongRoundResult();
+  mjSyncAndRender();
+}
+
+function proceedMahjongNextRound() {
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'host') {
+    showToast('🌐 ホストが次の局へ進めるのを待っています...');
+    return;
+  }
+  playSE('click');
+
+  // トビ（ハコ割れ）チェック：誰か1人でも0点未満なら即終了！
+  const isTobi = mjState.seats.some(s => s.score < 0);
+  const res = mjState.roundResult;
+
+  if (isTobi) {
+    mjFinishMatch(true);
+    return;
+  }
+
+  if (res && res.isDealerKeep) {
+    mjState.honba += 1;
+    mjStartRound();
+  } else {
+    mjState.honba = (res && res.type === 'draw') ? mjState.honba + 1 : 0;
+    mjState.roundNum += 1;
+    mjState.dealerIdx = (mjState.dealerIdx + 1) % 4;
+    if (mjState.roundNum >= 4) {
+      mjFinishMatch(false);
+    } else {
+      mjStartRound();
+    }
+  }
+}
+
+function mjFinishMatch(isTobi) {
+  mjState.phase = 'matchEnd';
+  const sorted = mjState.seats
+    .map((s, idx) => ({ ...s, origIdx: idx }))
+    .sort((a, b) => b.score - a.score);
+
+  const standings = sorted.map((s, rank) => {
+    let umaPts = 0;
+    if (mjOpts.uma) {
+      if (rank === 0) umaPts = 10000;
+      else if (rank === 3) umaPts = -10000;
+    }
+    const finalPts = s.score + umaPts;
+    const chipDiff = Math.round(((finalPts - 25000) / 1000) * mjOpts.rate);
+    return { ...s, rank: rank + 1, umaPts, finalPts, chipDiff };
+  });
+
+  mjState.matchResult = { isTobi, standings };
+  renderMahjongMatchResult(false);
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role === 'host') {
+    mjPushOnlineState();
+  }
+  updateGameBackLockUI();
+}
+
+/* --- 🎨 描画ロジック --- */
+function renderMahjongTable() {
+  const rText = document.getElementById('mjRoundStatusText');
+  if (rText) rText.textContent = `${MJ_WINDS[mjState.roundWind]}${mjState.roundNum + 1}局 ${mjState.honba}本場`;
+  const wText = document.getElementById('mjWallRemainText');
+  if (wText) wText.textContent = `残り ${mjState.wall.length} 枚`;
+  const pText = document.getElementById('mjRiichiPoolText');
+  if (pText) pText.textContent = `供託: ${mjState.riichiPool}本`;
+
+  const doraBox = document.getElementById('mjDoraDisplayRow');
+  if (doraBox) {
+    doraBox.innerHTML = mjGetCurrentDoraIndicators().map(t => mjRenderTileHtml(t, 'mj-tile-sm')).join('');
+  }
+
+  const offset = mjGetMyViewOffset();
+  for (let v = 0; v < 4; v++) {
+    const sIdx = (offset + v) % 4;
+    const s = mjState.seats[sIdx];
+    const box = document.getElementById('mjSeatBox' + v);
+    if (!box || !s) continue;
+
+    box.classList.toggle('active-turn', mjState.phase === 'playing' && mjState.turnIdx === sIdx);
+    box.classList.toggle('riichi-on', !!s.riichi);
+
+    const windLabel = MJ_WINDS[s.wind || 0];
+    const isDealer = sIdx === mjState.dealerIdx;
+    const riverHtml = (s.river || []).map(r => mjRenderTileHtml(r.tile, 'mj-tile-sm' + (r.isRiichiTile ? ' mj-tile-riichi' : ''))).join('');
+    const meldsHtml = (s.melds || []).map(m =>
+      `<div class="mj-meld-group">${m.tiles.map(t => mjRenderTileHtml(t, 'mj-tile-sm')).join('')}</div>`
+    ).join('');
+
+    box.innerHTML = `
+      <div class="mj-seat-head">
+        <div>
+          <span class="mj-seat-wind ${isDealer ? 'is-dealer' : ''}">${windLabel}${isDealer ? '親' : ''}</span>
+          <span style="color:#fff;">${s.name}</span>
+          ${s.riichi ? '<span style="color:#fda4af; font-size:0.66rem;">⚡リーチ</span>' : ''}
+        </div>
+        <div style="color:${s.score < 10000 ? '#f87171' : '#fef08a'};">${(s.score || 0).toLocaleString()}点</div>
+      </div>
+      <div class="mj-river-row">${riverHtml || '<span style="color:#64748b; font-size:0.64rem;">河: なし</span>'}</div>
+      ${meldsHtml ? `<div class="mj-melds-row">${meldsHtml}</div>` : ''}
+    `;
+  }
+
+  // 自分の手牌描画
+  const myIdx = offset;
+  const me = mjState.seats[myIdx];
+  const handRow = document.getElementById('mjMyHandRow');
+  const assistBar = document.getElementById('mjAssistBar');
+  const actionBar = document.getElementById('mjActionBar');
+  if (!me || !handRow || !actionBar) return;
+
+  const isMyTurn = (mjState.phase === 'playing' && mjState.turnIdx === myIdx);
+  const fullHand = me.hand.concat(isMyTurn && mjState.drawnTile !== null ? [mjState.drawnTile] : []);
+
+  // 初心者アシスト評価
+  let bestPosSet = new Set();
+  let worsePosSet = new Set();
+  if (mjOpts.assist && isMyTurn && fullHand.length % 3 === 2) {
+    const shValues = fullHand.map((_, i) => {
+      const rest = fullHand.slice(0, i).concat(fullHand.slice(i + 1));
+      return mjCalcShanten(mjHandToCounts(rest), me.melds.length);
+    });
+    const minSh = Math.min(...shValues);
+    shValues.forEach((v, i) => {
+      if (v === minSh) bestPosSet.add(i);
+      else worsePosSet.add(i);
+    });
+  }
+
+  let handHtml = '';
+  fullHand.forEach((t, i) => {
+    const isDrawn = (isMyTurn && mjState.drawnTile !== null && i === fullHand.length - 1);
+    let cls = '';
+    if (isDrawn) cls += ' drawn-gap';
+    if (mjState.selectedHandPos === i) cls += ' selected';
+    if (me.riichi && !mjState.riichiSelectMode && !isDrawn) cls += ' riichi-locked';
+    if (mjOpts.assist && isMyTurn && !me.riichi) {
+      if (worsePosSet.has(i)) cls += ' assist-dim';
+      else if (bestPosSet.has(i) && worsePosSet.size > 0) cls += ' assist-best';
+    }
+    handHtml += mjRenderTileHtml(t, cls, `onclick="onTapMahjongTile(${i})"`);
+  });
+  handRow.innerHTML = handHtml;
+
+  // アシストバー（テンパイ待ち牌 ＆ シャンテン数）
+  if (assistBar) {
+    if (mjOpts.assist) {
+      assistBar.style.display = 'flex';
+      const baseSh = mjCalcShanten(mjHandToCounts(me.hand), me.melds.length);
+      if (baseSh <= 0) {
+        const waits = mjGetWaitingTiles(me.hand, me.melds);
+        const waitHtml = waits.map(w => mjRenderTileHtml(w, 'mj-tile-sm')).join('');
+        assistBar.innerHTML = `<span>🎯 テンパイ！当たり牌:</span> ${waitHtml}`;
+      } else {
+        assistBar.innerHTML = `<span>💡 初心者アシストON：あと <strong>${baseSh + 1}枚</strong> でテンパイ！（明るい牌がおすすめ）</span>`;
+      }
+    } else {
+      assistBar.style.display = 'none';
+    }
+  }
+
+  // アクションバー
+  let actHtml = '';
+  if (isMyTurn) {
+    if (mjState.drawnTile !== null) {
+      const tsumoEv = mjEvaluateWin(me.hand, mjState.drawnTile, me.melds, mjGetWinContext(myIdx, true));
+      if (tsumoEv) {
+        actHtml += `<button class="mj-act-btn btn-win" onclick="onClickMahjongTsumo()">🎉 ツモ！(${tsumoEv.total.toLocaleString()}点)</button>`;
+      }
+    }
+    const riichiCandidates = mjCanDeclareRiichi(myIdx);
+    if (riichiCandidates.length > 0) {
+      actHtml += `<button class="mj-act-btn btn-riichi" onclick="onClickMahjongRiichiBtn()">${mjState.riichiSelectMode ? '✖ リーチ取消' : '⚡ リーチ！'}</button>`;
+    }
+    if (mjState.selectedHandPos >= 0) {
+      const selTile = fullHand[mjState.selectedHandPos];
+      actHtml += `<button class="mj-act-btn btn-discard" onclick="onClickMahjongDiscardSelected()">🗑️ ${mjTileInfo(selTile).text} を捨てる</button>`;
+    } else if (!mjState.riichiSelectMode) {
+      actHtml += `<span style="font-size:0.74rem; color:#fde047; font-weight:900;">👆 捨てる牌を2回タップ！</span>`;
+    }
+  } else if (mjState.phase === 'claim') {
+    const myClaim = mjState.claimQueue.find(c => c.seatIdx === myIdx);
+    if (myClaim) {
+      if (myClaim.canRon) {
+        actHtml += `<button class="mj-act-btn btn-win" onclick="onClickMahjongClaim('ron')">⚡ ロン！(${myClaim.winEval.total.toLocaleString()}点)</button>`;
+      }
+      if (myClaim.canPon) {
+        actHtml += `<button class="mj-act-btn btn-call" onclick="onClickMahjongClaim('pon')">🀄 ポン</button>`;
+      }
+      myClaim.chiCombos.forEach((combo, cIdx) => {
+        const lbl = combo.map(x => mjTileInfo(x).label).join('-');
+        actHtml += `<button class="mj-act-btn btn-call" onclick="onClickMahjongClaim('chi', ${cIdx})">🀄 チー(${lbl})</button>`;
+      });
+      actHtml += `<button class="mj-act-btn btn-pass" onclick="onClickMahjongClaim('pass')">💨 スルー</button>`;
+    } else {
+      actHtml = `<span style="font-size:0.74rem; color:#94a3b8; font-weight:900;">⏳ 相手の判断待ち...</span>`;
+    }
+  } else {
+    actHtml = `<span style="font-size:0.74rem; color:#cbd5e1; font-weight:900;">⏳ ${mjState.seats[mjState.turnIdx]?.name || ''} の手番中...</span>`;
+  }
+  actionBar.innerHTML = actHtml;
+}
+
+function renderMahjongRoundResult() {
+  const box = document.getElementById('mjRoundResultBox');
+  const res = mjState.roundResult;
+  if (!box || !res) return;
+  box.style.display = 'block';
+
+  const titleEl = document.getElementById('mjRoundResultTitle');
+  const tilesEl = document.getElementById('mjRoundResultTiles');
+  const yakuEl = document.getElementById('mjRoundResultYaku');
+  const scoresEl = document.getElementById('mjRoundResultScores');
+
+  if (res.type === 'draw') {
+    titleEl.textContent = '🤝 流局（山がなくなりました）';
+    tilesEl.innerHTML = '';
+    yakuEl.innerHTML = res.tenpaiList.map((t, i) => `${mjState.seats[i].name}: <strong>${t ? 'テンパイ' : 'ノーテン'}</strong>`).join(' ／ ');
+  } else {
+    const wName = mjState.seats[res.winnerIdx].name;
+    titleEl.textContent = `${res.type === 'tsumo' ? '🎉 ツモ！' : '⚡ ロン！'} ${wName} (+${res.totalPoints.toLocaleString()}点)`;
+    const handHtml = res.hand.map(t => mjRenderTileHtml(t, 'mj-tile-md')).join('');
+    const winHtml = mjRenderTileHtml(res.winTile, 'mj-tile-md win-flash drawn-gap');
+    const meldsHtml = (res.melds || []).map(m =>
+      `<div class="mj-meld-group" style="margin-left:4px;">${m.tiles.map(t => mjRenderTileHtml(t, 'mj-tile-md')).join('')}</div>`
+    ).join('');
+    tilesEl.innerHTML = handHtml + winHtml + meldsHtml;
+
+    const yakuStr = res.yaku.map(y => `【${y.name} ${y.han}飜】`).join(' ');
+    yakuEl.innerHTML = `${yakuStr}<br><strong style="color:#fef08a;">合計 ${res.han}飜 ${res.fu}符 ${res.rankName ? '★' + res.rankName : ''} ➔ ${res.totalPoints.toLocaleString()}点！</strong>`;
+  }
+
+  scoresEl.innerHTML = mjState.seats.map((s, i) => {
+    const d = res.deltas[i] || 0;
+    const dStr = d > 0 ? `<span style="color:#4ade80;">+${d.toLocaleString()}</span>` : (d < 0 ? `<span style="color:#f87171;">${d.toLocaleString()}</span>` : '±0');
+    return `<div>${s.name}: <strong>${s.score.toLocaleString()}点</strong> (${dStr})</div>`;
+  }).join('');
+
+  const nextBtn = document.getElementById('mjNextRoundBtn');
+  if (nextBtn) {
+    const willTobi = mjState.seats.some(s => s.score < 0);
+    nextBtn.textContent = willTobi ? '💥 トビ終了！最終精算へ' : '▶ 次の局へ進む';
+  }
+}
+
+function renderMahjongMatchResult(fromSync = false) {
+  document.getElementById('mjTablePanel').style.display = 'none';
+  document.getElementById('mjRoundResultBox').style.display = 'none';
+  const box = document.getElementById('mjMatchResultBox');
+  const titleEl = document.getElementById('mjMatchResultTitle');
+  const listEl = document.getElementById('mjMatchResultList');
+  if (!box || !mjState.matchResult) return;
+
+  box.style.display = 'block';
+  titleEl.textContent = mjState.matchResult.isTobi ? '💥 トビ（ハコ割れ）終了！最終精算' : '🏆 東風戦 対局終了！最終精算';
+
+  const myIdx = mjGetMyViewOffset();
+  const myStand = mjState.matchResult.standings.find(st => st.origIdx === myIdx);
+
+  // 自分の保証金＋収支を返還精算（1回のみ）
+  if (myStand && mjState.guaranteePaid > 0) {
+    const refund = Math.max(0, mjState.guaranteePaid + myStand.chipDiff);
+    if (!state.infiniteChips) {
+      state.chips += refund;
+    }
+    if (myStand.rank === 1) state.totalWins++;
+    mjState.guaranteePaid = 0;
+    saveState();
+    if (myStand.chipDiff >= 0) playSE('win');
+    else playSE('lose');
+    checkBankruptNotice();
+  }
+
+  listEl.innerHTML = mjState.matchResult.standings.map(st => {
+    const medal = st.rank === 1 ? '🥇' : (st.rank === 2 ? '🥈' : (st.rank === 3 ? '🥉' : '4位'));
+    const isMe = st.origIdx === myIdx;
+    const umaText = st.umaPts !== 0 ? ` (ウマ ${st.umaPts > 0 ? '+' : ''}${st.umaPts.toLocaleString()})` : '';
+    const chipColor = st.chipDiff >= 0 ? '#4ade80' : '#f87171';
+    return `
+      <div style="background:rgba(2,6,23,0.85); border:2px solid ${isMe ? '#facc15' : '#475569'}; border-radius:12px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+        <div style="text-align:left;">
+          <div style="font-weight:900; font-size:0.9rem; color:#fff;">${medal} ${st.name} ${isMe ? '★あなた' : ''}</div>
+          <div style="font-size:0.74rem; color:#94a3b8;">持ち点: ${st.score.toLocaleString()}点${umaText}</div>
+        </div>
+        <div style="font-weight:900; font-size:1rem; color:${chipColor};">
+          ${st.chipDiff >= 0 ? '+' : ''}${st.chipDiff.toLocaleString()} 🪙
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 /* ============================================================================
