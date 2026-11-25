@@ -6,7 +6,6 @@
 <title>カジノ・ロジカ (CASINO LOGICA) - 総合テーブル＆ダイスカジノ</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <style>
 /* ============================================================================
    🎨 カジノ・ロジカ (CASINO LOGICA)
@@ -2166,9 +2165,6 @@ html, body {
         <span>👥2P:</span>
         <span id="p2ChipText">100</span>
       </div>
-      <button id="exitAdminModeBtn" onclick="exitAdminTestMode()" style="display:none; background:linear-gradient(180deg,#d946ef,#a21caf); color:#fff; border:2px solid #fdf4ff; border-radius:999px; padding:4px 10px; font-weight:900; font-size:0.74rem; cursor:pointer; box-shadow:0 2px 0 #701a75; white-space:nowrap;">
-        🔧 管理者終了(元に戻る)
-      </button>
     </div>
     <div class="top-right-btns">
       <button class="icon-circle-btn" id="soundToggleBtn" onclick="toggleSound()" title="効果音 ON/OFF">🔊</button>
@@ -2184,7 +2180,7 @@ html, body {
       <div class="title-badge-ribbon">✨ LOGICA SERIES 3RD EDITION ✨</div>
       <div class="title-logo-sub">🎲 DICE × ♠️ CARDS × 🎡 WHEEL × 🎰 SLOT</div>
       <h1 class="title-logo-main">カジノ・ロジカ</h1>
-      <div onclick="triggerCasinoAdminSecretTap()" style="font-size:0.82rem; font-weight:900; color:#fde047; margin-bottom:12px; letter-spacing:0.12em; cursor:pointer;">CASINO LOGICA Ver 1.0</div>
+      <div style="font-size:0.82rem; font-weight:900; color:#fde047; margin-bottom:12px; letter-spacing:0.12em;">CASINO LOGICA Ver 1.0</div>
       <div class="title-icons-row">
         <span>🎲</span><span>🃏</span><span>🎡</span><span>🎰</span><span>🧬</span>
       </div>
@@ -3533,30 +3529,12 @@ html, body {
 
     <!-- プレイヤー戦績カード -->
     <div style="background:rgba(15,23,42,0.92); border:3px solid #facc15; border-radius:22px; padding:16px; margin-bottom:14px; box-shadow:0 6px 0 #854d0e;">
-      <div onclick="triggerCasinoAdminSecretTap()" style="font-size:1.05rem; font-weight:900; color:#fef08a; margin-bottom:10px; cursor:pointer;">📊 カジノ・ロジカ 戦績レコード</div>
+      <div style="font-size:1.05rem; font-weight:900; color:#fef08a; margin-bottom:10px;">📊 カジノ・ロジカ 戦績レコード</div>
       <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; font-size:0.86rem; font-weight:800;">
         <div style="background:#1e293b; padding:10px; border-radius:12px;">🪙 現在チップ: <span id="menuCurrentChips" style="color:#fef08a;">100</span></div>
         <div style="background:#1e293b; padding:10px; border-radius:12px;">👑 最高所持記録: <span id="menuMaxChips" style="color:#38bdf8;">100</span></div>
         <div style="background:#1e293b; padding:10px; border-radius:12px;">🏆 通算勝利数: <span id="menuTotalWins" style="color:#4ade80;">0</span> 勝</div>
         <div style="background:#1e293b; padding:10px; border-radius:12px;">📝 勉強獲得チップ: <span id="menuStudyChips" style="color:#f472b6;">0</span></div>
-      </div>
-    </div>
-
-    <!-- 👑 管理者専用コントロールパネル（管理者モード起動時のみ表示） -->
-    <div id="adminControlPanelCard" style="display:none; background:linear-gradient(135deg, #4a044e 0%, #1e1b4b 100%); border:3px solid #f472b6; border-radius:22px; padding:16px; margin-bottom:14px; box-shadow:0 6px 0 #701a75;">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
-        <div style="font-size:1.02rem; font-weight:900; color:#fbcfe8;">👑 管理者専用テストパネル（ランキング非反映）</div>
-        <button class="back-btn" style="background:#f472b6; color:#fff; border-color:#fff; font-size:0.76rem; padding:4px 10px;" onclick="exitAdminTestMode()">🔧 通常データに戻る</button>
-      </div>
-      <p style="font-size:0.78rem; color:#f5d0fe; line-height:1.5; margin-bottom:10px;">
-        ※現在、本来のセーブデータは安全に裏へ保護されており、このモード中のチップや勝敗は<strong>ランキングには一切反映・送信されません</strong>。
-      </p>
-      <div style="display:flex; flex-wrap:wrap; gap:8px;">
-        <button class="chip-bet-btn c-25" id="adminInfToggleBtn" onclick="toggleAdminInfiniteChips()">♾️ チップ無限固定: ON</button>
-        <button class="chip-bet-btn c-10" onclick="setAdminCustomChips(999999)">🪙 999,999チップにする</button>
-        <button class="chip-bet-btn c-5" onclick="setAdminCustomChips(10000)">🪙 10,000チップにする</button>
-        <button class="chip-bet-btn c-max" onclick="setAdminCustomChips(0)">💸 0チップにする(破産テスト)</button>
-        <button class="chip-bet-btn c-clear" onclick="adminWipeAllCloudRankings()">🧹 ランキング全件リセット(掃除)</button>
       </div>
     </div>
 
@@ -3644,10 +3622,6 @@ html, body {
       <button class="mode-tab-btn" id="rankTabMax" onclick="switchRankingTab('max')">
         👑 歴代最高チップ順
       </button>
-    </div>
-
-    <div id="adminRankingNoticeBanner" style="display:none; background:rgba(112,26,117,0.85); border:2px solid #f472b6; color:#fdf4ff; padding:10px 14px; border-radius:14px; font-size:0.8rem; font-weight:900; margin-bottom:10px; text-align:center;">
-      🔧 現在「管理者専用モード（チップ無限）」のため、あなたのテストデータはランキングには反映・送信されません。
     </div>
 
     <!-- ランキングリスト -->
@@ -3970,161 +3944,80 @@ let state = {
 
 const PLAYER_COLORS = ['#facc15', '#38bdf8', '#4ade80', '#f472b6'];
 
-/* --- 👑 管理者専用テストモード（本番データ自動保護 ＆ チップ無限 ＆ ランキング完全非反映） --- */
-const CASINO_ADMIN_PASS_DEFAULT = 'bio2026';
-let adminSecretTapCounter = 0;
-let adminTapResetTimer = null;
+/* --- 🛡️ セキュリティ・XSS対策・ID/入力検証ユーティリティ --- */
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-function triggerCasinoAdminSecretTap() {
-  adminSecretTapCounter++;
-  if (adminTapResetTimer) clearTimeout(adminTapResetTimer);
-  adminTapResetTimer = setTimeout(() => { adminSecretTapCounter = 0; }, 2500);
+function isSafeId(str, maxLen = 64) {
+  if (typeof str !== 'string') return false;
+  if (str.length === 0 || str.length > maxLen) return false;
+  if (str === '__proto__' || str === 'constructor' || str === 'prototype') return false;
+  return /^[A-Za-z0-9_-]+$/.test(str);
+}
 
-  if (adminSecretTapCounter >= 5) {
-    adminSecretTapCounter = 0;
-    if (state.isTestAccount) {
-      navigateTo('screen-menu');
-      showToast('👑 管理者専用テストパネルを表示中です');
-      return;
-    }
-    const savedPass = localStorage.getItem('biologica_admin_pass') || CASINO_ADMIN_PASS_DEFAULT;
-    const input = prompt('👑【管理者専用認証】\nマスターパスコードを入力してください：');
-    if (input === null) return;
-    const trimmed = input.trim();
-    if (trimmed === savedPass || trimmed.toUpperCase() === 'DEBUG_MAX') {
-      enterAdminTestMode();
-    } else {
-      playSE('lose');
-      showToast('❌ パスコードが一致しません');
-    }
+function isSafeRoomCode(str) {
+  return typeof str === 'string' && /^\d{4}$/.test(str);
+}
+
+function isSafeFriendCode(str) {
+  return typeof str === 'string' && /^[A-Z0-9-]{4,16}$/.test(str);
+}
+
+function sanitizeCardObj(card) {
+  if (!card || typeof card !== 'object') {
+    return { suit: '♠', color: 'black-suit', label: 'A', val: 14, bjVal: 11 };
   }
+  const allowedSuits = ['♠', '♥', '♦', '♣'];
+  const allowedLabels = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+  const suit = allowedSuits.includes(card.suit) ? card.suit : '♠';
+  const label = allowedLabels.includes(String(card.label)) ? String(card.label) : 'A';
+  const color = (suit === '♥' || suit === '♦') ? 'red-suit' : 'black-suit';
+  const rankDef = (typeof RANKS !== 'undefined' && Array.isArray(RANKS))
+    ? RANKS.find(r => r.label === label)
+    : null;
+  return {
+    suit,
+    color,
+    label,
+    val: rankDef ? rankDef.val : (Number(card.val) || 2),
+    bjVal: rankDef ? rankDef.bjVal : (Number(card.bjVal) || 2)
+  };
 }
 
-function enterAdminTestMode() {
-  // 既にテストモードでない場合、現在の本番セーブデータを安全に裏へ退避！
-  if (!state.isTestAccount) {
-    try {
-      const prodSnapshot = JSON.stringify({ ...state, isTestAccount: false, infiniteChips: false });
-      localStorage.setItem(PROD_BACKUP_KEY, prodSnapshot);
-    } catch (e) {}
-
-    // クラウド上に自分のドキュメントがあれば、管理者テスト中は一時的でも混ざらないよう保護
-  }
-
-  state.isTestAccount = true;
-  state.infiniteChips = true;
-  state.chips = 999999;
-  state.p2Chips = 999999;
-  state.maxChips = 999999;
-  saveState();
-  playSE('win');
-  showToast('👑 管理者専用モード（チップ無限・ランキング非反映）を起動しました！');
-}
-
-function exitAdminTestMode() {
-  playSE('click');
-  try {
-    const rawBackup = localStorage.getItem(PROD_BACKUP_KEY);
-    if (rawBackup) {
-      const restored = JSON.parse(rawBackup);
-      state = { ...state, ...restored, isTestAccount: false, infiniteChips: false };
-      localStorage.removeItem(PROD_BACKUP_KEY);
-    } else {
-      state.isTestAccount = false;
-      state.infiniteChips = false;
-      state.chips = 100;
-      state.maxChips = 100;
-    }
-  } catch (e) {
-    state.isTestAccount = false;
-    state.infiniteChips = false;
-    state.chips = 100;
-  }
-  saveState();
-  if (document.getElementById('screen-ranking').classList.contains('active')) {
-    renderRankingList();
-  }
-  showToast('🔧 管理者専用モードを終了し、本来のセーブデータに復元しました！');
-}
-
-function toggleAdminInfiniteChips() {
-  if (!state.isTestAccount) return;
-  playSE('click');
-  state.infiniteChips = !state.infiniteChips;
-  if (state.infiniteChips) {
-    state.chips = 999999;
-  }
-  saveState();
-  showToast(state.infiniteChips ? '♾️ チップ無限固定を ON にしました！' : '🔓 チップ無限固定を OFF にしました（増減テスト可能）');
-}
-
-function setAdminCustomChips(amount) {
-  if (!state.isTestAccount) return;
-  playSE('coin');
-  state.infiniteChips = (amount >= 999999);
-  state.chips = amount;
-  saveState();
-  showToast(`🪙 テスト所持チップを ${amount.toLocaleString()} 枚に設定しました`);
-}
-
-async function adminWipeAllCloudRankings() {
-  if (!state.isTestAccount) return;
-  if (!confirm('👑【管理者専用】クラウド上のランキングデータをすべて空（リセット）にしますか？\n（データ削除済みの古い残骸アカウントもすべて綺麗に消去されます）')) return;
-  playSE('click');
-  try {
-    if (db) {
-      await db.collection('players').doc('MATCH_CASINO_RANKINGS').set({
-        isSystemDoc: true,
-        entries: {},
-        updatedAt: Date.now()
-      });
-    }
-    cloudRankCache = [];
-    renderRankingList();
-    showToast('🧹 クラウド上のランキング残骸データをすべて消去しました！');
-  } catch (e) {
-    showToast('⚠️ ランキング初期化中に通信エラーが発生しました');
-  }
-}
-
-async function adminRemoveSingleRanker(targetId, targetName) {
-  if (!state.isTestAccount || !targetId) return;
-  if (!confirm(`👑【管理者専用】「${targetName || targetId}」をランキングから削除しますか？`)) return;
-  playSE('click');
-  await removePlayerFromCloudRanking(targetId);
-  cloudRankCache = cloudRankCache.filter(r => r && r.id !== targetId);
-  renderRankingList();
-  showToast(`🗑️ 「${targetName || targetId}」をランキングから除外しました`);
-}
-
-async function removePlayerFromCloudRanking(targetPlayerId) {
-  if (!db || !targetPlayerId) return;
+async function removeOwnPlayerFromCloudRanking(ownPlayerId) {
+  if (!db || !isSafeId(ownPlayerId)) return;
   try {
     const deletePromises = [];
-    // 1. players/MATCH_CASINO_RANKINGS ハブからそのプレイヤーのエントリを完全削除（FieldValue.delete + deletedフラグの二重保証）
+    // 1. players/MATCH_CASINO_RANKINGS ハブから自分のエントリを削除
     const fvDelete = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
       ? firebase.firestore.FieldValue.delete()
       : { isDeleted: true };
 
     deletePromises.push(
       db.collection('players').doc('MATCH_CASINO_RANKINGS').update({
-        [`entries.${targetPlayerId}`]: fvDelete,
+        [`entries.${ownPlayerId}`]: fvDelete,
         updatedAt: Date.now()
       }).catch(() =>
         db.collection('players').doc('MATCH_CASINO_RANKINGS').set({
           isSystemDoc: true,
           entries: {
-            [targetPlayerId]: { id: targetPlayerId, isDeleted: true }
+            [ownPlayerId]: { id: ownPlayerId, isDeleted: true }
           },
           updatedAt: Date.now()
         }, { merge: true })
       )
     );
 
-    // 2. casino_rankings コレクションからもドキュメント削除
+    // 2. casino_rankings コレクションからも自分のドキュメントを削除（ルールで削除制限時は isDeleted フラグでフォールバック）
     deletePromises.push(
-      db.collection('casino_rankings').doc(targetPlayerId).delete().catch(() =>
-        db.collection('casino_rankings').doc(targetPlayerId).set({ id: targetPlayerId, isDeleted: true }, { merge: true })
+      db.collection('casino_rankings').doc(ownPlayerId).delete().catch(() =>
+        db.collection('casino_rankings').doc(ownPlayerId).set({ id: ownPlayerId, isDeleted: true }, { merge: true })
       )
     );
 
@@ -4217,6 +4110,7 @@ function getCasinoRankTitle(chips) {
 }
 
 let syncRankTimer = null;
+let lastSyncedRankSignature = '';
 function ensureFirestoreDb() {
   if (db) return db;
   try {
@@ -4231,7 +4125,7 @@ function ensureFirestoreDb() {
 }
 
 function buildMyRankEntry() {
-  if (!state.playerId || !state.playerName || state.isTestAccount) return null;
+  if (!isSafeId(state.playerId) || !state.playerName) return null;
   const check = validatePlayerName(state.playerName);
   if (!check.ok) return null;
   return {
@@ -4246,10 +4140,17 @@ function buildMyRankEntry() {
   };
 }
 
-async function flushMyScoreToCloudNow() {
+function getRankEntrySignature(entry) {
+  if (!entry) return '';
+  return `${entry.id}|${entry.name}|${entry.chips}|${entry.maxChips}|${entry.wins}`;
+}
+
+async function flushMyScoreToCloudNow(force = false) {
   const fdb = ensureFirestoreDb();
   const myEntry = buildMyRankEntry();
   if (!fdb || !myEntry) return false;
+  const sig = getRankEntrySignature(myEntry);
+  if (!force && sig === lastSyncedRankSignature) return false;
 
   try {
     const p1 = fdb.collection('players').doc('MATCH_CASINO_RANKINGS').set({
@@ -4266,27 +4167,30 @@ async function flushMyScoreToCloudNow() {
       Promise.allSettled([p1, p2]),
       new Promise(res => setTimeout(res, 4000))
     ]);
+    lastSyncedRankSignature = sig;
     return true;
   } catch (e) {
     return false;
   }
 }
 
-function syncMyScoreToCloud(immediate = false) {
-  if (state.isTestAccount) return Promise.resolve(false);
-  if (!buildMyRankEntry()) return Promise.resolve(false);
+function syncMyScoreToCloud(immediate = false, force = false) {
+  const myEntry = buildMyRankEntry();
+  if (!myEntry) return Promise.resolve(false);
+  const sig = getRankEntrySignature(myEntry);
+  if (!force && sig === lastSyncedRankSignature) return Promise.resolve(false);
 
   if (syncRankTimer) {
     clearTimeout(syncRankTimer);
     syncRankTimer = null;
   }
   if (immediate) {
-    return flushMyScoreToCloudNow();
+    return flushMyScoreToCloudNow(force);
   }
   syncRankTimer = setTimeout(() => {
     syncRankTimer = null;
-    flushMyScoreToCloudNow();
-  }, 500);
+    flushMyScoreToCloudNow(false);
+  }, 2500);
   return Promise.resolve(true);
 }
 
@@ -4295,7 +4199,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden' && syncRankTimer) {
     clearTimeout(syncRankTimer);
     syncRankTimer = null;
-    flushMyScoreToCloudNow();
+    flushMyScoreToCloudNow(false);
   }
 });
 
@@ -4460,16 +4364,13 @@ function getTodayStr() {
 }
 
 function saveState() {
+  state.isTestAccount = false;
+  state.infiniteChips = false;
   if (!Array.isArray(state.localChips) || state.localChips.length < 4) {
     state.localChips = [state.chips || 100, state.p2Chips || 100, 100, 100];
   }
-  if (state.isTestAccount && state.infiniteChips) {
-    state.chips = 999999;
-    state.p2Chips = 999999;
-    state.localChips = [999999, 999999, 999999, 999999];
-  }
-  if (state.chips < 0) state.chips = 0;
-  if (state.p2Chips < 0) state.p2Chips = 0;
+  state.chips = Math.max(0, Number(state.chips) || 0);
+  state.p2Chips = Math.max(0, Number(state.p2Chips) || 0);
   state.localChips[0] = state.chips;
   state.localChips = state.localChips.map(c => Math.max(0, Number(c) || 0));
   state.p2Chips = state.localChips[1];
@@ -4491,19 +4392,50 @@ function generateCasinoFriendCode() {
 }
 
 function loadState() {
+  let needsNormalizedSave = false;
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      state = { ...state, ...parsed };
+      if (parsed && typeof parsed === 'object') {
+        state = { ...state, ...parsed };
+      }
     }
   } catch (e) {}
 
-  if (!state.playerId) {
-    state.playerId = 'cl_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+  // 万一過去のローカルセーブにテスト用フラグが残っていた場合は本番バックアップから復元し安全正規化
+  if (state.isTestAccount || state.infiniteChips) {
+    needsNormalizedSave = true;
+    try {
+      const rawBackup = localStorage.getItem(PROD_BACKUP_KEY);
+      if (rawBackup) {
+        const restored = JSON.parse(rawBackup);
+        if (restored && typeof restored === 'object') {
+          state = { ...state, ...restored };
+        }
+        localStorage.removeItem(PROD_BACKUP_KEY);
+      } else {
+        if (Number(state.chips) >= 999999) state.chips = 100;
+        if (Number(state.p2Chips) >= 999999) state.p2Chips = 100;
+        if (Number(state.maxChips) >= 999999) state.maxChips = Number(state.chips) || 100;
+        if (Array.isArray(state.localChips)) {
+          state.localChips = state.localChips.map(c => (Number(c) >= 999999 ? 100 : Math.max(0, Number(c) || 0)));
+        }
+      }
+    } catch (e) {
+      if (Number(state.chips) >= 999999) state.chips = 100;
+    }
+    state.isTestAccount = false;
+    state.infiniteChips = false;
   }
-  if (!state.friendCode) {
+
+  if (!isSafeId(state.playerId)) {
+    state.playerId = 'cl_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+    needsNormalizedSave = true;
+  }
+  if (!isSafeFriendCode(state.friendCode)) {
     state.friendCode = generateCasinoFriendCode();
+    needsNormalizedSave = true;
   }
   if (!Array.isArray(state.localChips) || state.localChips.length < 4) {
     state.localChips = [state.chips || 100, state.p2Chips || 100, 100, 100];
@@ -4516,6 +4448,13 @@ function loadState() {
   // 保存されている名前が万一NGワードに該当していたらリセット
   if (state.playerName && !validatePlayerName(state.playerName).ok) {
     state.playerName = '';
+    needsNormalizedSave = true;
+  }
+
+  if (needsNormalizedSave) {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    } catch (e) {}
   }
 
   // URLパラメータまたは出稼ぎセッションからのチップ帰還チェック
@@ -4533,7 +4472,7 @@ function loadState() {
     showRewardModal(
       '🎁',
       'デイリーログインボーナス！',
-      `今日も遊んでくれてありがとう、<strong>${sanitizeDisplayPlayerName(state.playerName)}</strong> さん！<br>毎日のログインボーナス<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 +50 チップ</span><br>を獲得しました！`,
+      `今日も遊んでくれてありがとう、<strong>${escapeHtml(sanitizeDisplayPlayerName(state.playerName))}</strong> さん！<br>毎日のログインボーナス<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 +50 チップ</span><br>を獲得しました！`,
       '🪙 50チップを受け取る！'
     );
   } else {
@@ -4577,19 +4516,6 @@ function confirmPlayerNameSubmit() {
   const inp = document.getElementById('playerNameInputBox');
   const errEl = document.getElementById('nameErrorMsg');
   const rawVal = (inp.value || '').trim();
-  const savedPass = localStorage.getItem('biologica_admin_pass') || CASINO_ADMIN_PASS_DEFAULT;
-
-  // 👑 名前入力欄に合言葉（DEBUG_MAX または bio2026）を入力した場合は管理者モード起動！
-  if (rawVal.toUpperCase() === 'DEBUG_MAX' || rawVal === savedPass) {
-    errEl.textContent = '';
-    if (!state.playerName) state.playerName = 'プレイヤー';
-    state.firstGiftClaimed = true;
-    state.lastLoginDate = getTodayStr();
-    document.getElementById('nameEntryModal').classList.remove('active');
-    enterAdminTestMode();
-    return;
-  }
-
   const check = validatePlayerName(rawVal);
 
   if (!check.ok) {
@@ -4608,17 +4534,17 @@ function confirmPlayerNameSubmit() {
     state.firstGiftClaimed = true;
     state.lastLoginDate = today;
     saveState();
-    syncMyScoreToCloud(true);
+    syncMyScoreToCloud(true, true);
     document.getElementById('nameEntryModal').classList.remove('active');
     showRewardModal(
       '🎉',
       `ようこそ、${state.playerName} さん！`,
-      `プレイヤー名を <strong>「${state.playerName}」</strong> に登録しました！<br>初回スタートボーナスとして<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 100 チップ</span><br>をプレゼントします！`,
+      `プレイヤー名を <strong>「${escapeHtml(state.playerName)}」</strong> に登録しました！<br>初回スタートボーナスとして<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 100 チップ</span><br>をプレゼントします！`,
       '✨ 100チップを受け取ってはじめる！'
     );
   } else {
     saveState();
-    syncMyScoreToCloud(true);
+    syncMyScoreToCloud(true, true);
     document.getElementById('nameEntryModal').classList.remove('active');
     playSE('win');
     showToast(`✨ プレイヤー名を「${state.playerName}」に設定しました！`);
@@ -4644,7 +4570,10 @@ function getBioLogicaTotalCorrect() {
 function checkStudyReturnReward() {
   try {
     const params = new URLSearchParams(window.location.search);
-    const earnedParam = parseInt(params.get('earned') || '0', 10);
+    const rawEarnedParam = parseInt(params.get('earned') || '0', 10);
+    const earnedParam = (Number.isFinite(rawEarnedParam) && rawEarnedParam > 0)
+      ? Math.min(Math.floor(rawEarnedParam), 5000)
+      : 0;
 
     const rawSession = localStorage.getItem(WORK_SESSION_KEY);
     let earnedFromSession = 0;
@@ -4653,13 +4582,13 @@ function checkStudyReturnReward() {
       const sess = JSON.parse(rawSession);
       if (sess && sess.active) {
         if (Number(sess.earnedChips) > 0) {
-          earnedFromSession = Number(sess.earnedChips);
+          earnedFromSession = Math.min(5000, Math.floor(Number(sess.earnedChips)));
         } else {
           // バイオ・ロジカ側の正解数差分からも自動計算
           const nowCorrect = getBioLogicaTotalCorrect();
           if (nowCorrect !== null && typeof sess.startCorrect === 'number') {
             const diff = Math.max(0, nowCorrect - sess.startCorrect);
-            earnedFromSession = Math.floor(diff / 3) * 10;
+            earnedFromSession = Math.min(5000, Math.floor(diff / 3) * 10);
           }
         }
         localStorage.removeItem(WORK_SESSION_KEY);
@@ -4677,12 +4606,12 @@ function checkStudyReturnReward() {
       setTimeout(() => {
         const hasDebtLock = state.debtStudyLock && state.activeDebtTotal > 0;
         const debtHint = hasDebtLock
-          ? `<br><span style="color:#fda4af; font-size:0.86rem;">🚨 現在 <strong>${state.activeDebtTotal} チップ</strong> の借金返済ノルマがあります！<br>「🤝 フレンド ➔ 📜 チップ貸し借り」から返済してロックを解除しよう！</span>`
+          ? `<br><span style="color:#fda4af; font-size:0.86rem;">🚨 現在 <strong>${Number(state.activeDebtTotal).toLocaleString()} チップ</strong> の借金返済ノルマがあります！<br>「🤝 フレンド ➔ 📜 チップ貸し借り」から返済してロックを解除しよう！</span>`
           : '';
         showRewardModal(
           '📝',
           '勉強バイト報酬獲得！',
-          `『バイオ・ロジカ』での学習お疲れ様でした！<br>正解報酬として<br><span style="font-size:1.7rem; color:#4ade80; font-weight:900;">🪙 +${totalEarned} チップ</span><br>を獲得しました！${debtHint}`,
+          `『バイオ・ロジカ』での学習お疲れ様でした！<br>正解報酬として<br><span style="font-size:1.7rem; color:#4ade80; font-weight:900;">🪙 +${totalEarned.toLocaleString()} チップ</span><br>を獲得しました！${debtHint}`,
           hasDebtLock ? '📜 借金返済へ行く！' : '🎰 カジノへ戻る！'
         );
       }, 200);
@@ -4722,18 +4651,11 @@ function handleStudyEarnClick() {
 function updateHeaderUI() {
   const safeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
   const hName = document.getElementById('headerPlayerName');
-  if (hName) hName.textContent = state.isTestAccount ? `👑${safeName}(管理者)` : safeName;
+  if (hName) hName.textContent = safeName;
 
-  document.getElementById('p1ChipText').textContent = (state.isTestAccount && state.infiniteChips) ? '♾️ 999,999' : state.chips.toLocaleString();
+  document.getElementById('p1ChipText').textContent = state.chips.toLocaleString();
   document.getElementById('p2ChipText').textContent = state.p2Chips.toLocaleString();
   document.getElementById('p2ChipBadge').style.display = (state.playMode === 'local' || (state.playMode === 'online' && onlineRoomState.active)) ? 'inline-flex' : 'none';
-
-  const exitAdminBtn = document.getElementById('exitAdminModeBtn');
-  if (exitAdminBtn) exitAdminBtn.style.display = state.isTestAccount ? 'inline-flex' : 'none';
-  const adminPanel = document.getElementById('adminControlPanelCard');
-  if (adminPanel) adminPanel.style.display = state.isTestAccount ? 'block' : 'none';
-  const adminInfBtn = document.getElementById('adminInfToggleBtn');
-  if (adminInfBtn) adminInfBtn.textContent = state.infiniteChips ? '♾️ チップ無限固定: ON' : '🔓 チップ無限固定: OFF';
 
   // 各ゲーム内のプレイヤー名ラベルにも自分の名前を反映（通信ルーム時はホスト＝親/1P、ゲスト＝子/2Pとして表示）
   const ccPl = document.getElementById('ccPlayerLabel');
@@ -4796,7 +4718,7 @@ function updateHeaderUI() {
   if (bioBox) {
     const bioCorrect = getBioLogicaTotalCorrect();
     if (bioCorrect !== null) {
-      bioBox.innerHTML = `🟢 『バイオ・ロジカ』セーブデータ連動確認済（累計正解数: ${bioCorrect} 問）`;
+      bioBox.innerHTML = `🟢 『バイオ・ロジカ』セーブデータ連動確認済（累計正解数: ${Number(bioCorrect) || 0} 問）`;
     } else {
       bioBox.innerHTML = `🟢 『バイオ・ロジカ』連動準備OK（0チップ時にボタンから直接ジャンプできます）`;
     }
@@ -4851,18 +4773,19 @@ async function refreshRankingData(showNotice = false) {
       fetchedAny = true;
       if (hubSnap && hubSnap.exists && hubSnap.data() && hubSnap.data().entries) {
         Object.entries(hubSnap.data().entries).forEach(([keyId, d]) => {
-          const entryId = (d && d.id) || keyId;
+          const entryId = String((d && d.id) || keyId || '');
+          if (!isSafeId(entryId)) return;
           if (!d || d.isDeleted) {
-            if (entryId) deletedIds.add(entryId);
+            deletedIds.add(entryId);
             return;
           }
           if (!d.isTestAccount && d.name && validatePlayerName(d.name).ok) {
             mergedMap.set(entryId, {
               id: entryId,
               name: sanitizeDisplayPlayerName(d.name),
-              chips: Number(d.chips) || 0,
-              maxChips: Number(d.maxChips) || Number(d.chips) || 0,
-              wins: Number(d.wins) || 0,
+              chips: Math.max(0, Number(d.chips) || 0),
+              maxChips: Math.max(0, Number(d.maxChips) || Number(d.chips) || 0),
+              wins: Math.max(0, Number(d.wins) || 0),
               isNpc: false
             });
           }
@@ -4879,7 +4802,8 @@ async function refreshRankingData(showNotice = false) {
       fetchedAny = true;
       snap.forEach(doc => {
         const d = doc.data();
-        const entryId = (d && d.id) || doc.id;
+        const entryId = String((d && d.id) || doc.id || '');
+        if (!isSafeId(entryId)) return;
         if (!d || d.isDeleted || deletedIds.has(entryId)) {
           mergedMap.delete(entryId);
           return;
@@ -4888,9 +4812,9 @@ async function refreshRankingData(showNotice = false) {
           mergedMap.set(entryId, {
             id: entryId,
             name: sanitizeDisplayPlayerName(d.name),
-            chips: Number(d.chips) || 0,
-            maxChips: Number(d.maxChips) || Number(d.chips) || 0,
-            wins: Number(d.wins) || 0,
+            chips: Math.max(0, Number(d.chips) || 0),
+            maxChips: Math.max(0, Number(d.maxChips) || Number(d.chips) || 0),
+            wins: Math.max(0, Number(d.wins) || 0),
             isNpc: false
           });
         }
@@ -4914,24 +4838,20 @@ function getMergedRankingEntries() {
 
   // クラウド実プレイヤーのみ（AI/NPCは一切入れず、不適切ネームも自動除外）
   cloudRankCache.forEach(r => {
-    if (!r || !r.id || String(r.id).startsWith('npc_')) return;
-    // 管理者専用モード中は、自分のテストデータで上書きしない
-    if (state.isTestAccount && r.id === state.playerId) return;
+    if (!r || !isSafeId(r.id) || String(r.id).startsWith('npc_')) return;
     map.set(r.id, { ...r });
   });
 
-  // 自分自身の最新データ（※管理者専用モード中はランキングに一切載せない！）
-  if (!state.isTestAccount) {
-    const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
-    map.set(state.playerId || 'me', {
-      id: state.playerId || 'me',
-      name: mySafeName,
-      chips: state.chips,
-      maxChips: state.maxChips,
-      wins: state.totalWins,
-      isMe: true
-    });
-  }
+  // 自分自身の最新データ
+  const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
+  map.set(state.playerId || 'me', {
+    id: state.playerId || 'me',
+    name: mySafeName,
+    chips: state.chips,
+    maxChips: state.maxChips,
+    wins: state.totalWins,
+    isMe: true
+  });
 
   const arr = Array.from(map.values());
   arr.sort((a, b) => {
@@ -4946,17 +4866,14 @@ function renderRankingList() {
   const list = getMergedRankingEntries();
   const myId = state.playerId || 'me';
   const myIdx = list.findIndex(item => item.id === myId || item.isMe);
-  const myRank = state.isTestAccount ? '対象外(管理者)' : (myIdx >= 0 ? `第 ${myIdx + 1} 位` : '第 - 位');
-
-  const adminBanner = document.getElementById('adminRankingNoticeBanner');
-  if (adminBanner) adminBanner.style.display = state.isTestAccount ? 'block' : 'none';
+  const myRank = myIdx >= 0 ? `第 ${myIdx + 1} 位` : '第 - 位';
 
   const safeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
-  document.getElementById('myRankNameText').textContent = state.isTestAccount ? `${safeName} (🔧管理者)` : safeName;
+  document.getElementById('myRankNameText').textContent = safeName;
   document.getElementById('myRankPosBadge').textContent = myRank;
   document.getElementById('myRankChipsText').textContent = state.chips.toLocaleString();
   document.getElementById('myRankMaxText').textContent = state.maxChips.toLocaleString();
-  document.getElementById('myRankTitleBadge').textContent = state.isTestAccount ? '👑 管理者テストモード (ランキング非反映)' : getCasinoRankTitle(state.chips);
+  document.getElementById('myRankTitleBadge').textContent = getCasinoRankTitle(state.chips);
 
   const container = document.getElementById('rankingListContainer');
   container.innerHTML = '';
@@ -4964,37 +4881,51 @@ function renderRankingList() {
   list.forEach((entry, idx) => {
     const rankNum = idx + 1;
     const isMe = entry.id === myId || entry.isMe;
-    const dispChips = rankTabMode === 'max' ? (entry.maxChips || 0) : (entry.chips || 0);
+    const dispChips = Math.max(0, Number(rankTabMode === 'max' ? entry.maxChips : entry.chips) || 0);
+    const winsNum = Math.max(0, Number(entry.wins) || 0);
     const rankIcon = rankNum === 1 ? '🥇' : (rankNum === 2 ? '🥈' : (rankNum === 3 ? '🥉' : `${rankNum}`));
     const rankClass = rankNum <= 3 ? `rank-${rankNum}` : '';
+    const safeEntryName = escapeHtml(sanitizeDisplayPlayerName(entry.name));
 
     const row = document.createElement('div');
     row.className = `ranking-row-card ${rankClass} ${isMe ? 'is-me' : ''}`;
-
-    const challengeBtnHtml = isMe
-      ? `<span style="font-size:0.76rem; font-weight:900; color:#fef08a; background:rgba(250,204,21,0.2); border:1.5px solid #facc15; padding:4px 10px; border-radius:999px;">🌟 あなた</span>`
-      : `<button class="chip-bet-btn c-max" style="padding:6px 10px; font-size:0.74rem;" onclick="challengeRanker('${entry.id}')">⚔️ 賭けて勝負</button>${state.isTestAccount ? `<button class="chip-bet-btn c-clear" style="padding:6px 8px; font-size:0.72rem;" onclick="adminRemoveSingleRanker('${entry.id}', '${entry.name.replace(/'/g, "\\'")}')">🗑️ 除外</button>` : ''}`;
 
     row.innerHTML = `
       <div style="display:flex; align-items:center; gap:10px;">
         <div class="rank-badge-circle">${rankIcon}</div>
         <div>
           <div style="font-weight:900; font-size:0.96rem; color:${isMe ? '#fef08a' : '#ffffff'};">
-            ${entry.name}
+            ${safeEntryName}
           </div>
           <div style="font-size:0.74rem; color:#94a3b8; font-weight:800;">
-            ${getCasinoRankTitle(dispChips)} ｜ 通算 ${entry.wins || 0}勝
+            ${getCasinoRankTitle(dispChips)} ｜ 通算 ${winsNum}勝
           </div>
         </div>
       </div>
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+      <div class="ranking-row-right" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
         <div style="text-align:right;">
           <div style="font-weight:900; font-size:1.05rem; color:#fef08a;">🪙 ${dispChips.toLocaleString()}</div>
           <div style="font-size:0.68rem; color:#94a3b8;">${rankTabMode === 'max' ? '最高記録' : '所持チップ'}</div>
         </div>
-        ${challengeBtnHtml}
       </div>
     `;
+
+    const rightWrap = row.querySelector('.ranking-row-right');
+    if (rightWrap) {
+      if (isMe) {
+        const meBadge = document.createElement('span');
+        meBadge.style.cssText = 'font-size:0.76rem; font-weight:900; color:#fef08a; background:rgba(250,204,21,0.2); border:1.5px solid #facc15; padding:4px 10px; border-radius:999px;';
+        meBadge.textContent = '🌟 あなた';
+        rightWrap.appendChild(meBadge);
+      } else {
+        const chalBtn = document.createElement('button');
+        chalBtn.className = 'chip-bet-btn c-max';
+        chalBtn.style.cssText = 'padding:6px 10px; font-size:0.74rem;';
+        chalBtn.textContent = '⚔️ 賭けて勝負';
+        chalBtn.onclick = () => challengeRanker(entry.id);
+        rightWrap.appendChild(chalBtn);
+      }
+    }
     container.appendChild(row);
   });
 }
@@ -5007,6 +4938,8 @@ function challengeRanker(targetId) {
   const list = getMergedRankingEntries();
   const target = list.find(e => e.id === targetId);
   if (!target) return;
+  const safeTargetName = sanitizeDisplayPlayerName(target.name);
+  const safeTargetHtml = escapeHtml(safeTargetName);
 
   const bet = Math.min(state.chips, Math.max(1, rankChallengeBet));
   const myRoll = (1 + Math.floor(Math.random() * 6)) + (1 + Math.floor(Math.random() * 6));
@@ -5021,7 +4954,7 @@ function challengeRanker(targetId) {
     showRewardModal(
       '⚔️',
       `ランカー勝負に勝利！`,
-      `<strong>${target.name}</strong> とのダイス賭け対決！<br>あなた: <strong>🎲 ${myRoll}</strong> vs 相手: <strong>🎲 ${rivalRoll}</strong><br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${bet} チップ</span> 奪取して順位アップ！`,
+      `<strong>${safeTargetHtml}</strong> とのダイス賭け対決！<br>あなた: <strong>🎲 ${myRoll}</strong> vs 相手: <strong>🎲 ${rivalRoll}</strong><br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${bet} チップ</span> 奪取して順位アップ！`,
       '🏆 よっしゃ！'
     );
   } else if (myRoll < rivalRoll) {
@@ -5035,13 +4968,13 @@ function challengeRanker(targetId) {
       showRewardModal(
         '💀',
         `ランカー勝負に敗北…`,
-        `<strong>${target.name}</strong> とのダイス賭け対決…<br>あなた: <strong>🎲 ${myRoll}</strong> vs 相手: <strong>🎲 ${rivalRoll}</strong><br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 -${bet} チップ</span> 奪われました…`,
+        `<strong>${safeTargetHtml}</strong> とのダイス賭け対決…<br>あなた: <strong>🎲 ${myRoll}</strong> vs 相手: <strong>🎲 ${rivalRoll}</strong><br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 -${bet} チップ</span> 奪われました…`,
         '🔥 リベンジする'
       );
     }
   } else {
     playSE('click');
-    showToast(`🤝 ${target.name}と引き分け（🎲${myRoll} vs 🎲${rivalRoll}）！チップ変動なし`);
+    showToast(`🤝 ${safeTargetName}と引き分け（🎲${myRoll} vs 🎲${rivalRoll}）！チップ変動なし`);
   }
 }
 
@@ -5108,6 +5041,9 @@ function navigateTo(screenId) {
     return;
   }
   playSE('click');
+  if (screenId !== 'screen-friend-loan' && typeof stopLoanLedgerListener === 'function') {
+    stopLoanLedgerListener();
+  }
   if (screenId !== 'screen-game-slot' && typeof slotState !== 'undefined') {
     if (typeof clearSlotStopAllTimers === 'function') clearSlotStopAllTimers();
     if (typeof closeSlotBigWinOverlay === 'function') closeSlotBigWinOverlay(true);
@@ -5163,8 +5099,6 @@ function showToast(msg) {
 }
 
 /* --- ⚔️ 対戦モード（AI / 1台2〜4人フレンド / 通信ルーム最大4人同時！） --- */
-let peer = null;
-let conn = null;
 let myRoomCode = '';
 
 let onlineRoomState = {
@@ -5201,8 +5135,9 @@ try {
 } catch (e) {}
 
 function getRoomDocRef(code) {
-  if (!db || !code) return null;
-  return db.collection('players').doc('MATCH_CASINO_ROOM_' + code);
+  const safeCode = String(code || '');
+  if (!db || !isSafeRoomCode(safeCode)) return null;
+  return db.collection('players').doc('MATCH_CASINO_ROOM_' + safeCode);
 }
 
 function syncModeSelectorUI() {
@@ -5243,7 +5178,7 @@ function renderLocalPlayersSummary() {
   for (let i = 0; i < cnt; i++) {
     const c = i === 0 ? state.chips : (chipsArr[i] ?? 100);
     const label = i === 0 ? `1P(${myName})` : `${i + 1}P`;
-    html += `<span style="background:rgba(15,23,42,0.9); border:1.5px solid ${PLAYER_COLORS[i]}; color:${PLAYER_COLORS[i]}; border-radius:999px; padding:2px 9px;">${label}: 🪙${c.toLocaleString()}</span>`;
+    html += `<span style="background:rgba(15,23,42,0.9); border:1.5px solid ${PLAYER_COLORS[i]}; color:${PLAYER_COLORS[i]}; border-radius:999px; padding:2px 9px;">${escapeHtml(label)}: 🪙${(Number(c) || 0).toLocaleString()}</span>`;
   }
   box.innerHTML = html;
 }
@@ -5380,8 +5315,9 @@ async function refreshOpenCasinoRooms() {
     const rooms = [];
     if (hubSnap && hubSnap.exists && hubSnap.data() && hubSnap.data().rooms) {
       Object.values(hubSnap.data().rooms).forEach(r => {
-        if (r && r.code && (r.status === 'waiting' || r.status === 'connected') && (Number(r.playerCount) || 1) < 4 && (now - (r.updatedAt || 0) < 1000 * 60 * 20)) {
-          rooms.push(r);
+        const roomCodeStr = String((r && r.code) || '');
+        if (r && isSafeRoomCode(roomCodeStr) && (r.status === 'waiting' || r.status === 'connected') && (Number(r.playerCount) || 1) < 4 && (now - (r.updatedAt || 0) < 1000 * 60 * 20)) {
+          rooms.push({ ...r, code: roomCodeStr });
         }
       });
     }
@@ -5395,7 +5331,7 @@ async function refreshOpenCasinoRooms() {
       const btn = document.createElement('button');
       btn.className = 'back-btn';
       btn.style.cssText = 'background:#0284c7; color:#fff; border-color:#38bdf8; font-size:0.76rem; padding:4px 10px;';
-      btn.textContent = `🏠 部屋【${r.code}】${sanitizeDisplayPlayerName(r.hostName)} (${r.playerCount || 1}/4人)`;
+      btn.textContent = `🏠 部屋【${r.code}】${sanitizeDisplayPlayerName(r.hostName)} (${Math.min(4, Math.max(1, Number(r.playerCount) || 1))}/4人)`;
       btn.onclick = () => {
         document.getElementById('joinRoomInput').value = r.code;
         joinOnlineRoom(r.code);
@@ -5408,13 +5344,14 @@ async function refreshOpenCasinoRooms() {
 }
 
 async function registerRoomToIndex(code, status, hostName, hostChips, playerCount = 1) {
-  if (!db || !code) return;
+  const safeCode = String(code || '');
+  if (!db || !isSafeRoomCode(safeCode)) return;
   try {
     await db.collection('players').doc('MATCH_CASINO_ROOMS_INDEX').set({
       isSystemDoc: true,
       rooms: {
-        [code]: {
-          code,
+        [safeCode]: {
+          code: safeCode,
           status,
           hostName: sanitizeDisplayPlayerName(hostName || 'ホスト'),
           hostChips: Number(hostChips) || 100,
@@ -5445,7 +5382,7 @@ function renderOnlineLobbySeats() {
       const isMe = s.id === onlineRoomState.mySeatId;
       card.innerHTML = `
         <div class="seat-name-row" style="color:${col};">${i === 0 ? '🏠 1P(ホスト)' : `🚪 ${i + 1}P`} ${isMe ? '★あなた' : ''}</div>
-        <div style="font-weight:900; font-size:0.9rem; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${sanitizeDisplayPlayerName(s.name)}</div>
+        <div style="font-weight:900; font-size:0.9rem; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(sanitizeDisplayPlayerName(s.name))}</div>
         <div class="seat-sub-row" style="color:#4ade80;">🪙 ${(Number(s.chips) || 0).toLocaleString()}</div>
       `;
     } else {
@@ -5462,7 +5399,7 @@ function renderOnlineLobbySeats() {
 function renderOnlineInviteFriendsBar() {
   const box = document.getElementById('onlineInviteFriendList');
   if (!box) return;
-  const friends = Object.values(friendCache.friends || {});
+  const friends = Object.values(friendCache.friends || {}).filter(f => f && isSafeFriendCode(String(f.code || '')));
   if (friends.length === 0) {
     box.innerHTML = '<span style="color:#94a3b8;">フレンドを追加するとここからワンタップ招待できます！</span>';
     return;
@@ -5770,11 +5707,17 @@ function handleOnlineRoomDocUpdate(data) {
   const prevCount = (onlineRoomState.seats || []).length;
   onlineRoomState.status = data.status || 'waiting';
   onlineRoomState.hostName = sanitizeDisplayPlayerName(data.hostName || 'ホスト');
-  onlineRoomState.hostChips = Number(data.hostChips) || 100;
+  onlineRoomState.hostChips = Math.max(0, Number(data.hostChips) || 100);
   if (Array.isArray(data.seats) && data.seats.length > 0) {
-    onlineRoomState.seats = data.seats;
+    onlineRoomState.seats = data.seats.slice(0, 4).filter(s => s && typeof s === 'object').map((s, idx) => ({
+      id: isSafeId(String(s.id || '')) ? String(s.id) : ('seat_' + idx),
+      name: sanitizeDisplayPlayerName(s.name || `${idx + 1}P`),
+      chips: Math.max(0, Number(s.chips) || 0),
+      role: s.role === 'host' ? 'host' : 'guest',
+      joinedAt: Number(s.joinedAt) || 0
+    }));
   } else {
-    onlineRoomState.seats = [{ id: data.hostId || 'host', name: onlineRoomState.hostName, chips: onlineRoomState.hostChips, role: 'host' }];
+    onlineRoomState.seats = [{ id: isSafeId(String(data.hostId || '')) ? String(data.hostId) : 'host', name: onlineRoomState.hostName, chips: onlineRoomState.hostChips, role: 'host' }];
   }
   const secondSeat = onlineRoomState.seats[1];
   onlineRoomState.guestName = secondSeat ? sanitizeDisplayPlayerName(secondSeat.name) : '';
@@ -5800,7 +5743,7 @@ function handleOnlineRoomDocUpdate(data) {
   const statusMsgEl = document.getElementById('onlineStatusMsg');
   if (statusMsgEl) {
     if (onlineRoomState.seats.length >= 2) {
-      const namesStr = onlineRoomState.seats.map((s, i) => `${i + 1}P:${sanitizeDisplayPlayerName(s.name)}`).join(' / ');
+      const namesStr = onlineRoomState.seats.map((s, i) => `${i + 1}P:${escapeHtml(sanitizeDisplayPlayerName(s.name))}`).join(' / ');
       statusMsgEl.innerHTML = `🟢 <strong>${onlineRoomState.seats.length}人接続中</strong> (${namesStr})<br>下のゲームを選ぶと全員で一斉スタートします！`;
     } else {
       statusMsgEl.textContent = `🟢 部屋【${onlineRoomState.code}】待機中！友達の入室を待っています (1/4人)...`;
@@ -5809,9 +5752,11 @@ function handleOnlineRoomDocUpdate(data) {
 
   // トースト通知同期
   if (data.toastEvent && data.toastEvent.id !== onlineRoomState.lastToastId) {
-    onlineRoomState.lastToastId = data.toastEvent.id;
+    onlineRoomState.lastToastId = String(data.toastEvent.id || '');
     if (data.toastEvent.senderSeatId !== onlineRoomState.mySeatId) {
-      showToast(`🌐 ${data.toastEvent.senderName}: ${data.toastEvent.msg}`);
+      const sName = sanitizeDisplayPlayerName(data.toastEvent.senderName || 'プレイヤー');
+      const sMsg = String(data.toastEvent.msg || '').slice(0, 120);
+      showToast(`🌐 ${sName}: ${sMsg}`);
     }
   }
 
@@ -6002,11 +5947,11 @@ function renderChinchiroSeats() {
     grid.innerHTML = `
       <div class="multi-seat-card ${ccState.phase === 'rolling' && !ccState.dealerRoll ? 'active-turn' : ''}" style="border-color:#f87171;">
         <div class="seat-name-row" style="color:#fca5a5;">👹 親 (AIディーラー)</div>
-        <div class="seat-result-row" style="color:#fff;">${dRes.text}</div>
+        <div class="seat-result-row" style="color:#fff;">${escapeHtml(dRes.text)}</div>
       </div>
       <div class="multi-seat-card ${ccState.phase === 'player_turn' ? 'active-turn' : ''}" style="border-color:#38bdf8;">
         <div class="seat-name-row" style="color:#7dd3fc;">🧑 子 (あなた)</div>
-        <div class="seat-result-row">${pRes.text}</div>
+        <div class="seat-result-row">${escapeHtml(pRes.text)}</div>
       </div>
     `;
     return;
@@ -6021,9 +5966,9 @@ function renderChinchiroSeats() {
     card.className = 'multi-seat-card' + (isTurn ? ' active-turn' : '');
     card.style.borderColor = isTurn ? '#facc15' : p.color;
     card.innerHTML = `
-      <div class="seat-name-row" style="color:${p.color};">${roleTag} ${p.name}</div>
+      <div class="seat-name-row" style="color:${p.color};">${roleTag} ${escapeHtml(p.name)}</div>
       <div class="seat-sub-row">🪙 ${getPlayerChipsByIdx(idx).toLocaleString()}</div>
-      <div class="seat-result-row">${resObj.text}</div>
+      <div class="seat-result-row">${escapeHtml(resObj.text)}</div>
     `;
     grid.appendChild(card);
   });
@@ -6078,14 +6023,17 @@ function syncChinchiroFromOnline(cData) {
   if (Array.isArray(cData.lastDice) && cData.lastDice.length === 3) {
     ['ccDie0', 'ccDie1', 'ccDie2'].forEach((id, i) => {
       const el = document.getElementById(id);
-      if (el) el.setAttribute('data-val', String(cData.lastDice[i]));
+      const dieVal = Math.min(6, Math.max(1, parseInt(cData.lastDice[i], 10) || 1));
+      if (el) el.setAttribute('data-val', String(dieVal));
     });
   }
 
   ccState.phase = cData.phase || 'idle';
   ccState.turnIdx = Number(cData.turnIdx) || 0;
   ccState.rollsLeft = typeof cData.rollsLeft === 'number' ? cData.rollsLeft : 3;
-  ccState.seatResults = Array.isArray(cData.seatResults) ? cData.seatResults : [];
+  ccState.seatResults = Array.isArray(cData.seatResults)
+    ? cData.seatResults.slice(0, 4).map(r => (r && typeof r === 'object') ? { text: String(r.text || '待機中...').slice(0, 80), roll: r.roll || null } : { text: '待機中...', roll: null })
+    : [];
   ccState.dealerRoll = (ccState.seatResults[0] && ccState.seatResults[0].roll) || cData.dealerRoll || null;
 
   renderChinchiroSeats();
@@ -6551,14 +6499,29 @@ function syncYachtFromOnline(yData) {
   ytState.currentTurn = yData.currentTurn || ('p' + (ytState.turnIdx + 1));
   ytState.rollsLeft = typeof yData.rollsLeft === 'number' ? yData.rollsLeft : 3;
   ytState.hasRolledThisTurn = !!yData.hasRolledThisTurn;
-  if (Array.isArray(yData.dice) && yData.dice.length === 5) ytState.dice = [...yData.dice];
-  if (Array.isArray(yData.kept) && yData.kept.length === 5) ytState.kept = [...yData.kept];
-  if (yData.scores) {
+  if (Array.isArray(yData.dice) && yData.dice.length === 5) {
+    ytState.dice = yData.dice.map(d => Math.min(6, Math.max(1, parseInt(d, 10) || 1)));
+  }
+  if (Array.isArray(yData.kept) && yData.kept.length === 5) {
+    ytState.kept = yData.kept.map(Boolean);
+  }
+  if (yData.scores && typeof yData.scores === 'object') {
+    const cleanScoreMap = rawMap => {
+      const out = {};
+      if (rawMap && typeof rawMap === 'object') {
+        YACHT_CATEGORIES.forEach(c => {
+          if (rawMap[c.id] !== undefined && rawMap[c.id] !== null) {
+            out[c.id] = Math.max(0, Math.min(100, Math.floor(Number(rawMap[c.id]) || 0)));
+          }
+        });
+      }
+      return out;
+    };
     ytState.scores = {
-      p1: { ...(yData.scores.p1 || {}) },
-      p2: { ...(yData.scores.p2 || {}) },
-      p3: { ...(yData.scores.p3 || {}) },
-      p4: { ...(yData.scores.p4 || {}) }
+      p1: cleanScoreMap(yData.scores.p1),
+      p2: cleanScoreMap(yData.scores.p2),
+      p3: cleanScoreMap(yData.scores.p3),
+      p4: cleanScoreMap(yData.scores.p4)
     };
   }
   ytState.matchOver = !!yData.matchOver;
@@ -6835,7 +6798,7 @@ function settleYachtChipsAndModal() {
   const lines = ranked.map((x, rank) => {
     const medal = rank === 0 ? '🥇' : (rank === 1 ? '🥈' : (rank === 2 ? '🥉' : '4️⃣'));
     const dStr = x.delta >= 0 ? `<span style="color:#4ade80;">+${x.delta}🪙</span>` : `<span style="color:#f87171;">${x.delta}🪙</span>`;
-    return `${medal} <strong>${x.name}</strong>：${x.score}点 (${dStr})`;
+    return `${medal} <strong>${escapeHtml(x.name)}</strong>：${x.score}点 (${dStr})`;
   }).join('<br>');
 
   showRewardModal('⛵', `ヨット ${roster.length}人マッチ決着！`, lines, '👑 結果確認！');
@@ -6852,7 +6815,7 @@ function renderYachtUI() {
   if (headRow) {
     headRow.innerHTML = `<th style="text-align:left;">役</th>` + roster.map((r, idx) => {
       const isTurn = !ytState.matchOver && ytState.turnIdx === idx;
-      return `<th style="color:${r.color}; ${isTurn ? 'background:rgba(250,204,21,0.22); border-bottom:3px solid #facc15;' : ''}">${r.name}</th>`;
+      return `<th style="color:${r.color}; ${isTurn ? 'background:rgba(250,204,21,0.22); border-bottom:3px solid #facc15;' : ''}">${escapeHtml(r.name)}</th>`;
     }).join('');
   }
 
@@ -6875,16 +6838,17 @@ function renderYachtUI() {
   const tray = document.getElementById('ytDiceTray');
   tray.innerHTML = '';
   ytState.dice.forEach((val, idx) => {
+    const safeVal = Math.min(6, Math.max(1, parseInt(val, 10) || 1));
     const slot = document.createElement('div');
     slot.className = 'yacht-dice-slot';
     const isKept = ytState.kept[idx];
     slot.innerHTML = `
-      <div class="dice-cube ${isKept ? 'kept' : ''}" data-val="${val}" onclick="toggleYachtKeep(${idx})">
+      <div class="dice-cube ${isKept ? 'kept' : ''}" data-val="${safeVal}" onclick="toggleYachtKeep(${idx})">
         <span class="pip pip-1"></span><span class="pip pip-2"></span><span class="pip pip-3"></span>
         <span class="pip pip-4"></span><span class="pip pip-5"></span><span class="pip pip-6"></span>
         <span class="pip pip-7"></span><span class="pip pip-8"></span><span class="pip pip-9"></span>
       </div>
-      <span class="keep-badge ${isKept ? 'active' : ''}">${isKept ? `🔒 【${val}】KEEP` : `【${val}】タップ固定`}</span>
+      <span class="keep-badge ${isKept ? 'active' : ''}">${isKept ? `🔒 【${safeVal}】KEEP` : `【${safeVal}】タップ固定`}</span>
     `;
     tray.appendChild(slot);
   });
@@ -6899,7 +6863,7 @@ function renderYachtUI() {
     const cellsHtml = roster.map((r, rIdx) => {
       const val = (ytState.scores[r.slotKey] || {})[cat.id];
       const canSelect = !ytState.matchOver && ytState.turnIdx === rIdx && isMyYachtTurn() && !r.isAi && ytState.hasRolledThisTurn && val === undefined;
-      if (val !== undefined) return `<td class="yacht-cell-filled">${val}</td>`;
+      if (val !== undefined) return `<td class="yacht-cell-filled">${Number(val) || 0}</td>`;
       if (canSelect) return `<td class="yacht-cell-selectable" onclick="selectYachtCategory('${cat.id}')">+${previewScoreCache[cat.id]}</td>`;
       return `<td>-</td>`;
     }).join('');
@@ -6975,12 +6939,16 @@ function createCardElement(card, faceDown = false, isHeld = false, onClick = nul
     div.className = 'playing-card face-down';
     return div;
   }
-  div.className = `playing-card ${card.color} ${isHeld ? 'held' : ''}`;
+  const safeCard = sanitizeCardObj(card);
+  const safeColor = safeCard.color === 'red-suit' ? 'red-suit' : 'black-suit';
+  const safeLabel = escapeHtml(safeCard.label);
+  const safeSuit = escapeHtml(safeCard.suit);
+  div.className = `playing-card ${safeColor} ${isHeld ? 'held' : ''}`;
   div.innerHTML = `
     ${isHeld ? '<div class="hold-tag">HOLD</div>' : ''}
-    <div class="card-corner-top">${card.label}<br>${card.suit}</div>
-    <div class="card-center-suit">${card.suit}</div>
-    <div class="card-corner-bot">${card.suit} ${card.label}</div>
+    <div class="card-corner-top">${safeLabel}<br>${safeSuit}</div>
+    <div class="card-center-suit">${safeSuit}</div>
+    <div class="card-corner-bot">${safeSuit} ${safeLabel}</div>
   `;
   if (onClick) div.onclick = onClick;
   return div;
@@ -7096,9 +7064,16 @@ function syncBlackjackFromOnline(bData) {
     document.getElementById('bjBetText').textContent = bjState.bet;
   }
   bjState.roundId = bData.roundId || bjState.roundId;
-  bjState.deck = Array.isArray(bData.deck) ? bData.deck : bjState.deck;
-  bjState.dealerHand = Array.isArray(bData.dealerHand) ? bData.dealerHand : [];
-  bjState.seats = Array.isArray(bData.seats) ? bData.seats : [];
+  bjState.deck = Array.isArray(bData.deck) ? bData.deck.slice(0, 60).map(sanitizeCardObj) : bjState.deck;
+  bjState.dealerHand = Array.isArray(bData.dealerHand) ? bData.dealerHand.slice(0, 15).map(sanitizeCardObj) : [];
+  bjState.seats = Array.isArray(bData.seats)
+    ? bData.seats.slice(0, 4).map(s => (s && typeof s === 'object') ? {
+      hand: Array.isArray(s.hand) ? s.hand.slice(0, 15).map(sanitizeCardObj) : [],
+      bet: Math.max(0, Number(s.bet) || 0),
+      status: ['wait', 'playing', 'stand', 'bust', 'bj', 'done'].includes(s.status) ? s.status : 'wait',
+      delta: Number(s.delta) || 0
+    } : { hand: [], bet: bjState.bet, status: 'wait', delta: 0 })
+    : [];
   bjState.turnIdx = Number(bData.turnIdx) || 0;
   bjState.phase = bData.phase || 'idle';
   bjState.hideDealerHole = bData.hideDealerHole !== undefined ? !!bData.hideDealerHole : true;
@@ -7245,12 +7220,14 @@ function renderBlackjackHands() {
       card.style.borderColor = isTurn ? '#facc15' : p.color;
 
       let statusTag = '';
+      const seatDelta = Number(seat.delta) || 0;
+      const seatBet = Math.max(0, Number(seat.bet) || 0);
       if (seat.status === 'bj') statusTag = '👑 BJ!';
       else if (seat.status === 'bust') statusTag = '💥 バースト';
       else if (seat.status === 'stand') statusTag = '✋ スタンド';
       else if (isTurn) statusTag = '🎯 手番中';
       else if (seat.status === 'done') {
-        statusTag = seat.delta > 0 ? `🎉+${seat.delta}` : (seat.delta < 0 ? `💀${seat.delta}` : '🤝引分');
+        statusTag = seatDelta > 0 ? `🎉+${seatDelta}` : (seatDelta < 0 ? `💀${seatDelta}` : '🤝引分');
       }
 
       const cardsWrap = document.createElement('div');
@@ -7259,8 +7236,8 @@ function renderBlackjackHands() {
       seat.hand.forEach(c => cardsWrap.appendChild(createCardElement(c, false)));
 
       card.innerHTML = `
-        <div class="seat-name-row" style="color:${p.color};">${p.name} <span style="color:#cbd5e1;">(${tot}点)</span></div>
-        <div class="seat-sub-row">賭:${seat.bet}🪙 ${statusTag}</div>
+        <div class="seat-name-row" style="color:${p.color};">${escapeHtml(p.name)} <span style="color:#cbd5e1;">(${tot}点)</span></div>
+        <div class="seat-sub-row">賭:${seatBet}🪙 ${statusTag}</div>
       `;
       card.appendChild(cardsWrap);
       grid.appendChild(card);
@@ -7631,10 +7608,12 @@ function syncPokerFromOnline(pData) {
   const prevTurn = pkState.turnIdx;
   const prevRound = pkState.roundId;
   pkState.roundId = pData.roundId || pkState.roundId;
-  pkState.deck = Array.isArray(pData.deck) ? pData.deck : pkState.deck;
-  pkState.hands = Array.isArray(pData.hands) ? pData.hands : [];
-  pkState.bets = Array.isArray(pData.bets) ? pData.bets : [];
-  pkState.doneFlags = Array.isArray(pData.doneFlags) ? pData.doneFlags : [];
+  pkState.deck = Array.isArray(pData.deck) ? pData.deck.slice(0, 60).map(sanitizeCardObj) : pkState.deck;
+  pkState.hands = Array.isArray(pData.hands)
+    ? pData.hands.slice(0, 4).map(h => Array.isArray(h) ? h.slice(0, 5).map(sanitizeCardObj) : [])
+    : [];
+  pkState.bets = Array.isArray(pData.bets) ? pData.bets.slice(0, 4).map(b => Math.max(0, Number(b) || 0)) : [];
+  pkState.doneFlags = Array.isArray(pData.doneFlags) ? pData.doneFlags.slice(0, 4).map(Boolean) : [];
   pkState.turnIdx = Number(pData.turnIdx) || 0;
   pkState.phase = pData.phase || 'idle';
 
@@ -7789,8 +7768,8 @@ function renderPokerMultiSeats() {
     else if (isTurn) rankLabel = '🎯 交換中';
 
     card.innerHTML = `
-      <div class="seat-name-row" style="color:${p.color};">${p.name}</div>
-      <div class="seat-sub-row">賭:${betVal}🪙 ｜ ${rankLabel}</div>
+      <div class="seat-name-row" style="color:${p.color};">${escapeHtml(p.name)}</div>
+      <div class="seat-sub-row">賭:${Math.max(0, Number(betVal) || 0)}🪙 ｜ ${escapeHtml(rankLabel)}</div>
     `;
 
     if (isDone && hand.length === 5) {
@@ -8077,7 +8056,7 @@ function updateRouletteMultiBar() {
   if (state.playMode === 'local') {
     const curP = players[rlState.betTurnIdx] || players[0];
     const isLast = rlState.betTurnIdx >= players.length - 1;
-    txt.innerHTML = `<span style="color:${curP.color};">🎯 ${curP.name}</span> がベット中 (${rlState.betTurnIdx + 1}/${players.length}人) ｜ 所持: 🪙${getPlayerChipsByIdx(rlState.betTurnIdx).toLocaleString()}`;
+    txt.innerHTML = `<span style="color:${curP.color};">🎯 ${escapeHtml(curP.name)}</span> がベット中 (${rlState.betTurnIdx + 1}/${players.length}人) ｜ 所持: 🪙${getPlayerChipsByIdx(rlState.betTurnIdx).toLocaleString()}`;
     btn.style.display = isLast ? 'none' : 'inline-block';
     btn.textContent = '✅ 確定して次の人へ ➔';
   } else {
@@ -8141,8 +8120,19 @@ function confirmRoulettePlayerBet() {
 
 function syncRouletteFromOnline(rData) {
   if (!rData) return;
-  if (Array.isArray(rData.playerBets)) rlState.playerBets = rData.playerBets;
-  if (Array.isArray(rData.readyFlags)) rlState.readyFlags = rData.readyFlags;
+  if (Array.isArray(rData.playerBets)) {
+    rlState.playerBets = rData.playerBets.slice(0, 4).map(bObj => {
+      const clean = {};
+      if (bObj && typeof bObj === 'object') {
+        Object.entries(bObj).forEach(([k, v]) => {
+          const n = Math.min(10000000, Math.max(0, Math.floor(Number(v) || 0)));
+          if (n > 0 && isSafeId(k)) clean[k] = n;
+        });
+      }
+      return clean;
+    });
+  }
+  if (Array.isArray(rData.readyFlags)) rlState.readyFlags = rData.readyFlags.slice(0, 4).map(Boolean);
 
   if (rData.phase === 'betting') {
     if (!rlState.spinning && document.getElementById('rlWheelStage').style.display === 'block') {
@@ -8152,7 +8142,7 @@ function syncRouletteFromOnline(rData) {
     updateRouletteMultiBar();
   } else if (rData.phase === 'spinning' && rData.roundId && onlineRoomState.processedRoundId !== rData.roundId) {
     onlineRoomState.processedRoundId = rData.roundId;
-    const winIdx = Number(rData.winIdx) || 0;
+    const winIdx = Math.min(ROULETTE_WHEEL_ORDER.length - 1, Math.max(0, Math.floor(Number(rData.winIdx) || 0)));
     const myIdx = getMyOnlineSeatIdx();
     rlState.playerBets[myIdx] = { ...rlState.bets };
     const myBetTotal = getRouletteTotalBet();
@@ -8234,7 +8224,7 @@ function renderRouletteSelectedBetsSidebar(winNum = null) {
 }
 
 function getRouletteTotalBet(betsObj = rlState.bets) {
-  return Object.values(betsObj || {}).reduce((a, b) => a + b, 0);
+  return Object.values(betsObj || {}).reduce((a, b) => a + Math.max(0, Math.floor(Number(b) || 0)), 0);
 }
 
 function placeRouletteBet(key) {
@@ -8393,16 +8383,18 @@ function calcRoulettePayout(betsObj, winNum) {
   const isRed = RED_NUMS.has(winNum);
   const isBlack = winNum !== 0 && !isRed;
   Object.entries(betsObj || {}).forEach(([key, amt]) => {
-    if (key === 'RED' && isRed) payout += amt * 2;
-    else if (key === 'BLACK' && isBlack) payout += amt * 2;
-    else if (key === 'EVEN' && winNum !== 0 && winNum % 2 === 0) payout += amt * 2;
-    else if (key === 'ODD' && winNum % 2 === 1) payout += amt * 2;
-    else if (key === 'LOW' && winNum >= 1 && winNum <= 18) payout += amt * 2;
-    else if (key === 'HIGH' && winNum >= 19 && winNum <= 36) payout += amt * 2;
-    else if (key === 'DOZ1' && winNum >= 1 && winNum <= 12) payout += amt * 3;
-    else if (key === 'DOZ2' && winNum >= 13 && winNum <= 24) payout += amt * 3;
-    else if (key === 'DOZ3' && winNum >= 25 && winNum <= 36) payout += amt * 3;
-    else if (key === 'NUM_' + winNum) payout += amt * 36;
+    const safeAmt = Math.max(0, Math.floor(Number(amt) || 0));
+    if (safeAmt <= 0) return;
+    if (key === 'RED' && isRed) payout += safeAmt * 2;
+    else if (key === 'BLACK' && isBlack) payout += safeAmt * 2;
+    else if (key === 'EVEN' && winNum !== 0 && winNum % 2 === 0) payout += safeAmt * 2;
+    else if (key === 'ODD' && winNum % 2 === 1) payout += safeAmt * 2;
+    else if (key === 'LOW' && winNum >= 1 && winNum <= 18) payout += safeAmt * 2;
+    else if (key === 'HIGH' && winNum >= 19 && winNum <= 36) payout += safeAmt * 2;
+    else if (key === 'DOZ1' && winNum >= 1 && winNum <= 12) payout += safeAmt * 3;
+    else if (key === 'DOZ2' && winNum >= 13 && winNum <= 24) payout += safeAmt * 3;
+    else if (key === 'DOZ3' && winNum >= 25 && winNum <= 36) payout += safeAmt * 3;
+    else if (key === 'NUM_' + winNum) payout += safeAmt * 36;
   });
   return payout;
 }
@@ -8533,7 +8525,7 @@ function settleRoulette(winNum, totalBet) {
       card.className = 'multi-seat-card ' + (pay > 0 ? 'done-seat' : '');
       card.style.borderColor = p.color;
       card.innerHTML = `
-        <div class="seat-name-row" style="color:${p.color};">${p.name}</div>
+        <div class="seat-name-row" style="color:${p.color};">${escapeHtml(p.name)}</div>
         <div class="seat-sub-row">賭:${bTot}🪙</div>
         <div class="seat-result-row" style="color:${pay > 0 ? '#4ade80' : '#f87171'};">${bTot === 0 ? '見送り' : (pay > 0 ? `🎉 +${pay}🪙` : `💨 -${bTot}🪙`)}</div>
       `;
@@ -8686,7 +8678,7 @@ function updateBigSixMultiBar() {
   if (state.playMode === 'local') {
     const curP = players[bsState.betTurnIdx] || players[0];
     const isLast = bsState.betTurnIdx >= players.length - 1;
-    txt.innerHTML = `<span style="color:${curP.color};">🎯 ${curP.name}</span> がベット中 (${bsState.betTurnIdx + 1}/${players.length}人) ｜ 所持: 🪙${getPlayerChipsByIdx(bsState.betTurnIdx).toLocaleString()}`;
+    txt.innerHTML = `<span style="color:${curP.color};">🎯 ${escapeHtml(curP.name)}</span> がベット中 (${bsState.betTurnIdx + 1}/${players.length}人) ｜ 所持: 🪙${getPlayerChipsByIdx(bsState.betTurnIdx).toLocaleString()}`;
     btn.style.display = isLast ? 'none' : 'inline-block';
     btn.textContent = '✅ 確定して次の人へ ➔';
   } else {
@@ -8750,17 +8742,28 @@ function confirmBigSixPlayerBet() {
 
 function syncBigSixFromOnline(bData) {
   if (!bData) return;
-  if (bData.ruleMode && bData.ruleMode !== bsState.ruleMode) {
+  if ((bData.ruleMode === 'num1to10' || bData.ruleMode === 'classic') && bData.ruleMode !== bsState.ruleMode) {
     bsState.ruleMode = bData.ruleMode;
     document.getElementById('bsTab1to10').classList.toggle('active', bsState.ruleMode === 'num1to10');
     document.getElementById('bsTabClassic').classList.toggle('active', bsState.ruleMode === 'classic');
     document.getElementById('bsShuffleMultBtn').style.display = bsState.ruleMode === 'num1to10' ? 'inline-block' : 'none';
   }
   if (Array.isArray(bData.num1to10Mults) && bData.num1to10Mults.length === 10) {
-    bsState.num1to10Mults = bData.num1to10Mults;
+    bsState.num1to10Mults = bData.num1to10Mults.map(v => Math.min(40, Math.max(1, Math.floor(Number(v) || 5))));
   }
-  if (Array.isArray(bData.playerBets)) bsState.playerBets = bData.playerBets;
-  if (Array.isArray(bData.readyFlags)) bsState.readyFlags = bData.readyFlags;
+  if (Array.isArray(bData.playerBets)) {
+    bsState.playerBets = bData.playerBets.slice(0, 4).map(bObj => {
+      const clean = {};
+      if (bObj && typeof bObj === 'object') {
+        Object.entries(bObj).forEach(([k, v]) => {
+          const n = Math.min(10000000, Math.max(0, Math.floor(Number(v) || 0)));
+          if (n > 0 && isSafeId(k)) clean[k] = n;
+        });
+      }
+      return clean;
+    });
+  }
+  if (Array.isArray(bData.readyFlags)) bsState.readyFlags = bData.readyFlags.slice(0, 4).map(Boolean);
 
   if (bData.phase === 'betting') {
     renderBigSixBoard();
@@ -8768,7 +8771,8 @@ function syncBigSixFromOnline(bData) {
     updateBigSixMultiBar();
   } else if (bData.phase === 'spinning' && bData.roundId && onlineRoomState.processedRoundId !== bData.roundId) {
     onlineRoomState.processedRoundId = bData.roundId;
-    const winIdx = Number(bData.winIdx) || 0;
+    const segCount = bsState.ruleMode === 'num1to10' ? 10 : BIGSIX_SEGMENTS.length;
+    const winIdx = Math.min(segCount - 1, Math.max(0, Math.floor(Number(bData.winIdx) || 0)));
     const myIdx = getMyOnlineSeatIdx();
     bsState.playerBets[myIdx] = { ...bsState.bets };
     const myBetTotal = getBigSixTotalBet();
@@ -8782,7 +8786,7 @@ function syncBigSixFromOnline(bData) {
 }
 
 function getBigSixTotalBet(betsObj = bsState.bets) {
-  return Object.values(betsObj || {}).reduce((a, b) => a + b, 0);
+  return Object.values(betsObj || {}).reduce((a, b) => a + Math.max(0, Math.floor(Number(b) || 0)), 0);
 }
 
 function placeBigSixBet(num) {
@@ -8819,7 +8823,7 @@ function renderBigSixBoard() {
   if (bsState.ruleMode === 'num1to10') {
     grid.style.gridTemplateColumns = 'repeat(5, 1fr)';
     for (let num = 1; num <= 10; num++) {
-      const mult = bsState.num1to10Mults[num - 1];
+      const mult = Math.min(40, Math.max(1, Math.floor(Number(bsState.num1to10Mults[num - 1]) || 5)));
       const col = BS_1TO10_COLORS[num - 1];
       const amt = bsState.bets[num] || 0;
       const card = document.createElement('div');
@@ -8956,12 +8960,12 @@ function calcBigSixReward(betsObj, winIdx) {
   if (!betsObj) return 0;
   if (bsState.ruleMode === 'num1to10') {
     const winNum = winIdx + 1;
-    const mult = bsState.num1to10Mults[winIdx];
-    const betOnWin = betsObj[winNum] || 0;
+    const mult = Math.min(40, Math.max(1, Math.floor(Number(bsState.num1to10Mults[winIdx]) || 5)));
+    const betOnWin = Math.max(0, Math.floor(Number(betsObj[winNum]) || 0));
     return betOnWin > 0 ? betOnWin * mult : 0;
   } else {
-    const winNum = BIGSIX_SEGMENTS[winIdx];
-    const betOnWin = betsObj[winNum] || 0;
+    const winNum = BIGSIX_SEGMENTS[winIdx] || 1;
+    const betOnWin = Math.max(0, Math.floor(Number(betsObj[winNum]) || 0));
     return betOnWin > 0 ? betOnWin + betOnWin * winNum : 0;
   }
 }
@@ -9089,7 +9093,7 @@ function settleBigSix(winIdx, totalBet) {
       card.className = 'multi-seat-card ' + (pay > 0 ? 'done-seat' : '');
       card.style.borderColor = p.color;
       card.innerHTML = `
-        <div class="seat-name-row" style="color:${p.color};">${p.name}</div>
+        <div class="seat-name-row" style="color:${p.color};">${escapeHtml(p.name)}</div>
         <div class="seat-sub-row">賭:${bTot}🪙</div>
         <div class="seat-result-row" style="color:${pay > 0 ? '#4ade80' : '#f87171'};">${bTot === 0 ? '見送り' : (pay > 0 ? `🎉 +${pay}🪙` : `💨 -${bTot}🪙`)}</div>
       `;
@@ -9940,15 +9944,19 @@ let mjState = {
 };
 
 function mjTileInfo(t) {
-  if (t >= 0 && t <= 8) return { suit: 'm', num: t + 1, label: String(t + 1), sub: '萬', cls: 'mj-suit-m', text: `${t + 1}萬` };
-  if (t >= 9 && t <= 17) return { suit: 'p', num: t - 8, label: String(t - 8), sub: '筒', cls: 'mj-suit-p', text: `${t - 8}筒` };
-  if (t >= 18 && t <= 26) return { suit: 's', num: t - 17, label: String(t - 17), sub: '索', cls: 'mj-suit-s', text: `${t - 17}索` };
+  const ti = Number.isInteger(t) ? t : parseInt(t, 10);
+  if (!Number.isInteger(ti) || ti < 0 || ti > 33) {
+    return { suit: 'z', num: 0, label: '?', sub: '', cls: 'mj-suit-z-wind', text: '?' };
+  }
+  if (ti >= 0 && ti <= 8) return { suit: 'm', num: ti + 1, label: String(ti + 1), sub: '萬', cls: 'mj-suit-m', text: `${ti + 1}萬` };
+  if (ti >= 9 && ti <= 17) return { suit: 'p', num: ti - 8, label: String(ti - 8), sub: '筒', cls: 'mj-suit-p', text: `${ti - 8}筒` };
+  if (ti >= 18 && ti <= 26) return { suit: 's', num: ti - 17, label: String(ti - 17), sub: '索', cls: 'mj-suit-s', text: `${ti - 17}索` };
   const zNames = ['東', '南', '西', '北', '白', '發', '中'];
-  const zIdx = t - 27;
+  const zIdx = ti - 27;
   let cls = 'mj-suit-z-wind';
-  if (t === 31) cls = 'mj-suit-z-dragon-w';
-  else if (t === 32) cls = 'mj-suit-z-dragon-g';
-  else if (t === 33) cls = 'mj-suit-z-dragon-r';
+  if (ti === 31) cls = 'mj-suit-z-dragon-w';
+  else if (ti === 32) cls = 'mj-suit-z-dragon-g';
+  else if (ti === 33) cls = 'mj-suit-z-dragon-r';
   return { suit: 'z', num: zIdx + 1, label: zNames[zIdx] || '?', sub: '', cls, text: zNames[zIdx] || '?' };
 }
 
@@ -10429,7 +10437,7 @@ function syncMahjongOptionUI() {
     const b = document.getElementById('mjRateBtn' + r);
     if (b) {
       b.classList.toggle('active', mjOpts.rate === r);
-      b.disabled = !state.infiniteChips && state.chips < getMahjongGuarantee(r);
+      b.disabled = state.chips < getMahjongGuarantee(r);
     }
   });
   const uOn = document.getElementById('mjUmaBtnOn');
@@ -10514,7 +10522,7 @@ function resetMahjongToSetup() {
   document.getElementById('mjRoundResultBox').style.display = 'none';
   document.getElementById('mjMatchResultBox').style.display = 'none';
   // 手持ちチップに合わせて初期レートを安全に選択
-  if (!state.infiniteChips && state.chips < getMahjongGuarantee(mjOpts.rate)) {
+  if (state.chips < getMahjongGuarantee(mjOpts.rate)) {
     mjOpts.rate = 10;
   }
   syncMahjongOptionUI();
@@ -10535,15 +10543,13 @@ function startMahjongMatch() {
     return;
   }
   const guar = getMahjongGuarantee(mjOpts.rate);
-  if (!state.infiniteChips && state.chips < guar) {
+  if (state.chips < guar) {
     playSE('lose');
     showToast(`⚠️ このレートの保証金（${guar.toLocaleString()}🪙）が足りません！`);
     return;
   }
-  if (!state.infiniteChips) {
-    state.chips -= guar;
-    saveState();
-  }
+  state.chips -= guar;
+  saveState();
   mjState.guaranteePaid = guar;
   mjState.matchId = 'MJ_' + Date.now();
   mjState.roundWind = 0;
@@ -10663,10 +10669,10 @@ function syncMahjongFromOnline(remote) {
 
   // ゲストがまだ保証金を払っていなければ自動で預ける
   if (mjState.matchId !== remote.matchId) {
-    mjOpts.rate = remote.rate || 10;
+    mjOpts.rate = [10, 100, 1000].includes(Number(remote.rate)) ? Number(remote.rate) : 10;
     mjOpts.uma = !!remote.uma;
     const guar = getMahjongGuarantee(mjOpts.rate);
-    if (!state.infiniteChips && state.chips >= guar) {
+    if (state.chips >= guar) {
       state.chips -= guar;
       saveState();
     }
@@ -11374,14 +11380,15 @@ function renderMahjongTable() {
       `<div class="mj-meld-group">${m.tiles.map(t => mjRenderTileHtml(t, 'mj-tile-sm')).join('')}</div>`
     ).join('');
 
+    const seatScore = Number(s.score) || 0;
     box.innerHTML = `
       <div class="mj-seat-head">
         <div>
           <span class="mj-seat-wind ${isDealer ? 'is-dealer' : ''}">${windLabel}${isDealer ? '親' : ''}</span>
-          <span style="color:#fff;">${s.name}</span>
+          <span style="color:#fff;">${escapeHtml(s.name)}</span>
           ${s.riichi ? '<span style="color:#fda4af; font-size:0.66rem;">⚡リーチ</span>' : ''}
         </div>
-        <div style="color:${s.score < 10000 ? '#f87171' : '#fef08a'};">${(s.score || 0).toLocaleString()}点</div>
+        <div style="color:${seatScore < 10000 ? '#f87171' : '#fef08a'};">${seatScore.toLocaleString()}点</div>
       </div>
       <div class="mj-river-row">${riverHtml || '<span style="color:#64748b; font-size:0.64rem;">河: なし</span>'}</div>
       ${meldsHtml ? `<div class="mj-melds-row">${meldsHtml}</div>` : ''}
@@ -11469,21 +11476,22 @@ function renderMahjongTable() {
     const myClaim = mjState.claimQueue.find(c => c.seatIdx === myIdx);
     if (myClaim) {
       if (myClaim.canRon) {
-        actHtml += `<button class="mj-act-btn btn-win" onclick="onClickMahjongClaim('ron')">⚡ ロン！(${myClaim.winEval.total.toLocaleString()}点)</button>`;
+        const ronPts = Number(myClaim.winEval && myClaim.winEval.total) || 0;
+        actHtml += `<button class="mj-act-btn btn-win" onclick="onClickMahjongClaim('ron')">⚡ ロン！(${ronPts.toLocaleString()}点)</button>`;
       }
       if (myClaim.canPon) {
         actHtml += `<button class="mj-act-btn btn-call" onclick="onClickMahjongClaim('pon')">🀄 ポン</button>`;
       }
-      myClaim.chiCombos.forEach((combo, cIdx) => {
-        const lbl = combo.map(x => mjTileInfo(x).label).join('-');
-        actHtml += `<button class="mj-act-btn btn-call" onclick="onClickMahjongClaim('chi', ${cIdx})">🀄 チー(${lbl})</button>`;
+      (myClaim.chiCombos || []).forEach((combo, cIdx) => {
+        const lbl = (combo || []).map(x => mjTileInfo(x).label).join('-');
+        actHtml += `<button class="mj-act-btn btn-call" onclick="onClickMahjongClaim('chi', ${cIdx})">🀄 チー(${escapeHtml(lbl)})</button>`;
       });
       actHtml += `<button class="mj-act-btn btn-pass" onclick="onClickMahjongClaim('pass')">💨 スルー</button>`;
     } else {
       actHtml = `<span style="font-size:0.74rem; color:#94a3b8; font-weight:900;">⏳ 相手の判断待ち...</span>`;
     }
   } else {
-    actHtml = `<span style="font-size:0.74rem; color:#cbd5e1; font-weight:900;">⏳ ${mjState.seats[mjState.turnIdx]?.name || ''} の手番中...</span>`;
+    actHtml = `<span style="font-size:0.74rem; color:#cbd5e1; font-weight:900;">⏳ ${escapeHtml(mjState.seats[mjState.turnIdx]?.name || '')} の手番中...</span>`;
   }
   actionBar.innerHTML = actHtml;
 }
@@ -11502,25 +11510,27 @@ function renderMahjongRoundResult() {
   if (res.type === 'draw') {
     titleEl.textContent = '🤝 流局（山がなくなりました）';
     tilesEl.innerHTML = '';
-    yakuEl.innerHTML = res.tenpaiList.map((t, i) => `${mjState.seats[i].name}: <strong>${t ? 'テンパイ' : 'ノーテン'}</strong>`).join(' ／ ');
+    yakuEl.innerHTML = (res.tenpaiList || []).map((t, i) => `${escapeHtml(mjState.seats[i]?.name || '')}: <strong>${t ? 'テンパイ' : 'ノーテン'}</strong>`).join(' ／ ');
   } else {
-    const wName = mjState.seats[res.winnerIdx].name;
-    titleEl.textContent = `${res.type === 'tsumo' ? '🎉 ツモ！' : '⚡ ロン！'} ${wName} (+${res.totalPoints.toLocaleString()}点)`;
-    const handHtml = res.hand.map(t => mjRenderTileHtml(t, 'mj-tile-md')).join('');
+    const wName = mjState.seats[res.winnerIdx]?.name || '';
+    const totalPts = Number(res.totalPoints) || 0;
+    titleEl.textContent = `${res.type === 'tsumo' ? '🎉 ツモ！' : '⚡ ロン！'} ${wName} (+${totalPts.toLocaleString()}点)`;
+    const handHtml = (res.hand || []).map(t => mjRenderTileHtml(t, 'mj-tile-md')).join('');
     const winHtml = mjRenderTileHtml(res.winTile, 'mj-tile-md win-flash drawn-gap');
     const meldsHtml = (res.melds || []).map(m =>
-      `<div class="mj-meld-group" style="margin-left:4px;">${m.tiles.map(t => mjRenderTileHtml(t, 'mj-tile-md')).join('')}</div>`
+      `<div class="mj-meld-group" style="margin-left:4px;">${(m.tiles || []).map(t => mjRenderTileHtml(t, 'mj-tile-md')).join('')}</div>`
     ).join('');
     tilesEl.innerHTML = handHtml + winHtml + meldsHtml;
 
-    const yakuStr = res.yaku.map(y => `【${y.name} ${y.han}飜】`).join(' ');
-    yakuEl.innerHTML = `${yakuStr}<br><strong style="color:#fef08a;">合計 ${res.han}飜 ${res.fu}符 ${res.rankName ? '★' + res.rankName : ''} ➔ ${res.totalPoints.toLocaleString()}点！</strong>`;
+    const yakuStr = (res.yaku || []).map(y => `【${escapeHtml(y.name)} ${Number(y.han) || 0}飜】`).join(' ');
+    const rankStr = res.rankName ? '★' + escapeHtml(res.rankName) : '';
+    yakuEl.innerHTML = `${yakuStr}<br><strong style="color:#fef08a;">合計 ${Number(res.han) || 0}飜 ${Number(res.fu) || 0}符 ${rankStr} ➔ ${totalPts.toLocaleString()}点！</strong>`;
   }
 
   scoresEl.innerHTML = mjState.seats.map((s, i) => {
-    const d = res.deltas[i] || 0;
+    const d = Number(res.deltas && res.deltas[i]) || 0;
     const dStr = d > 0 ? `<span style="color:#4ade80;">+${d.toLocaleString()}</span>` : (d < 0 ? `<span style="color:#f87171;">${d.toLocaleString()}</span>` : '±0');
-    return `<div>${s.name}: <strong>${s.score.toLocaleString()}点</strong> (${dStr})</div>`;
+    return `<div>${escapeHtml(s.name)}: <strong>${(Number(s.score) || 0).toLocaleString()}点</strong> (${dStr})</div>`;
   }).join('');
 
   const nextBtn = document.getElementById('mjNextRoundBtn');
@@ -11546,10 +11556,8 @@ function renderMahjongMatchResult(fromSync = false) {
 
   // 自分の保証金＋収支を返還精算（1回のみ）
   if (myStand && mjState.guaranteePaid > 0) {
-    const refund = Math.max(0, mjState.guaranteePaid + myStand.chipDiff);
-    if (!state.infiniteChips) {
-      state.chips += refund;
-    }
+    const refund = Math.max(0, mjState.guaranteePaid + (Number(myStand.chipDiff) || 0));
+    state.chips += refund;
     if (myStand.rank === 1) state.totalWins++;
     mjState.guaranteePaid = 0;
     saveState();
@@ -11561,16 +11569,19 @@ function renderMahjongMatchResult(fromSync = false) {
   listEl.innerHTML = mjState.matchResult.standings.map(st => {
     const medal = st.rank === 1 ? '🥇' : (st.rank === 2 ? '🥈' : (st.rank === 3 ? '🥉' : '4位'));
     const isMe = st.origIdx === myIdx;
-    const umaText = st.umaPts !== 0 ? ` (ウマ ${st.umaPts > 0 ? '+' : ''}${st.umaPts.toLocaleString()})` : '';
-    const chipColor = st.chipDiff >= 0 ? '#4ade80' : '#f87171';
+    const umaPts = Number(st.umaPts) || 0;
+    const scorePts = Number(st.score) || 0;
+    const chipDiff = Number(st.chipDiff) || 0;
+    const umaText = umaPts !== 0 ? ` (ウマ ${umaPts > 0 ? '+' : ''}${umaPts.toLocaleString()})` : '';
+    const chipColor = chipDiff >= 0 ? '#4ade80' : '#f87171';
     return `
       <div style="background:rgba(2,6,23,0.85); border:2px solid ${isMe ? '#facc15' : '#475569'}; border-radius:12px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
         <div style="text-align:left;">
-          <div style="font-weight:900; font-size:0.9rem; color:#fff;">${medal} ${st.name} ${isMe ? '★あなた' : ''}</div>
-          <div style="font-size:0.74rem; color:#94a3b8;">持ち点: ${st.score.toLocaleString()}点${umaText}</div>
+          <div style="font-weight:900; font-size:0.9rem; color:#fff;">${medal} ${escapeHtml(st.name)} ${isMe ? '★あなた' : ''}</div>
+          <div style="font-size:0.74rem; color:#94a3b8;">持ち点: ${scorePts.toLocaleString()}点${umaText}</div>
         </div>
         <div style="font-weight:900; font-size:1rem; color:${chipColor};">
-          ${st.chipDiff >= 0 ? '+' : ''}${st.chipDiff.toLocaleString()} 🪙
+          ${chipDiff >= 0 ? '+' : ''}${chipDiff.toLocaleString()} 🪙
         </div>
       </div>
     `;
@@ -11588,10 +11599,12 @@ let friendCache = {
 };
 let friendUserUnsub = null;
 let friendLedgerUnsub = null;
+const pendingLoanActionIds = new Set();
 
 function getCasinoUserDocRef(code) {
-  if (!db || !code) return null;
-  return db.collection('players').doc('CASINO_USER_' + code);
+  const safeCode = String(code || '');
+  if (!db || !isSafeFriendCode(safeCode)) return null;
+  return db.collection('players').doc('CASINO_USER_' + safeCode);
 }
 
 function getCasinoLoansLedgerRef() {
@@ -11599,35 +11612,97 @@ function getCasinoLoansLedgerRef() {
   return db.collection('players').doc('CASINO_LOANS_LEDGER');
 }
 
-function startFriendRealtimeListener() {
-  if (!db || !state.friendCode) return;
-  if (friendUserUnsub) {
-    try { friendUserUnsub(); } catch (e) {}
-  }
+function sanitizeFriendMap(rawMap) {
+  const out = {};
+  if (!rawMap || typeof rawMap !== 'object') return out;
+  Object.entries(rawMap).forEach(([k, v]) => {
+    const code = String((v && v.code) || k || '');
+    if (!isSafeFriendCode(code) || !v || typeof v !== 'object') return;
+    out[code] = {
+      code,
+      name: sanitizeDisplayPlayerName(v.name || code),
+      addedAt: Number(v.addedAt) || 0,
+      sentAt: Number(v.sentAt) || 0
+    };
+  });
+  return out;
+}
+
+function sanitizeRoomInvitesMap(rawInvites) {
+  const now = Date.now();
+  const freshInvites = {};
+  if (!rawInvites || typeof rawInvites !== 'object') return freshInvites;
+  Object.entries(rawInvites).forEach(([k, v]) => {
+    if (!v || typeof v !== 'object') return;
+    const fromCode = String(v.fromCode || k || '');
+    const roomCode = String(v.roomCode || '');
+    if (!isSafeFriendCode(fromCode) || !isSafeRoomCode(roomCode)) return;
+    if (now - (Number(v.sentAt) || 0) < 1000 * 60 * 30) {
+      freshInvites[fromCode] = {
+        fromCode,
+        fromName: sanitizeDisplayPlayerName(v.fromName || fromCode),
+        roomCode,
+        sentAt: Number(v.sentAt) || 0
+      };
+    }
+  });
+  return freshInvites;
+}
+
+function sanitizeLoansMap(rawLoans) {
+  const out = {};
+  if (!rawLoans || typeof rawLoans !== 'object') return out;
+  Object.entries(rawLoans).forEach(([k, v]) => {
+    const id = String((v && v.id) || k || '');
+    if (!isSafeId(id) || !v || typeof v !== 'object') return;
+    const fromCode = String(v.fromCode || '');
+    const toCode = String(v.toCode || '');
+    if (!isSafeFriendCode(fromCode) || !isSafeFriendCode(toCode)) return;
+    out[id] = { ...v, id, fromCode, toCode };
+  });
+  return out;
+}
+
+function startLoanLedgerListener() {
+  if (!db || !isSafeFriendCode(state.friendCode)) return;
+  if (friendLedgerUnsub) return;
+  const ledgerRef = getCasinoLoansLedgerRef();
+  if (!ledgerRef) return;
+  friendLedgerUnsub = ledgerRef.onSnapshot(snap => {
+    if (!snap || !snap.exists) return;
+    const lData = snap.data() || {};
+    friendCache.loans = sanitizeLoansMap(lData.loans);
+    updateFriendNotificationBadges();
+    renderCasinoLoanUI();
+  }, () => {});
+}
+
+function stopLoanLedgerListener() {
   if (friendLedgerUnsub) {
     try { friendLedgerUnsub(); } catch (e) {}
+    friendLedgerUnsub = null;
+  }
+}
+
+function startFriendRealtimeListener() {
+  if (!db || !isSafeFriendCode(state.friendCode)) return;
+  if (friendUserUnsub) {
+    try { friendUserUnsub(); } catch (e) {}
+    friendUserUnsub = null;
   }
   registerMyFriendProfileToCloud();
 
-  friendUserUnsub = getCasinoUserDocRef(state.friendCode).onSnapshot(snap => {
+  const userRef = getCasinoUserDocRef(state.friendCode);
+  if (!userRef) return;
+  friendUserUnsub = userRef.onSnapshot(snap => {
     if (!snap || !snap.exists) return;
     const uData = snap.data() || {};
     const prevReqCnt = Object.keys(friendCache.requests || {}).length;
     const prevInvCnt = Object.keys(friendCache.roomInvites || {}).length;
 
-    friendCache.friends = uData.friends || {};
-    friendCache.requests = uData.requests || {};
-
-    // 古い招待(30分以上前)は除外
-    const now = Date.now();
-    const rawInvites = uData.roomInvites || {};
-    const freshInvites = {};
-    Object.entries(rawInvites).forEach(([k, v]) => {
-      if (v && v.roomCode && (now - (v.sentAt || 0) < 1000 * 60 * 30)) {
-        freshInvites[k] = v;
-      }
-    });
-    friendCache.roomInvites = freshInvites;
+    friendCache.friends = sanitizeFriendMap(uData.friends);
+    friendCache.requests = sanitizeFriendMap(uData.requests);
+    friendCache.roomInvites = sanitizeRoomInvitesMap(uData.roomInvites);
 
     const newReqCnt = Object.keys(friendCache.requests).length;
     const newInvCnt = Object.keys(friendCache.roomInvites).length;
@@ -11642,14 +11717,6 @@ function startFriendRealtimeListener() {
     updateFriendNotificationBadges();
     renderCasinoFriendListUI();
     renderOnlineInviteFriendsBar();
-  }, () => {});
-
-  friendLedgerUnsub = getCasinoLoansLedgerRef().onSnapshot(snap => {
-    if (!snap || !snap.exists) return;
-    const lData = snap.data() || {};
-    friendCache.loans = lData.loans || {};
-    updateFriendNotificationBadges();
-    renderCasinoLoanUI();
   }, () => {});
 }
 
@@ -11669,6 +11736,7 @@ function openFriendLoanScreen() {
   navigateTo('screen-friend-loan');
   renderCasinoLoanUI();
   syncFriendAndLoanData(false);
+  startLoanLedgerListener();
 }
 
 function copyMyCasinoFriendCode() {
@@ -11687,11 +11755,13 @@ function copyMyCasinoFriendCode() {
 }
 
 async function registerMyFriendProfileToCloud() {
-  if (!db || !state.friendCode || !state.playerName || state.isTestAccount) return;
+  if (!db || !isSafeFriendCode(state.friendCode) || !state.playerName) return;
   const check = validatePlayerName(state.playerName);
   if (!check.ok) return;
+  const userRef = getCasinoUserDocRef(state.friendCode);
+  if (!userRef) return;
   try {
-    await getCasinoUserDocRef(state.friendCode).set({
+    await userRef.set({
       isSystemDoc: true,
       friendCode: state.friendCode,
       playerId: state.playerId,
@@ -11703,7 +11773,7 @@ async function registerMyFriendProfileToCloud() {
 }
 
 async function syncFriendAndLoanData(showNotice = false) {
-  if (!db || !state.friendCode) {
+  if (!db || !isSafeFriendCode(state.friendCode)) {
     renderCasinoFriendListUI();
     renderCasinoLoanUI();
     return;
@@ -11721,21 +11791,13 @@ async function syncFriendAndLoanData(showNotice = false) {
 
     if (userSnap && userSnap.exists) {
       const uData = userSnap.data() || {};
-      friendCache.friends = uData.friends || {};
-      friendCache.requests = uData.requests || {};
-      const now = Date.now();
-      const rawInvites = uData.roomInvites || {};
-      const freshInvites = {};
-      Object.entries(rawInvites).forEach(([k, v]) => {
-        if (v && v.roomCode && (now - (v.sentAt || 0) < 1000 * 60 * 30)) {
-          freshInvites[k] = v;
-        }
-      });
-      friendCache.roomInvites = freshInvites;
+      friendCache.friends = sanitizeFriendMap(uData.friends);
+      friendCache.requests = sanitizeFriendMap(uData.requests);
+      friendCache.roomInvites = sanitizeRoomInvitesMap(uData.roomInvites);
     }
     if (ledgerSnap && ledgerSnap.exists) {
       const lData = ledgerSnap.data() || {};
-      friendCache.loans = lData.loans || {};
+      friendCache.loans = sanitizeLoansMap(lData.loans);
     }
 
     // 貸出側：返済済み・断られたチップの自動回収チェック
@@ -11744,17 +11806,21 @@ async function syncFriendAndLoanData(showNotice = false) {
     const ledgerUpdates = {};
 
     Object.entries(friendCache.loans).forEach(([id, loan]) => {
-      if (!loan || loan.fromCode !== state.friendCode) return;
+      if (!isSafeId(id) || !loan || loan.fromCode !== state.friendCode) return;
+      const loanAmt = Math.floor(Number(loan.amount) || 0);
+      if (!Number.isFinite(loanAmt) || loanAmt <= 0 || loanAmt > 10000000) return;
+      const safeToHtml = escapeHtml(sanitizeDisplayPlayerName(loan.toName));
       if (loan.status === 'declined' && !loan.lenderCollected) {
-        totalCollectedNow += Number(loan.amount) || 0;
+        totalCollectedNow += loanAmt;
         loan.lenderCollected = true;
         ledgerUpdates[`loans.${id}.lenderCollected`] = true;
-        collectedMessages.push(`${sanitizeDisplayPlayerName(loan.toName)} が貸出オファーを辞退（${loan.amount}🪙返却）`);
+        collectedMessages.push(`${safeToHtml} が貸出オファーを辞退（${loanAmt.toLocaleString()}🪙返却）`);
       } else if (loan.status === 'active' || loan.status === 'repaid') {
-        const repaidTotal = (Number(loan.amount) || 0) - (Number(loan.remaining) || 0);
-        const alreadyCollected = Number(loan.collectedAmount) || 0;
+        const remVal = Math.max(0, Math.min(loanAmt, Math.floor(Number(loan.remaining) || 0)));
+        const repaidTotal = loanAmt - remVal;
+        const alreadyCollected = Math.max(0, Math.min(loanAmt, Math.floor(Number(loan.collectedAmount) || 0)));
         const deltaCollect = repaidTotal - alreadyCollected;
-        if (deltaCollect > 0) {
+        if (deltaCollect > 0 && deltaCollect <= loanAmt) {
           totalCollectedNow += deltaCollect;
           loan.collectedAmount = repaidTotal;
           ledgerUpdates[`loans.${id}.collectedAmount`] = repaidTotal;
@@ -11762,12 +11828,12 @@ async function syncFriendAndLoanData(showNotice = false) {
             loan.lenderCollected = true;
             ledgerUpdates[`loans.${id}.lenderCollected`] = true;
           }
-          collectedMessages.push(`${sanitizeDisplayPlayerName(loan.toName)} から ${deltaCollect.toLocaleString()}🪙 返済回収！`);
+          collectedMessages.push(`${safeToHtml} から ${deltaCollect.toLocaleString()}🪙 返済回収！`);
         }
       }
     });
 
-    if (totalCollectedNow > 0 && !state.isTestAccount) {
+    if (totalCollectedNow > 0) {
       state.chips += totalCollectedNow;
       saveState();
       try {
@@ -11786,15 +11852,18 @@ async function syncFriendAndLoanData(showNotice = false) {
     let myDebtTotal = 0;
     Object.values(friendCache.loans).forEach(loan => {
       if (loan && loan.toCode === state.friendCode && loan.status === 'active') {
-        myDebtTotal += Number(loan.remaining) || 0;
+        myDebtTotal += Math.max(0, Math.floor(Number(loan.remaining) || 0));
       }
     });
     const prevDebtLock = !!state.debtStudyLock;
+    const prevDebtTotal = Number(state.activeDebtTotal) || 0;
     state.activeDebtTotal = myDebtTotal;
     if (myDebtTotal <= 0 && prevDebtLock) {
       state.debtStudyLock = false;
     }
-    saveState();
+    if (state.activeDebtTotal !== prevDebtTotal || !!state.debtStudyLock !== prevDebtLock) {
+      saveState();
+    }
 
     updateFriendNotificationBadges();
     renderCasinoFriendListUI();
@@ -11848,8 +11917,8 @@ function normalizeFriendCodeInput(raw) {
 async function sendCasinoFriendRequest() {
   const inp = document.getElementById('casinoFriendCodeInput');
   const rawCode = normalizeFriendCodeInput(inp ? inp.value : '');
-  if (!rawCode) {
-    showToast('⚠️ 友達のフレンドコードを入力してください！');
+  if (!isSafeFriendCode(rawCode)) {
+    showToast('⚠️ 正しいフレンドコード（例: CL-7A3K）を入力してください！');
     return;
   }
   if (rawCode === state.friendCode) {
@@ -11867,14 +11936,16 @@ async function sendCasinoFriendRequest() {
 
   try {
     await registerMyFriendProfileToCloud();
-    const targetSnap = await getCasinoUserDocRef(rawCode).get();
+    const targetRef = getCasinoUserDocRef(rawCode);
+    if (!targetRef) return;
+    const targetSnap = await targetRef.get();
     if (!targetSnap.exists) {
       playSE('lose');
       showToast('❌ そのフレンドコードが見つかりません！相手に一度カジノ・ロジカを開いてもらってください');
       return;
     }
     const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
-    await getCasinoUserDocRef(rawCode).set({
+    await targetRef.set({
       requests: {
         [state.friendCode]: {
           code: state.friendCode,
@@ -11893,18 +11964,20 @@ async function sendCasinoFriendRequest() {
 }
 
 async function inviteFriendToOnlineRoom(targetCode, targetName) {
-  if (!db || !targetCode) return;
+  if (!db || !isSafeFriendCode(String(targetCode || ''))) return;
   let roomCode = (onlineRoomState.active && onlineRoomState.code) ? onlineRoomState.code : '';
   if (!roomCode) {
     setPlayMode('online');
     roomCode = await createOnlineRoom();
     navigateTo('screen-category');
   }
-  if (!roomCode) return;
+  if (!isSafeRoomCode(String(roomCode))) return;
 
   try {
     const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ホスト');
-    await getCasinoUserDocRef(targetCode).set({
+    const targetRef = getCasinoUserDocRef(targetCode);
+    if (!targetRef) return;
+    await targetRef.set({
       roomInvites: {
         [state.friendCode]: {
           fromCode: state.friendCode,
@@ -11922,6 +11995,7 @@ async function inviteFriendToOnlineRoom(targetCode, targetName) {
 }
 
 async function acceptRoomInvite(roomCode, fromCode) {
+  if (!isSafeRoomCode(String(roomCode || '')) || !isSafeFriendCode(String(fromCode || ''))) return;
   playSE('click');
   await declineRoomInvite(fromCode, true);
   state.playMode = 'online';
@@ -11931,36 +12005,40 @@ async function acceptRoomInvite(roomCode, fromCode) {
 }
 
 async function declineRoomInvite(fromCode, silent = false) {
-  if (db && fromCode && state.friendCode) {
+  const safeFrom = String(fromCode || '');
+  if (!isSafeFriendCode(safeFrom)) return;
+  if (db && isSafeFriendCode(state.friendCode)) {
     try {
       const fvDel = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
         ? firebase.firestore.FieldValue.delete()
         : null;
       if (fvDel) {
-        await getCasinoUserDocRef(state.friendCode).update({ [`roomInvites.${fromCode}`]: fvDel });
+        await getCasinoUserDocRef(state.friendCode).update({ [`roomInvites.${safeFrom}`]: fvDel });
       }
     } catch (e) {}
   }
-  delete friendCache.roomInvites[fromCode];
+  delete friendCache.roomInvites[safeFrom];
   updateFriendNotificationBadges();
   renderCasinoFriendListUI();
   if (!silent) showToast('招待を閉じました');
 }
 
 async function removeCasinoFriend(targetCode, targetName) {
-  if (!db || !targetCode) return;
-  if (!confirm(`「${targetName || targetCode}」をフレンドリストから解除しますか？`)) return;
+  const safeTarget = String(targetCode || '');
+  if (!db || !isSafeFriendCode(safeTarget)) return;
+  const dispName = sanitizeDisplayPlayerName(targetName || safeTarget);
+  if (!confirm(`「${dispName}」をフレンドリストから解除しますか？`)) return;
   try {
     const fvDel = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
       ? firebase.firestore.FieldValue.delete()
       : null;
     if (fvDel) {
-      await getCasinoUserDocRef(state.friendCode).update({ [`friends.${targetCode}`]: fvDel });
-      await getCasinoUserDocRef(targetCode).update({ [`friends.${state.friendCode}`]: fvDel }).catch(() => {});
+      await getCasinoUserDocRef(state.friendCode).update({ [`friends.${safeTarget}`]: fvDel });
+      await getCasinoUserDocRef(safeTarget).update({ [`friends.${state.friendCode}`]: fvDel }).catch(() => {});
     }
-    delete friendCache.friends[targetCode];
+    delete friendCache.friends[safeTarget];
     playSE('click');
-    showToast(`🗑️ ${targetName || targetCode} をフレンドから解除しました`);
+    showToast(`🗑️ ${dispName} をフレンドから解除しました`);
     renderCasinoFriendListUI();
     renderCasinoLoanUI();
     renderOnlineInviteFriendsBar();
@@ -11970,10 +12048,11 @@ async function removeCasinoFriend(targetCode, targetName) {
 }
 
 async function acceptCasinoFriendRequest(fromCode, fromName) {
-  if (!db || !fromCode) return;
+  const safeFrom = String(fromCode || '');
+  if (!db || !isSafeFriendCode(safeFrom) || !isSafeFriendCode(state.friendCode)) return;
   try {
     const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
-    const targetSafeName = sanitizeDisplayPlayerName(fromName || fromCode);
+    const targetSafeName = sanitizeDisplayPlayerName(fromName || safeFrom);
     const fvDel = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
       ? firebase.firestore.FieldValue.delete()
       : null;
@@ -11981,21 +12060,21 @@ async function acceptCasinoFriendRequest(fromCode, fromName) {
     const myRef = getCasinoUserDocRef(state.friendCode);
     await myRef.set({
       friends: {
-        [fromCode]: { code: fromCode, name: targetSafeName, addedAt: Date.now() }
+        [safeFrom]: { code: safeFrom, name: targetSafeName, addedAt: Date.now() }
       }
     }, { merge: true });
     if (fvDel) {
-      await myRef.update({ [`requests.${fromCode}`]: fvDel });
+      await myRef.update({ [`requests.${safeFrom}`]: fvDel });
     }
 
-    await getCasinoUserDocRef(fromCode).set({
+    await getCasinoUserDocRef(safeFrom).set({
       friends: {
         [state.friendCode]: { code: state.friendCode, name: mySafeName, addedAt: Date.now() }
       }
     }, { merge: true });
 
-    delete friendCache.requests[fromCode];
-    friendCache.friends[fromCode] = { code: fromCode, name: targetSafeName, addedAt: Date.now() };
+    delete friendCache.requests[safeFrom];
+    friendCache.friends[safeFrom] = { code: safeFrom, name: targetSafeName, addedAt: Date.now() };
     playSE('win');
     showToast(`🤝 ${targetSafeName} さんとフレンドになりました！`);
     updateFriendNotificationBadges();
@@ -12008,15 +12087,16 @@ async function acceptCasinoFriendRequest(fromCode, fromName) {
 }
 
 async function declineCasinoFriendRequest(fromCode) {
-  if (!db || !fromCode) return;
+  const safeFrom = String(fromCode || '');
+  if (!db || !isSafeFriendCode(safeFrom) || !isSafeFriendCode(state.friendCode)) return;
   try {
     const fvDel = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
       ? firebase.firestore.FieldValue.delete()
       : null;
     if (fvDel) {
-      await getCasinoUserDocRef(state.friendCode).update({ [`requests.${fromCode}`]: fvDel });
+      await getCasinoUserDocRef(state.friendCode).update({ [`requests.${safeFrom}`]: fvDel });
     }
-    delete friendCache.requests[fromCode];
+    delete friendCache.requests[safeFrom];
     playSE('click');
     showToast('申請を拒否しました');
     updateFriendNotificationBadges();
@@ -12031,7 +12111,9 @@ function renderCasinoFriendListUI() {
   // 🎮 届いている対戦ルーム招待
   const invBox = document.getElementById('casinoIncomingRoomInvitesBox');
   const invList = document.getElementById('casinoIncomingRoomInvitesList');
-  const invites = Object.values(friendCache.roomInvites || {});
+  const invites = Object.values(friendCache.roomInvites || {}).filter(inv =>
+    inv && isSafeRoomCode(String(inv.roomCode || '')) && isSafeFriendCode(String(inv.fromCode || ''))
+  );
   if (invBox && invList) {
     invBox.style.display = invites.length > 0 ? 'block' : 'none';
     invList.innerHTML = '';
@@ -12042,21 +12124,32 @@ function renderCasinoFriendListUI() {
       row.style.borderColor = '#4ade80';
       row.innerHTML = `
         <div>
-          <div style="font-weight:900; font-size:0.94rem; color:#a7f3d0;">🎮 ${safeName} から対戦の招待！</div>
-          <div style="font-size:0.74rem; color:#e2e8f0;">通信ルーム【${inv.roomCode}】に誘われています</div>
+          <div style="font-weight:900; font-size:0.94rem; color:#a7f3d0;">🎮 ${escapeHtml(safeName)} から対戦の招待！</div>
+          <div style="font-size:0.74rem; color:#e2e8f0;">通信ルーム【${escapeHtml(inv.roomCode)}】に誘われています</div>
         </div>
-        <div style="display:flex; gap:6px; flex-wrap:wrap;">
-          <button class="action-btn btn-green" style="padding:7px 12px; font-size:0.82rem;" onclick="acceptRoomInvite('${inv.roomCode}', '${inv.fromCode}')">🚪 参加する！</button>
-          <button class="chip-bet-btn c-clear" onclick="declineRoomInvite('${inv.fromCode}')">✕</button>
-        </div>
+        <div class="friend-card-actions" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
       `;
+      const actions = row.querySelector('.friend-card-actions');
+      if (actions) {
+        const joinBtn = document.createElement('button');
+        joinBtn.className = 'action-btn btn-green';
+        joinBtn.style.cssText = 'padding:7px 12px; font-size:0.82rem;';
+        joinBtn.textContent = '🚪 参加する！';
+        joinBtn.onclick = () => acceptRoomInvite(inv.roomCode, inv.fromCode);
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'chip-bet-btn c-clear';
+        closeBtn.textContent = '✕';
+        closeBtn.onclick = () => declineRoomInvite(inv.fromCode);
+        actions.appendChild(joinBtn);
+        actions.appendChild(closeBtn);
+      }
       invList.appendChild(row);
     });
   }
 
   const reqBox = document.getElementById('casinoIncomingReqBox');
   const reqList = document.getElementById('casinoIncomingReqList');
-  const reqs = Object.values(friendCache.requests || {});
+  const reqs = Object.values(friendCache.requests || {}).filter(r => r && isSafeFriendCode(String(r.code || '')));
   if (reqBox && reqList) {
     reqBox.style.display = reqs.length > 0 ? 'block' : 'none';
     reqList.innerHTML = '';
@@ -12067,21 +12160,31 @@ function renderCasinoFriendListUI() {
       row.style.borderColor = '#f472b6';
       row.innerHTML = `
         <div>
-          <div style="font-weight:900; font-size:0.95rem; color:#fff;">👤 ${safeName}</div>
-          <div style="font-size:0.74rem; color:#fbcfe8;">コード: ${r.code}</div>
+          <div style="font-weight:900; font-size:0.95rem; color:#fff;">👤 ${escapeHtml(safeName)}</div>
+          <div style="font-size:0.74rem; color:#fbcfe8;">コード: ${escapeHtml(r.code)}</div>
         </div>
-        <div style="display:flex; gap:6px;">
-          <button class="chip-bet-btn c-25" onclick="acceptCasinoFriendRequest('${r.code}', '${safeName.replace(/'/g, "\\'")}')">✅ 承認</button>
-          <button class="chip-bet-btn c-clear" onclick="declineCasinoFriendRequest('${r.code}')">✕ 拒否</button>
-        </div>
+        <div class="friend-card-actions" style="display:flex; gap:6px;"></div>
       `;
+      const actions = row.querySelector('.friend-card-actions');
+      if (actions) {
+        const okBtn = document.createElement('button');
+        okBtn.className = 'chip-bet-btn c-25';
+        okBtn.textContent = '✅ 承認';
+        okBtn.onclick = () => acceptCasinoFriendRequest(r.code, safeName);
+        const ngBtn = document.createElement('button');
+        ngBtn.className = 'chip-bet-btn c-clear';
+        ngBtn.textContent = '✕ 拒否';
+        ngBtn.onclick = () => declineCasinoFriendRequest(r.code);
+        actions.appendChild(okBtn);
+        actions.appendChild(ngBtn);
+      }
       reqList.appendChild(row);
     });
   }
 
   const listEl = document.getElementById('casinoFriendListContainer');
   const countEl = document.getElementById('casinoFriendCountText');
-  const friends = Object.values(friendCache.friends || {});
+  const friends = Object.values(friendCache.friends || {}).filter(f => f && isSafeFriendCode(String(f.code || '')));
   if (countEl) countEl.textContent = friends.length;
   if (!listEl) return;
   listEl.innerHTML = '';
@@ -12093,20 +12196,36 @@ function renderCasinoFriendListUI() {
 
   friends.forEach(f => {
     const safeName = sanitizeDisplayPlayerName(f.name || f.code);
-    const escaped = safeName.replace(/'/g, "\\'");
     const card = document.createElement('div');
     card.className = 'friend-card-item';
     card.innerHTML = `
       <div style="min-width:120px;">
-        <div style="font-weight:900; font-size:0.96rem; color:#fef08a;">🤝 ${safeName}</div>
-        <div style="font-size:0.72rem; color:#94a3b8;">コード: ${f.code}</div>
+        <div style="font-weight:900; font-size:0.96rem; color:#fef08a;">🤝 ${escapeHtml(safeName)}</div>
+        <div style="font-size:0.72rem; color:#94a3b8;">コード: ${escapeHtml(f.code)}</div>
       </div>
-      <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
-        <button class="chip-bet-btn c-25" onclick="inviteFriendToOnlineRoom('${f.code}', '${escaped}')">🎮 対戦に誘う</button>
-        <button class="chip-bet-btn c-10" onclick="jumpToLoanWithFriend('${f.code}')">📜 貸す</button>
-        <button class="chip-bet-btn c-clear" onclick="removeCasinoFriend('${f.code}', '${escaped}')">🗑️</button>
-      </div>
+      <div class="friend-card-actions" style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;"></div>
     `;
+    const actions = card.querySelector('.friend-card-actions');
+    if (actions) {
+      const invBtn = document.createElement('button');
+      invBtn.className = 'chip-bet-btn c-25';
+      invBtn.textContent = '🎮 対戦に誘う';
+      invBtn.onclick = () => inviteFriendToOnlineRoom(f.code, safeName);
+
+      const lendBtn = document.createElement('button');
+      lendBtn.className = 'chip-bet-btn c-10';
+      lendBtn.textContent = '📜 貸す';
+      lendBtn.onclick = () => jumpToLoanWithFriend(f.code);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'chip-bet-btn c-clear';
+      delBtn.textContent = '🗑️';
+      delBtn.onclick = () => removeCasinoFriend(f.code, safeName);
+
+      actions.appendChild(invBtn);
+      actions.appendChild(lendBtn);
+      actions.appendChild(delBtn);
+    }
     listEl.appendChild(card);
   });
 }
@@ -12124,20 +12243,16 @@ function setLoanQuickAmount(amt) {
 }
 
 async function sendChipLoanOffer() {
-  if (state.isTestAccount) {
-    showToast('🔧 管理者テストモード中はフレンドへのチップ貸出はできません');
-    return;
-  }
   const sel = document.getElementById('loanTargetFriendSelect');
   const inp = document.getElementById('loanAmountInput');
   const targetCode = sel ? sel.value : '';
   const amt = Math.floor(Number(inp ? inp.value : 0));
 
-  if (!targetCode || !friendCache.friends[targetCode]) {
+  if (!isSafeFriendCode(targetCode) || !friendCache.friends[targetCode]) {
     showToast('⚠️ 貸す相手のフレンドを選んでください！');
     return;
   }
-  if (!amt || amt <= 0) {
+  if (!Number.isFinite(amt) || amt <= 0 || amt > 10000000) {
     showToast('⚠️ 1チップ以上の正しい数を入力してください！');
     return;
   }
@@ -12192,10 +12307,16 @@ async function sendChipLoanOffer() {
 }
 
 async function acceptChipLoanOffer(loanId) {
+  if (!isSafeId(String(loanId || '')) || pendingLoanActionIds.has(loanId)) return;
   const loan = friendCache.loans[loanId];
   if (!loan || loan.status !== 'pending' || loan.toCode !== state.friendCode) return;
+  const amt = Math.floor(Number(loan.amount) || 0);
+  if (!Number.isFinite(amt) || amt <= 0 || amt > 10000000) {
+    showToast('⚠️ 無効な貸出オファーデータです');
+    return;
+  }
+  pendingLoanActionIds.add(loanId);
   try {
-    const amt = Number(loan.amount) || 0;
     loan.status = 'active';
     loan.acceptedAt = Date.now();
     await getCasinoLoansLedgerRef().update({
@@ -12211,19 +12332,24 @@ async function acceptChipLoanOffer(loanId) {
     showRewardModal(
       '📜',
       'デジタル借用書 発行！',
-      `<strong>${sanitizeDisplayPlayerName(loan.fromName)}</strong> さんから<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 +${amt.toLocaleString()} チップ</span><br>を借りました！<br><span style="font-size:0.82rem; color:#fda4af;">※返済義務が発生しています！勝ったら忘れずに返済しよう！</span>`,
+      `<strong>${escapeHtml(sanitizeDisplayPlayerName(loan.fromName))}</strong> さんから<br><span style="font-size:1.7rem; color:#facc15; font-weight:900;">🪙 +${amt.toLocaleString()} チップ</span><br>を借りました！<br><span style="font-size:0.82rem; color:#fda4af;">※返済義務が発生しています！勝ったら忘れずに返済しよう！</span>`,
       '🤝 了解！（大切に使う）'
     );
     renderCasinoLoanUI();
     updateFriendNotificationBadges();
   } catch (e) {
+    loan.status = 'pending';
     showToast('❌ 借入承諾に失敗しました');
+  } finally {
+    pendingLoanActionIds.delete(loanId);
   }
 }
 
 async function declineChipLoanOffer(loanId) {
+  if (!isSafeId(String(loanId || '')) || pendingLoanActionIds.has(loanId)) return;
   const loan = friendCache.loans[loanId];
   if (!loan || loan.status !== 'pending' || loan.toCode !== state.friendCode) return;
+  pendingLoanActionIds.add(loanId);
   try {
     loan.status = 'declined';
     await getCasinoLoansLedgerRef().update({
@@ -12233,12 +12359,20 @@ async function declineChipLoanOffer(loanId) {
     showToast('貸出オファーを断りました（相手の元へチップが戻ります）');
     renderCasinoLoanUI();
     updateFriendNotificationBadges();
-  } catch (e) {}
+  } catch (e) {
+    loan.status = 'pending';
+  } finally {
+    pendingLoanActionIds.delete(loanId);
+  }
 }
 
 async function cancelChipLoanOffer(loanId) {
+  if (!isSafeId(String(loanId || '')) || pendingLoanActionIds.has(loanId)) return;
   const loan = friendCache.loans[loanId];
   if (!loan || loan.status !== 'pending' || loan.fromCode !== state.friendCode) return;
+  const amt = Math.floor(Number(loan.amount) || 0);
+  if (!Number.isFinite(amt) || amt <= 0 || amt > 10000000) return;
+  pendingLoanActionIds.add(loanId);
   try {
     loan.status = 'cancelled';
     loan.lenderCollected = true;
@@ -12246,18 +12380,25 @@ async function cancelChipLoanOffer(loanId) {
       [`loans.${loanId}.status`]: 'cancelled',
       [`loans.${loanId}.lenderCollected`]: true
     });
-    state.chips += Number(loan.amount) || 0;
+    state.chips += amt;
     saveState();
     playSE('coin');
-    showToast(`↩️ 貸出オファーを取り消し、${loan.amount}🪙 を回収しました`);
+    showToast(`↩️ 貸出オファーを取り消し、${amt.toLocaleString()}🪙 を回収しました`);
     renderCasinoLoanUI();
-  } catch (e) {}
+  } catch (e) {
+    loan.status = 'pending';
+    loan.lenderCollected = false;
+  } finally {
+    pendingLoanActionIds.delete(loanId);
+  }
 }
 
 async function repayChipLoan(loanId) {
+  if (!isSafeId(String(loanId || '')) || pendingLoanActionIds.has(loanId)) return;
   const loan = friendCache.loans[loanId];
   if (!loan || loan.status !== 'active' || loan.toCode !== state.friendCode) return;
-  const rem = Number(loan.remaining) || 0;
+  const rem = Math.floor(Number(loan.remaining) || 0);
+  if (!Number.isFinite(rem) || rem <= 0) return;
   if (state.chips <= 0) {
     showToast('⚠️ 返済するチップがありません！「📝 勉強でチップ稼ぎ」からバイオ・ロジカで稼いできてください！');
     return;
@@ -12267,6 +12408,7 @@ async function repayChipLoan(loanId) {
   const newRem = rem - payAmt;
   const isFullRepay = newRem <= 0;
 
+  pendingLoanActionIds.add(loanId);
   try {
     state.chips -= payAmt;
     loan.remaining = newRem;
@@ -12288,7 +12430,7 @@ async function repayChipLoan(loanId) {
     let nextDebt = 0;
     Object.values(friendCache.loans).forEach(l => {
       if (l && l.toCode === state.friendCode && l.status === 'active') {
-        nextDebt += Number(l.remaining) || 0;
+        nextDebt += Math.max(0, Math.floor(Number(l.remaining) || 0));
       }
     });
     state.activeDebtTotal = nextDebt;
@@ -12302,7 +12444,7 @@ async function repayChipLoan(loanId) {
       showRewardModal(
         '✨',
         '借金 完済おめでとう！！',
-        `<strong>${sanitizeDisplayPlayerName(loan.fromName)}</strong> さんへの借金<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 ${payAmt.toLocaleString()} チップ</span><br>をきっちり返済して完済しました！<br>信用度がアップしました！`,
+        `<strong>${escapeHtml(sanitizeDisplayPlayerName(loan.fromName))}</strong> さんへの借金<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 ${payAmt.toLocaleString()} チップ</span><br>をきっちり返済して完済しました！<br>信用度がアップしました！`,
         '👑 気持ちいい！！'
       );
     } else {
@@ -12312,8 +12454,12 @@ async function repayChipLoan(loanId) {
     updateFriendNotificationBadges();
   } catch (e) {
     state.chips += payAmt;
+    loan.remaining = rem;
+    loan.status = 'active';
     saveState();
     showToast('❌ 返済処理に失敗しました');
+  } finally {
+    pendingLoanActionIds.delete(loanId);
   }
 }
 
@@ -12323,6 +12469,7 @@ function renderCasinoLoanUI() {
     const prevVal = sel.value;
     sel.innerHTML = '<option value="">-- 貸すフレンドを選んでください --</option>';
     Object.values(friendCache.friends || {}).forEach(f => {
+      if (!f || !isSafeFriendCode(String(f.code || ''))) return;
       const opt = document.createElement('option');
       opt.value = f.code;
       opt.textContent = `🤝 ${sanitizeDisplayPlayerName(f.name || f.code)} (${f.code})`;
@@ -12331,34 +12478,50 @@ function renderCasinoLoanUI() {
     if (prevVal && friendCache.friends[prevVal]) sel.value = prevVal;
   }
 
-  const allLoans = Object.values(friendCache.loans || {}).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const allLoans = Object.values(friendCache.loans || {})
+    .filter(l => l && isSafeId(String(l.id || '')))
+    .sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0));
 
   // ① 届いている借入オファー（自分宛の pending）
   const offersSec = document.getElementById('loanIncomingOffersSection');
   const offersList = document.getElementById('loanIncomingOffersList');
-  const incomingOffers = allLoans.filter(l => l && l.toCode === state.friendCode && l.status === 'pending');
+  const incomingOffers = allLoans.filter(l => l.toCode === state.friendCode && l.status === 'pending');
   if (offersSec && offersList) {
     offersSec.style.display = incomingOffers.length > 0 ? 'block' : 'none';
     offersList.innerHTML = '';
     incomingOffers.forEach(l => {
+      const amtNum = Math.max(0, Math.floor(Number(l.amount) || 0));
       const card = document.createElement('div');
       card.className = 'loan-card-item offer-card';
       card.innerHTML = `
         <div style="font-weight:900; font-size:0.95rem; color:#bae6fd;">
-          📩 <strong>${sanitizeDisplayPlayerName(l.fromName)}</strong> さんから <span style="color:#facc15; font-size:1.1rem;">${Number(l.amount).toLocaleString()} 🪙</span> の貸出オファー！
+          📩 <strong>${escapeHtml(sanitizeDisplayPlayerName(l.fromName))}</strong> さんから <span style="color:#facc15; font-size:1.1rem;">${amtNum.toLocaleString()} 🪙</span> の貸出オファー！
         </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="action-btn btn-green" style="padding:7px 14px; font-size:0.86rem;" onclick="acceptChipLoanOffer('${l.id}')">🤝 借りる！（借用書発行）</button>
-          <button class="chip-bet-btn c-clear" onclick="declineChipLoanOffer('${l.id}')">✕ 断る</button>
-        </div>
+        <div class="loan-card-actions" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
       `;
+      const actions = card.querySelector('.loan-card-actions');
+      if (actions) {
+        const accBtn = document.createElement('button');
+        accBtn.className = 'action-btn btn-green';
+        accBtn.style.cssText = 'padding:7px 14px; font-size:0.86rem;';
+        accBtn.textContent = '🤝 借りる！（借用書発行）';
+        accBtn.onclick = () => acceptChipLoanOffer(l.id);
+
+        const decBtn = document.createElement('button');
+        decBtn.className = 'chip-bet-btn c-clear';
+        decBtn.textContent = '✕ 断る';
+        decBtn.onclick = () => declineChipLoanOffer(l.id);
+
+        actions.appendChild(accBtn);
+        actions.appendChild(decBtn);
+      }
       offersList.appendChild(card);
     });
   }
 
   // ② 自分が借りている一覧（借入中）
   const borrowList = document.getElementById('loanBorrowedList');
-  const myBorrows = allLoans.filter(l => l && l.toCode === state.friendCode && (l.status === 'active' || l.status === 'repaid'));
+  const myBorrows = allLoans.filter(l => l.toCode === state.friendCode && (l.status === 'active' || l.status === 'repaid'));
   if (borrowList) {
     borrowList.innerHTML = '';
     if (myBorrows.length === 0) {
@@ -12366,6 +12529,8 @@ function renderCasinoLoanUI() {
     } else {
       myBorrows.slice(0, 10).forEach(l => {
         const isRepaid = l.status === 'repaid';
+        const amtNum = Math.max(0, Math.floor(Number(l.amount) || 0));
+        const remNum = Math.max(0, Math.floor(Number(l.remaining) || 0));
         const card = document.createElement('div');
         card.className = 'loan-card-item borrow-card';
         card.style.opacity = isRepaid ? '0.68' : '1';
@@ -12373,18 +12538,23 @@ function renderCasinoLoanUI() {
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
             <div style="font-weight:900; font-size:0.94rem; color:${isRepaid ? '#86efac' : '#fda4af'};">
-              👤 ${sanitizeDisplayPlayerName(l.fromName)} から <strong>${Number(l.amount).toLocaleString()}チップ</strong> ${isRepaid ? '借入（✅ 完済済）' : '借入中（借金返済義務あり）'}
+              👤 ${escapeHtml(sanitizeDisplayPlayerName(l.fromName))} から <strong>${amtNum.toLocaleString()}チップ</strong> ${isRepaid ? '借入（✅ 完済済）' : '借入中（借金返済義務あり）'}
             </div>
-            ${!isRepaid ? `<span style="background:#9f1239; color:#fff; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">残り ${Number(l.remaining).toLocaleString()} 🪙</span>` : ''}
+            ${!isRepaid ? `<span style="background:#9f1239; color:#fff; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">残り ${remNum.toLocaleString()} 🪙</span>` : ''}
           </div>
-          ${!isRepaid ? `
-            <div style="display:flex; justify-content:flex-end;">
-              <button class="action-btn btn-green" style="padding:7px 14px; font-size:0.84rem;" onclick="repayChipLoan('${l.id}')">
-                🪙 ${state.chips >= l.remaining ? '全額返済する' : '手持ちで一部返済する'}
-              </button>
-            </div>
-          ` : ''}
+          ${!isRepaid ? '<div class="loan-card-actions" style="display:flex; justify-content:flex-end;"></div>' : ''}
         `;
+        if (!isRepaid) {
+          const actions = card.querySelector('.loan-card-actions');
+          if (actions) {
+            const repayBtn = document.createElement('button');
+            repayBtn.className = 'action-btn btn-green';
+            repayBtn.style.cssText = 'padding:7px 14px; font-size:0.84rem;';
+            repayBtn.textContent = `🪙 ${state.chips >= remNum ? '全額返済する' : '手持ちで一部返済する'}`;
+            repayBtn.onclick = () => repayChipLoan(l.id);
+            actions.appendChild(repayBtn);
+          }
+        }
         borrowList.appendChild(card);
       });
     }
@@ -12392,22 +12562,22 @@ function renderCasinoLoanUI() {
 
   // ③ 自分が貸している一覧（貸出中）
   const lentList = document.getElementById('loanLentList');
-  const myLents = allLoans.filter(l => l && l.fromCode === state.friendCode && l.status !== 'cancelled');
+  const myLents = allLoans.filter(l => l.fromCode === state.friendCode && l.status !== 'cancelled');
   if (lentList) {
     lentList.innerHTML = '';
     if (myLents.length === 0) {
       lentList.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.82rem; padding:10px;">現在貸しているチップはありません</div>';
     } else {
       myLents.slice(0, 10).forEach(l => {
+        const amtNum = Math.max(0, Math.floor(Number(l.amount) || 0));
+        const remNum = Math.max(0, Math.floor(Number(l.remaining) || 0));
         const card = document.createElement('div');
         card.className = 'loan-card-item';
         let statusBadge = '';
-        let actionHtml = '';
         if (l.status === 'pending') {
           statusBadge = '<span style="background:#0284c7; color:#fff; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">⏳ 相手承諾待ち</span>';
-          actionHtml = `<button class="chip-bet-btn c-clear" onclick="cancelChipLoanOffer('${l.id}')">↩️ 取り消す</button>`;
         } else if (l.status === 'active') {
-          statusBadge = `<span style="background:#b45309; color:#fef08a; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">未返済（残り ${Number(l.remaining).toLocaleString()}🪙）</span>`;
+          statusBadge = `<span style="background:#b45309; color:#fef08a; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">未返済（残り ${remNum.toLocaleString()}🪙）</span>`;
         } else if (l.status === 'repaid') {
           statusBadge = '<span style="background:#065f46; color:#a7f3d0; padding:2px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">✅ 完済！</span>';
         } else {
@@ -12418,12 +12588,22 @@ function renderCasinoLoanUI() {
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
             <div style="font-weight:900; font-size:0.94rem; color:#fef08a;">
-              👤 ${sanitizeDisplayPlayerName(l.toName)} に <strong>${Number(l.amount).toLocaleString()}チップ</strong> ${l.status === 'active' ? '貸出中（未返済）' : (l.status === 'pending' ? '貸出オファー中' : '')}
+              👤 ${escapeHtml(sanitizeDisplayPlayerName(l.toName))} に <strong>${amtNum.toLocaleString()}チップ</strong> ${l.status === 'active' ? '貸出中（未返済）' : (l.status === 'pending' ? '貸出オファー中' : '')}
             </div>
             ${statusBadge}
           </div>
-          ${actionHtml ? `<div style="display:flex; justify-content:flex-end;">${actionHtml}</div>` : ''}
+          ${l.status === 'pending' ? '<div class="loan-card-actions" style="display:flex; justify-content:flex-end;"></div>' : ''}
         `;
+        if (l.status === 'pending') {
+          const actions = card.querySelector('.loan-card-actions');
+          if (actions) {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'chip-bet-btn c-clear';
+            cancelBtn.textContent = '↩️ 取り消す';
+            cancelBtn.onclick = () => cancelChipLoanOffer(l.id);
+            actions.appendChild(cancelBtn);
+          }
+        }
         lentList.appendChild(card);
       });
     }
@@ -12446,19 +12626,19 @@ async function resetAllCasinoData() {
   if (!confirm('カジノ・ロジカのセーブデータを初期化して最初から（100チップ配布から）やり直しますか？\n（※ランキングからも現在のデータは削除されます）')) return;
   if (syncRankTimer) clearTimeout(syncRankTimer);
 
-  // 現在のアカウント（および管理者モード退避中の本番アカウント）をクラウドのランキングから完全削除
+  // 自分自身のアカウントをクラウドのランキングから削除
   const idsToDelete = new Set();
-  if (state.playerId) idsToDelete.add(state.playerId);
+  if (isSafeId(state.playerId)) idsToDelete.add(state.playerId);
   try {
     const rawBackup = localStorage.getItem(PROD_BACKUP_KEY);
     if (rawBackup) {
       const parsedBackup = JSON.parse(rawBackup);
-      if (parsedBackup && parsedBackup.playerId) idsToDelete.add(parsedBackup.playerId);
+      if (parsedBackup && isSafeId(parsedBackup.playerId)) idsToDelete.add(parsedBackup.playerId);
     }
   } catch (e) {}
 
   for (const pid of idsToDelete) {
-    await removePlayerFromCloudRanking(pid);
+    await removeOwnPlayerFromCloudRanking(pid);
   }
 
   localStorage.removeItem(SAVE_KEY);
