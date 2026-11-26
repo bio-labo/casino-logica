@@ -2138,6 +2138,186 @@ html, body {
   color: #cbd5e1;
   line-height: 1.35;
 }
+
+/* ============================================================================
+   🎲 ナインダイス (NINE DICE) 専用スタイル
+============================================================================ */
+.yokai-btn-ninedice {
+  background: linear-gradient(180deg, #0d9488 0%, #0f766e 55%, #115e59 100%);
+  border-color: #66E0C0;
+  box-shadow: 0 7px 0 #042f2e, 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.nd-board-card {
+  background: linear-gradient(180deg, #111C26 0%, #080E14 100%);
+  border: 3px solid #66E0C0;
+  border-radius: 20px;
+  padding: 14px 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7), inset 0 0 24px rgba(97, 200, 232, 0.08);
+  margin-bottom: 12px;
+}
+
+.nd-mode-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: #152431;
+  border: 1.5px solid #61C8E8;
+  border-radius: 14px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+
+.nd-dice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 310px;
+  margin: 10px auto 12px;
+}
+
+.nd-die-btn {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 3px solid #475569;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  box-shadow: 0 4px 0 #020617;
+  font-family: inherit;
+}
+
+.nd-die-btn:active:not(:disabled) {
+  transform: translateY(3px);
+}
+
+.nd-die-btn.kept {
+  background: linear-gradient(180deg, #134e4a 0%, #0f172a 100%);
+  border-color: #66E0C0;
+  box-shadow: 0 0 14px rgba(102, 224, 192, 0.55), 0 4px 0 #042f2e;
+}
+
+.nd-die-btn.all-one {
+  border-color: #F2C66D;
+  background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+  box-shadow: 0 0 18px rgba(242, 198, 109, 0.85);
+}
+
+.nd-die-btn.rolling {
+  animation: ndShake 0.25s infinite;
+}
+
+@keyframes ndShake {
+  0% { transform: rotate(-4deg) scale(0.96); }
+  50% { transform: rotate(4deg) scale(1.04); }
+  100% { transform: rotate(-4deg) scale(0.96); }
+}
+
+.nd-die-val {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.nd-die-val.is-high { color: #F2C66D; }
+.nd-die-val.is-one { color: #61C8E8; }
+
+.nd-die-keep-pill {
+  margin-top: 4px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: #94a3b8;
+}
+.nd-die-btn.kept .nd-die-keep-pill {
+  background: #66E0C0;
+  color: #042f2e;
+}
+
+.nd-status-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+.nd-info-badge {
+  background: #152431;
+  border: 1.5px solid #334155;
+  border-radius: 999px;
+  padding: 4px 12px;
+  color: #e2e8f0;
+}
+
+.nd-score-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #080E14;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid #334155;
+  font-size: 0.78rem;
+}
+.nd-score-table th,
+.nd-score-table td {
+  padding: 7px 6px;
+  border-bottom: 1px solid #1e293b;
+  text-align: center;
+}
+.nd-score-table th {
+  background: #152431;
+  color: #61C8E8;
+  font-weight: 900;
+}
+.nd-score-table td.nd-cat-col {
+  text-align: left;
+  font-weight: 900;
+  color: #f8fafc;
+}
+.nd-cat-sub {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+.nd-cell-filled {
+  font-weight: 900;
+  color: #F2C66D;
+}
+.nd-cell-pick {
+  background: rgba(102, 224, 192, 0.16);
+  color: #66E0C0;
+  font-weight: 900;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.14s;
+}
+.nd-cell-pick:hover {
+  background: rgba(102, 224, 192, 0.35);
+}
+.nd-cell-pick.is-best {
+  background: rgba(242, 198, 109, 0.24);
+  color: #F2C66D;
+  box-shadow: inset 0 0 0 1.5px #F2C66D;
+}
+@media (max-width: 520px) {
+  .nd-dice-grid { gap: 8px; max-width: 264px; }
+  .nd-die-val { font-size: 1.7rem; }
+  .nd-score-table th, .nd-score-table td { padding: 6px 3px; font-size: 0.72rem; }
+}
 </style>
 </head>
 <body>
@@ -2596,6 +2776,17 @@ html, body {
         </div>
         <div class="yokai-btn-arrow">▶</div>
       </button>
+
+      <button class="yokai-btn yokai-btn-ninedice" onclick="openGame('ninedice')">
+        <div class="yokai-btn-left">
+          <div class="yokai-btn-icon">🎲</div>
+          <div class="yokai-btn-text-wrap">
+            <div class="yokai-btn-title">ナインダイス (NINE DICE) <span style="font-size:0.72rem; background:#F2C66D; color:#422006; padding:2px 8px; border-radius:999px; vertical-align:middle;">NEW!</span></div>
+            <div class="yokai-btn-desc">1〜9のサイコロ9個！Root 2・7 Straight・Kudi・全て1で自動勝利！</div>
+          </div>
+        </div>
+        <div class="yokai-btn-arrow">▶</div>
+      </button>
     </div>
   </section>
 
@@ -2793,6 +2984,94 @@ html, body {
             <!-- JSで生成 -->
           </tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       🎲 ゲーム9：ナインダイス (NINE DICE) (#screen-game-ninedice)
+  ======================================================================== -->
+  <section id="screen-game-ninedice" class="screen">
+    <div class="sub-nav-header">
+      <div class="sub-nav-title">🎲 ナインダイス <span id="ndModeBadge" style="font-size:0.74rem; background:#0f766e; padding:2px 8px; border-radius:999px;">🤖 AI戦</span></div>
+      <button class="back-btn" onclick="navigateTo('screen-sub-dice')">⬅️ ダイス選択へ</button>
+    </div>
+
+    <div class="nd-board-card">
+      <!-- レート ＆ プレイ形式バー -->
+      <div class="nd-mode-bar">
+        <div style="font-weight:900; font-size:0.84rem; color:#F2C66D;" id="ndRateInfoText">
+          点差レート: 1点差 = 1 🪙
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:5px; align-items:center;">
+          <button class="chip-bet-btn c-5" id="ndSoloToggleBtn" onclick="toggleNineDiceSoloMode()" style="display:none;">🎯 ソロ挑戦</button>
+          <button class="chip-bet-btn c-5" onclick="setNineDiceRate(1)">1点=1🪙</button>
+          <button class="chip-bet-btn c-10" onclick="setNineDiceRate(5)">1点=5🪙</button>
+          <button class="chip-bet-btn c-50" onclick="setNineDiceRate(10)">1点=10🪙</button>
+          <button class="chip-bet-btn c-clear" onclick="initNineDiceMatch()">🔄 新規1戦</button>
+        </div>
+      </div>
+
+      <!-- ステータス・ベストスコア -->
+      <div class="nd-status-pill-row">
+        <div class="nd-info-badge" id="ndTurnBanner" style="border-color:#66E0C0; color:#66E0C0;">
+          🎯 あなたの番 (1 / 12)
+        </div>
+        <div class="nd-info-badge" id="ndBestBadge" style="border-color:#F2C66D; color:#F2C66D;">
+          👑 自己ベスト: 0点
+        </div>
+      </div>
+
+      <!-- 3×3 9個サイコログリッド (1〜9の目) -->
+      <div class="nd-dice-grid" id="ndDiceGrid"></div>
+
+      <!-- ロール ＆ 操作ボタン -->
+      <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+        <button class="action-btn btn-green" id="ndRollBtn" onclick="rollNineDice()" style="background:linear-gradient(180deg,#66E0C0,#0d9488); color:#042f2e; border-color:#ffffff;">
+          🎲 サイコロを振る (残り3回)
+        </button>
+      </div>
+
+      <!-- スコア記録表 -->
+      <div style="overflow-x:auto;">
+        <table class="nd-score-table" id="ndScoreTable">
+          <thead>
+            <tr id="ndTableHeadRow">
+              <th style="text-align:left;">役名</th>
+              <th>🧑 あなた</th>
+              <th>🤖 AI</th>
+            </tr>
+          </thead>
+          <tbody id="ndScoreBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 📖 ナインダイス ルール＆計算ガイド -->
+    <div class="rule-guide-box" style="border-color:#61C8E8;">
+      <div class="rule-guide-title" style="color:#66E0C0;">📖 ナインダイス (NINE DICE) ルール＆役ガイド</div>
+      <div style="margin-bottom:8px;">
+        🎲 <strong>基本ルール</strong>：<strong>1〜9の目が出るサイコロ9個</strong>を振り、残したい目をタップでキープしながら<strong>最大3回まで振り直し</strong>可能！全15役を1回ずつ埋めて合計点を競います！
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:6px; font-size:0.75rem;">
+        <div style="background:#080E14; padding:7px 9px; border-radius:10px; border:1px solid #334155;">
+          🔢 <strong>1・7・8・9の目</strong>：出た目の合計点<br>
+          🔢 <strong>2〜6の目</strong>：同じ目2個＝1ペア（奇数切り捨て）として <code>ペア数 × (目の2乗)</code> 点！<br>
+          ⭐ <strong>上段ボーナス</strong>：1〜9の目の合計が <strong>160点以上</strong> で <strong>+60点ボーナス</strong>！
+        </div>
+        <div style="background:#080E14; padding:7px 9px; border-radius:10px; border:1px solid #334155;">
+          💎 <strong>6 Dice</strong>：同じ目が6個以上 ➔ <code>出目 × 10点</code>（最大90点）<br>
+          🏠 <strong>Share House</strong>：3個・3個・3個 ➔ <strong>40点</strong><br>
+          🏰 <strong>Full House</strong>：4個・5個 ➔ <strong>60点</strong>
+        </div>
+        <div style="background:#080E14; padding:7px 9px; border-radius:10px; border:1px solid #334155;">
+          📈 <strong>7 Straight</strong>：1〜7連番で<strong>30点</strong>（8あり+10、9あり+10で最大<strong>50点</strong>）<br>
+          📐 <strong>Root 2</strong>：「1,4,1,4,2,1,3,5,6」揃いで<strong>100点</strong>！<br>
+          👑 <strong>Kudi</strong>：9個すべて同じ目(2〜9)で<strong>200点</strong>！
+        </div>
+        <div style="background:#451a03; padding:7px 9px; border-radius:10px; border:1px solid #F2C66D;">
+          🌟 <strong>特別ルール【全て1】</strong>：9個すべてが「1」なら<strong>その瞬間に自動勝利！</strong>（ソロなら1,000🪙、対戦なら即大金星！）
+        </div>
       </div>
     </div>
   </section>
@@ -3555,6 +3834,7 @@ html, body {
       <div style="font-size:1.05rem; font-weight:900; color:#7dd3fc; margin-bottom:8px;">📖 収録ゲーム ルールガイド</div>
       <div style="margin-bottom:8px;"><strong>🥣 チンチロ</strong>：お椀にサイコロ3個を最大3回まで振る。ピンゾロ(5倍)・アラシ(3倍)・シゴロ(2倍)・通常の目(1倍)・ヒフミ(2倍払い)・目なし(1倍負け)。</div>
       <div style="margin-bottom:8px;"><strong>⛵ ヨット</strong>：5個のサイコロをキープしながら3回振り、12個の役を埋める。1戦終了時の「お互いの合計スコア差 × 点差レート」でチップを奪い合う点差マッチ！</div>
+      <div style="margin-bottom:8px;"><strong>🎲 ナインダイス (NINE DICE)</strong>：1〜9のサイコロ9個（3×3）を最大3回振り直す独自ダイスゲーム！Root 2(100点)・Kudi(200点)・全て1(自動勝利)を狙え！</div>
       <div style="margin-bottom:8px;"><strong>🃏 ブラックジャック</strong>：トランプの合計を21に近づける。22以上はバースト負け。A+10点札の21はナチュラルBJで2.5倍配当！</div>
       <div style="margin-bottom:8px;"><strong>👑 ポーカー</strong>：5枚の手札から残したいカードをHOLDして1回交換。相手より強い役を作れば勝利＋高役ボーナス倍率！</div>
       <div style="margin-bottom:8px;"><strong>🎯 ルーレット</strong>：0〜36の回転盤。赤黒・偶数奇数(2倍)、ダズン(3倍)、数字ピンポイント当て(36倍)に自由ベット！</div>
@@ -5010,6 +5290,12 @@ function isActiveGameLocked() {
   if (id === 'screen-game-mahjong' && typeof mjState !== 'undefined') {
     return mjState.phase !== 'setup' && mjState.phase !== 'matchEnd';
   }
+  if (id === 'screen-game-ninedice' && typeof ndState !== 'undefined') {
+    return !ndState.matchOver && (
+      ndState.hasRolledThisTurn ||
+      Object.values(ndState.scores || {}).some(sc => Object.keys(sc || {}).length > 0)
+    );
+  }
   return false;
 }
 
@@ -5475,6 +5761,7 @@ async function createOnlineRoom() {
     roulette: null,
     bigsix: null,
     mahjong: null,
+    ninedice: null,
     toastEvent: null,
     updatedAt: Date.now()
   };
@@ -5660,19 +5947,24 @@ async function leaveOnlineRoom(silent = false) {
 
 async function pushOnlineRoomPatch(patch) {
   if (!onlineRoomState.active || !onlineRoomState.code) return;
-  const merged = {
-    ...(onlineRoomState.lastData || {}),
+  const firestorePatch = {
     ...patch,
     isSystemDoc: true,
     roomCode: onlineRoomState.code,
     updatedAt: Date.now()
   };
+  const merged = {
+    ...(onlineRoomState.lastData || {}),
+    ...firestorePatch
+  };
   onlineRoomState.lastData = merged;
 
   if (db) {
     try {
-      await getRoomDocRef(onlineRoomState.code).set(patch, { merge: true });
-    } catch (e) {}
+      await getRoomDocRef(onlineRoomState.code).set(firestorePatch, { merge: true });
+    } catch (e) {
+      console.warn('Firestore room patch error:', e);
+    }
   }
   try {
     if (onlineRoomState.bc) {
@@ -5771,7 +6063,8 @@ function handleOnlineRoomDocUpdate(data) {
       roulette: 'screen-game-roulette',
       bigsix: 'screen-game-bigsix',
       slot: 'screen-game-slot',
-      mahjong: 'screen-game-mahjong'
+      mahjong: 'screen-game-mahjong',
+      ninedice: 'screen-game-ninedice'
     };
     const targetScreen = screenMap[data.activeGame];
     if (targetScreen && !document.getElementById(targetScreen).classList.contains('active')) {
@@ -5802,8 +6095,14 @@ function handleOnlineRoomDocUpdate(data) {
   if (data.mahjong && document.getElementById('screen-game-mahjong').classList.contains('active')) {
     syncMahjongFromOnline(data.mahjong);
   }
+  if (data.ninedice && document.getElementById('screen-game-ninedice').classList.contains('active')) {
+    syncNineDiceFromOnline(data.ninedice);
+  }
   if (data.mahjongAction && onlineRoomState.role === 'host' && typeof mjHandleGuestAction === 'function') {
     mjHandleGuestAction(data.mahjongAction);
+  }
+  if (data.pokerAction && onlineRoomState.role === 'host' && typeof pkHandleGuestAction === 'function') {
+    pkHandleGuestAction(data.pokerAction);
   }
 }
 
@@ -5889,6 +6188,11 @@ function openGame(gameKey, fromRemoteSync = false) {
     if (mjBadge) mjBadge.textContent = state.playMode === 'local' ? '🤖 1人＋CPU3人戦' : modeLabel;
     initMahjongUI(fromRemoteSync);
     navigateTo('screen-game-mahjong');
+  } else if (gameKey === 'ninedice') {
+    const ndBadge = document.getElementById('ndModeBadge');
+    if (ndBadge) ndBadge.textContent = modeLabel;
+    initNineDiceMatch(fromRemoteSync);
+    navigateTo('screen-game-ninedice');
   }
 }
 
@@ -6577,8 +6881,7 @@ function calcYachtCategoryScore(catId, dice) {
   if (catId === 'full_house') {
     const has3 = counts.includes(3);
     const has2 = counts.includes(2);
-    const has5 = counts.includes(5);
-    return (has3 && has2) || has5 ? sum : 0;
+    return (has3 && has2) ? sum : 0;
   }
   if (catId === 's_straight') {
     const u = [...new Set(dice)].sort((a, b) => a - b).join('');
@@ -6892,6 +7195,622 @@ function renderYachtUI() {
       return `<td style="font-weight:900; color:${r.color};">${t}</td>`;
     }).join('');
   tbody.appendChild(totRow);
+}
+
+/* ============================================================================
+   🎲 ゲーム9：ナインダイス (NINE DICE) エンジン
+   1〜9のサイコロ9個(3×3)・最大3回振り直し・ヨット方式・全て1自動勝利
+============================================================================ */
+const ND_BEST_KEY = 'casino_logica_ninedice_best_v1';
+
+const NINEDICE_CATEGORIES = [
+  { id: 'aces',        name: '1の目 (Aces)',     shortName: '1の目',     sub: '1の目の合計 (最大8点)' },
+  { id: 'twos',        name: '2の目 (Twos)',     shortName: '2の目',     sub: 'ペア数 × 4点' },
+  { id: 'threes',      name: '3の目 (Threes)',   shortName: '3の目',     sub: 'ペア数 × 9点' },
+  { id: 'fours',       name: '4の目 (Fours)',    shortName: '4の目',     sub: 'ペア数 × 16点' },
+  { id: 'fives',       name: '5の目 (Fives)',    shortName: '5の目',     sub: 'ペア数 × 25点' },
+  { id: 'sixes',       name: '6の目 (Sixes)',    shortName: '6の目',     sub: 'ペア数 × 36点' },
+  { id: 'sevens',      name: '7の目 (Sevens)',   shortName: '7の目',     sub: '7の目の合計 (最大63点)' },
+  { id: 'eights',      name: '8の目 (Eights)',   shortName: '8の目',     sub: '8の目の合計 (最大72点)' },
+  { id: 'nines',       name: '9の目 (Nines)',    shortName: '9の目',     sub: '9の目の合計 (最大81点)' },
+  { id: 'six_dice',    name: '6 Dice',           shortName: '6 Dice',    sub: '同目6個以上 (出目×10)' },
+  { id: 'share_house', name: 'Share House',      shortName: 'Share H',   sub: '3個・3個・3個 (40点)' },
+  { id: 'full_house',  name: 'Full House',       shortName: 'Full H',    sub: '4個・5個 (60点)' },
+  { id: 'straight7',   name: '7 Straight',       shortName: '7 Str',     sub: '1〜7連番 30点(+8/+9各+10)' },
+  { id: 'root2',       name: 'Root 2 (√2)',      shortName: 'Root 2',    sub: '141421356 (100点)' },
+  { id: 'kudi',        name: 'Kudi (クディ)',    shortName: 'Kudi',      sub: '9個同目(2〜9) (200点)' }
+];
+
+let ndState = {
+  rate: 1,
+  soloMode: false, // AIモード時のみソロ挑戰に切替可能
+  soloEntryPaid: false,
+  dice: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  kept: new Array(9).fill(false),
+  rollsLeft: 3, // 最初の1回は自動ではなく、振り直し3回（初回ロールは0回目扱い、あるいは初期状態3回＋初回ボタン）
+  hasRolledThisTurn: false,
+  rollingAnim: false,
+  round: 1,
+  turnIdx: 0,
+  scores: { p1: {}, p2: {}, p3: {}, p4: {} },
+  matchOver: false,
+  allOneWinnerIdx: -1,
+  matchId: '',
+  settled: false
+};
+
+function getNineDiceBestScore() {
+  try { return Math.max(0, parseInt(localStorage.getItem(ND_BEST_KEY) || '0', 10) || 0); } catch (e) { return 0; }
+}
+function saveNineDiceBestScore(score) {
+  const cur = getNineDiceBestScore();
+  if (score > cur) {
+    try { localStorage.setItem(ND_BEST_KEY, String(score)); } catch (e) {}
+  }
+}
+
+function getNineDiceRoster() {
+  if (state.playMode === 'ai' && ndState.soloMode) {
+    return [{ slotKey: 'p1', name: sanitizeDisplayPlayerName(state.playerName || 'あなた'), color: '#66E0C0', isAi: false }];
+  }
+  const active = getActivePlayers();
+  if (state.playMode === 'ai') {
+    return [
+      { slotKey: 'p1', name: active[0]?.name || 'あなた', color: '#66E0C0', isAi: false },
+      { slotKey: 'p2', name: '🤖 AI', color: '#f87171', isAi: true }
+    ];
+  }
+  return active.map((p, idx) => ({
+    slotKey: 'p' + (idx + 1),
+    name: p.name,
+    color: p.color,
+    isAi: false
+  }));
+}
+
+function isMyNineDiceTurn() {
+  const roster = getNineDiceRoster();
+  const cur = roster[ndState.turnIdx];
+  if (!cur || cur.isAi) return false;
+  if (state.playMode === 'online' && onlineRoomState.active) {
+    return ndState.turnIdx === getMyOnlineSeatIdx();
+  }
+  return true;
+}
+
+function calcNineDiceScore(catId, diceArr) {
+  const counts = {};
+  for (let i = 1; i <= 9; i++) counts[i] = 0;
+  diceArr.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+
+  if (catId === 'aces') return counts[1] * 1;
+  if (catId === 'twos') return Math.floor(counts[2] / 2) * 4;
+  if (catId === 'threes') return Math.floor(counts[3] / 2) * 9;
+  if (catId === 'fours') return Math.floor(counts[4] / 2) * 16;
+  if (catId === 'fives') return Math.floor(counts[5] / 2) * 25;
+  if (catId === 'sixes') return Math.floor(counts[6] / 2) * 36;
+  if (catId === 'sevens') return counts[7] * 7;
+  if (catId === 'eights') return counts[8] * 8;
+  if (catId === 'nines') return counts[9] * 9;
+
+  if (catId === 'six_dice') {
+    let best = 0;
+    for (let v = 1; v <= 9; v++) {
+      if (counts[v] >= 6) best = Math.max(best, v * 10);
+    }
+    return best;
+  }
+
+  const nonZeroCounts = Object.values(counts).filter(c => c > 0).sort((a, b) => a - b);
+  if (catId === 'share_house') {
+    return (nonZeroCounts.length === 3 && nonZeroCounts[0] === 3 && nonZeroCounts[1] === 3 && nonZeroCounts[2] === 3) ? 40 : 0;
+  }
+  if (catId === 'full_house') {
+    return (nonZeroCounts.length === 2 && nonZeroCounts[0] === 4 && nonZeroCounts[1] === 5) ? 60 : 0;
+  }
+  if (catId === 'straight7') {
+    const has1to7 = [1, 2, 3, 4, 5, 6, 7].every(n => counts[n] >= 1);
+    if (!has1to7) return 0;
+    let pts = 30;
+    if (counts[8] >= 1) {
+      pts += 10;
+      if (counts[9] >= 1) pts += 10;
+    }
+    return pts;
+  }
+  if (catId === 'root2') {
+    // 141421356 -> 1:3個, 2:1個, 3:1個, 4:2個, 5:1個, 6:1個
+    const ok = counts[1] === 3 && counts[2] === 1 && counts[3] === 1 && counts[4] === 2 && counts[5] === 1 && counts[6] === 1;
+    return ok ? 100 : 0;
+  }
+  if (catId === 'kudi') {
+    for (let v = 2; v <= 9; v++) {
+      if (counts[v] === 9) return 200;
+    }
+    return 0;
+  }
+  return 0;
+}
+
+const ND_UPPER_IDS = ['aces', 'twos', 'threes', 'fours', 'fives', 'sixes', 'sevens', 'eights', 'nines'];
+
+function getNineDiceScoreDetail(slotKey) {
+  const sc = ndState.scores[slotKey] || {};
+  let upper = 0;
+  ND_UPPER_IDS.forEach(id => { upper += (Number(sc[id]) || 0); });
+  const bonus = upper >= 160 ? 60 : 0;
+  const subTotal = Object.values(sc).reduce((a, b) => a + (Number(b) || 0), 0);
+  return { upper, bonus, total: subTotal + bonus };
+}
+
+function getNineDiceTotalScore(slotKey) {
+  return getNineDiceScoreDetail(slotKey).total;
+}
+
+function setNineDiceRate(r) {
+  if (ndState.hasRolledThisTurn && !ndState.matchOver) {
+    showToast('⚠️ 試合の途中でレートは変更できません');
+    return;
+  }
+  playSE('click');
+  ndState.rate = r;
+  renderNineDiceUI();
+  pushNineDiceOnlineState();
+}
+
+function toggleNineDiceSoloMode() {
+  if (state.playMode !== 'ai') return;
+  if (ndState.hasRolledThisTurn && !ndState.matchOver) {
+    showToast('⚠️ 試合中はモード変更できません');
+    return;
+  }
+  playSE('click');
+  ndState.soloMode = !ndState.soloMode;
+  initNineDiceMatch();
+}
+
+function initNineDiceMatch(fromRemoteSync = false) {
+  if (!fromRemoteSync && state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'host') {
+    showToast('🌐 通信ルームではホストが「🔄 新規1戦」を押します');
+    return;
+  }
+  ndState.dice = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  ndState.kept = new Array(9).fill(false);
+  ndState.rollsLeft = 4; // 初回1回 + 振り直し3回 = 最大4回ロール
+  ndState.hasRolledThisTurn = false;
+  ndState.rollingAnim = false;
+  ndState.round = 1;
+  ndState.turnIdx = 0;
+  ndState.scores = { p1: {}, p2: {}, p3: {}, p4: {} };
+  ndState.matchOver = false;
+  ndState.allOneWinnerIdx = -1;
+  ndState.soloEntryPaid = false;
+  ndState.matchId = 'ND_' + Date.now();
+  ndState.settled = false;
+
+  if (!fromRemoteSync && state.playMode === 'online' && onlineRoomState.active) {
+    pushNineDiceOnlineState();
+  }
+  renderNineDiceUI();
+  updateGameBackLockUI();
+}
+
+function pushNineDiceOnlineState() {
+  if (state.playMode !== 'online' || !onlineRoomState.active) return;
+  pushOnlineRoomPatch({
+    ninedice: {
+      matchId: ndState.matchId,
+      rate: ndState.rate,
+      dice: ndState.dice,
+      kept: ndState.kept,
+      rollsLeft: ndState.rollsLeft,
+      hasRolledThisTurn: ndState.hasRolledThisTurn,
+      round: ndState.round,
+      turnIdx: ndState.turnIdx,
+      scores: ndState.scores,
+      matchOver: ndState.matchOver,
+      allOneWinnerIdx: ndState.allOneWinnerIdx,
+      tick: Date.now()
+    }
+  });
+}
+
+function syncNineDiceFromOnline(remote) {
+  if (!remote) return;
+  if (ndState.matchId !== remote.matchId) {
+    ndState.settled = false;
+  }
+  ndState.matchId = remote.matchId || ndState.matchId;
+  ndState.rate = remote.rate || 1;
+  ndState.dice = Array.isArray(remote.dice) ? remote.dice : ndState.dice;
+  ndState.kept = Array.isArray(remote.kept) ? remote.kept : ndState.kept;
+  ndState.rollsLeft = Number(remote.rollsLeft ?? 4);
+  ndState.hasRolledThisTurn = !!remote.hasRolledThisTurn;
+  ndState.round = Number(remote.round) || 1;
+  ndState.turnIdx = Number(remote.turnIdx) || 0;
+  ndState.scores = remote.scores || ndState.scores;
+  ndState.matchOver = !!remote.matchOver;
+  ndState.allOneWinnerIdx = Number(remote.allOneWinnerIdx ?? -1);
+
+  renderNineDiceUI();
+  updateGameBackLockUI();
+  if (ndState.matchOver && !ndState.settled) {
+    ndState.settled = true;
+    finishNineDiceMatch(true);
+  }
+}
+
+function toggleNineDiceKeep(idx) {
+  if (ndState.matchOver || !ndState.hasRolledThisTurn || !isMyNineDiceTurn() || ndState.rollingAnim) return;
+  playSE('click');
+  ndState.kept[idx] = !ndState.kept[idx];
+  renderNineDiceUI();
+  pushNineDiceOnlineState();
+}
+
+function rollNineDice() {
+  if (ndState.matchOver || ndState.rollsLeft <= 0 || !isMyNineDiceTurn() || ndState.rollingAnim) return;
+
+  // ソロモード初回ロール時に参加費20チップ預ける
+  if (state.playMode === 'ai' && ndState.soloMode && !ndState.soloEntryPaid && ndState.round === 1 && !ndState.hasRolledThisTurn) {
+    if (!state.infiniteChips && state.chips < 20) {
+      playSE('lose');
+      showToast('⚠️ ソロ挑戦には参加費 20🪙 が必要です！');
+      return;
+    }
+    if (!state.infiniteChips) {
+      state.chips -= 20;
+      saveState();
+    }
+    ndState.soloEntryPaid = true;
+  }
+
+  playSE('dice');
+  ndState.rollingAnim = true;
+  ndState.hasRolledThisTurn = true;
+  ndState.rollsLeft -= 1;
+  renderNineDiceUI();
+
+  setTimeout(() => {
+    for (let i = 0; i < 9; i++) {
+      if (!ndState.kept[i]) {
+        ndState.dice[i] = 1 + Math.floor(Math.random() * 9);
+      }
+    }
+    ndState.rollingAnim = false;
+
+    // 🌟 特別ルール：9個すべて「1」が出たら即座に自動勝利！
+    if (ndState.dice.every(v => v === 1)) {
+      ndState.matchOver = true;
+      ndState.allOneWinnerIdx = ndState.turnIdx;
+      renderNineDiceUI();
+      pushNineDiceOnlineState();
+      if (!ndState.settled) {
+        ndState.settled = true;
+        finishNineDiceMatch(false);
+      }
+      return;
+    }
+
+    renderNineDiceUI();
+    pushNineDiceOnlineState();
+    updateGameBackLockUI();
+  }, 280);
+}
+
+function selectNineDiceCategory(catId) {
+  if (ndState.matchOver || !ndState.hasRolledThisTurn || !isMyNineDiceTurn() || ndState.rollingAnim) return;
+  const roster = getNineDiceRoster();
+  const cur = roster[ndState.turnIdx];
+  if (!cur || (ndState.scores[cur.slotKey] || {})[catId] !== undefined) return;
+
+  const pts = calcNineDiceScore(catId, ndState.dice);
+  if (!ndState.scores[cur.slotKey]) ndState.scores[cur.slotKey] = {};
+  ndState.scores[cur.slotKey][catId] = pts;
+  playSE(pts >= 40 ? 'win' : 'click');
+
+  ndAdvanceTurn();
+}
+
+function ndAdvanceTurn() {
+  const roster = getNineDiceRoster();
+  ndState.kept = new Array(9).fill(false);
+  ndState.rollsLeft = 4;
+  ndState.hasRolledThisTurn = false;
+
+  if (ndState.turnIdx < roster.length - 1) {
+    ndState.turnIdx += 1;
+  } else {
+    ndState.turnIdx = 0;
+    ndState.round += 1;
+  }
+
+  if (ndState.round > NINEDICE_CATEGORIES.length) {
+    ndState.matchOver = true;
+    renderNineDiceUI();
+    pushNineDiceOnlineState();
+    if (!ndState.settled) {
+      ndState.settled = true;
+      finishNineDiceMatch(false);
+    }
+    return;
+  }
+
+  renderNineDiceUI();
+  pushNineDiceOnlineState();
+  updateGameBackLockUI();
+
+  const nextP = roster[ndState.turnIdx];
+  if (nextP && nextP.isAi) {
+    setTimeout(runNineDiceAiTurn, 520);
+  }
+}
+
+function runNineDiceAiTurn() {
+  if (ndState.matchOver) return;
+  const roster = getNineDiceRoster();
+  const aiP = roster[ndState.turnIdx];
+  if (!aiP || !aiP.isAi) return;
+
+  // 1〜2回振り直しシミュレーションして一番高い未埋まり役を選ぶ
+  for (let i = 0; i < 9; i++) ndState.dice[i] = 1 + Math.floor(Math.random() * 9);
+  for (let r = 0; r < 3; r++) {
+    // 一番多い目（ただし2〜9優先）をキープして振り直す簡易賢いAI
+    const counts = {};
+    ndState.dice.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+    let bestNum = 6, bestCnt = 0;
+    for (let v = 1; v <= 9; v++) {
+      if ((counts[v] || 0) > bestCnt || ((counts[v] || 0) === bestCnt && v > bestNum)) {
+        bestCnt = counts[v] || 0;
+        bestNum = v;
+      }
+    }
+    for (let i = 0; i < 9; i++) {
+      if (ndState.dice[i] !== bestNum) {
+        ndState.dice[i] = 1 + Math.floor(Math.random() * 9);
+      }
+    }
+    if (ndState.dice.every(v => v === 1)) {
+      ndState.matchOver = true;
+      ndState.allOneWinnerIdx = ndState.turnIdx;
+      renderNineDiceUI();
+      if (!ndState.settled) {
+        ndState.settled = true;
+        finishNineDiceMatch(false);
+      }
+      return;
+    }
+  }
+
+  const filled = ndState.scores[aiP.slotKey] || {};
+  const available = NINEDICE_CATEGORIES.filter(c => filled[c.id] === undefined);
+  if (available.length > 0) {
+    let pick = available[0];
+    let bestPts = -1;
+    available.forEach(c => {
+      const p = calcNineDiceScore(c.id, ndState.dice);
+      if (p > bestPts) { bestPts = p; pick = c; }
+    });
+    filled[pick.id] = bestPts;
+    ndState.scores[aiP.slotKey] = filled;
+    playSE('dice');
+    showToast(`🤖 AIが【${pick.shortName}】に ${bestPts}点 を記録！`);
+  }
+  ndAdvanceTurn();
+}
+
+function finishNineDiceMatch(fromSync = false) {
+  const roster = getNineDiceRoster();
+  const isAllOneWin = ndState.allOneWinnerIdx >= 0;
+
+  // 🌟 特別ルール：全て1 (自動勝利)
+  if (isAllOneWin) {
+    const winner = roster[ndState.allOneWinnerIdx] || roster[0];
+    if (typeof showSlotBigWinOverlay === 'function') {
+      showSlotBigWinOverlay(true, state.playMode === 'ai' && ndState.soloMode ? 1000 : 500, { mult3: 1 }, false, null);
+      const tEl = document.getElementById('bigWinTitleText');
+      const sEl = document.getElementById('bigWinSubText');
+      const cEl = document.getElementById('bigWinChipCounter');
+      const odEl = document.getElementById('bigWinOverdrivePill');
+      const clEl = document.getElementById('bigWinCloseBtn');
+      if (tEl) tEl.textContent = 'ALL 1s MIRACLE!!';
+      if (sEl) sEl.textContent = `🌟 ${winner.name} が「全て1」で自動勝利を達成しました！！`;
+      if (cEl) cEl.textContent = state.playMode === 'ai' && ndState.soloMode ? '🪙 +1,000' : '👑 自動勝利！';
+      if (odEl) odEl.style.display = 'none';
+      if (clEl) clEl.textContent = '✨ 最高すぎる！！';
+    }
+    if (state.playMode === 'ai' && ndState.soloMode) {
+      if (!state.infiniteChips) state.chips += 1000;
+      state.totalWins++;
+      saveState();
+    } else if (state.playMode === 'ai') {
+      const delta = ndState.allOneWinnerIdx === 0 ? 500 : -500;
+      adjustPlayerChipsByIdx(0, delta);
+      if (delta > 0) state.totalWins++;
+    } else if (state.playMode === 'local') {
+      roster.forEach((_, idx) => {
+        adjustPlayerChipsByIdx(idx, idx === ndState.allOneWinnerIdx ? 500 * (roster.length - 1) : -500);
+      });
+    } else if (state.playMode === 'online') {
+      const myIdx = getMyOnlineSeatIdx();
+      adjustPlayerChipsByIdx(myIdx, myIdx === ndState.allOneWinnerIdx ? 500 * (roster.length - 1) : -500);
+    }
+    checkBankruptNotice();
+    updateGameBackLockUI();
+    return;
+  }
+
+  // 通常終了：ソロ挑戦モード
+  if (state.playMode === 'ai' && ndState.soloMode) {
+    const myScore = getNineDiceTotalScore('p1');
+    saveNineDiceBestScore(myScore);
+    let reward = 0;
+    let tier = '目標未達…';
+    if (myScore >= 420) { reward = 300; tier = '👑 神引き (420点〜)'; }
+    else if (myScore >= 340) { reward = 120; tier = '🔥 プロ級 (340点〜)'; }
+    else if (myScore >= 280) { reward = 60; tier = '✨ 上級 (280点〜)'; }
+    else if (myScore >= 220) { reward = 30; tier = '👍 クリア (220点〜)'; }
+
+    if (reward > 0) {
+      if (!state.infiniteChips) state.chips += reward;
+      state.totalWins++;
+      saveState();
+      playSE('win');
+      showRewardModal('🎲', 'ナインダイス 目標達成！', `${tier}<br>最終スコア：<strong>${myScore}点</strong><br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${reward} チップ獲得！</span>`, '✨ やったね！');
+    } else {
+      playSE('lose');
+      showRewardModal('🎲', 'ナインダイス 結果', `最終スコア：<strong>${myScore}点</strong>（目標220点〜）<br>あと少し！もう1戦挑戦しよう！`, '🔥 リベンジ！');
+    }
+    checkBankruptNotice();
+    updateGameBackLockUI();
+    return;
+  }
+
+  // 対戦モード（AI / ローカル / オンライン点差精算）
+  const totals = roster.map(r => getNineDiceTotalScore(r.slotKey));
+  if (state.playMode === 'ai') {
+    saveNineDiceBestScore(totals[0]);
+    const diff = totals[0] - totals[1];
+    const chipDelta = diff * ndState.rate;
+    adjustPlayerChipsByIdx(0, chipDelta);
+    if (chipDelta > 0) {
+      state.totalWins++;
+      saveState();
+      playSE('win');
+      showRewardModal('🎲', 'ナインダイス 勝利！！', `あなた: <strong>${totals[0]}点</strong> vs AI: <strong>${totals[1]}点</strong><br>（${diff}点差 × ${ndState.rate}🪙）<br><span style="font-size:1.6rem; color:#4ade80; font-weight:900;">🪙 +${chipDelta} チップ獲得！</span>`, '🏆 よっしゃ！');
+    } else if (chipDelta < 0) {
+      playSE('lose');
+      showRewardModal('💀', 'ナインダイス 敗北…', `あなた: <strong>${totals[0]}点</strong> vs AI: <strong>${totals[1]}点</strong><br><span style="font-size:1.5rem; color:#f87171; font-weight:900;">🪙 ${chipDelta} チップ</span> 支払い…`, '🔥 もう1戦！');
+    } else {
+      showRewardModal('🤝', '同点ドロー！', `${totals[0]}点 対 ${totals[1]}点 で引き分け！`, 'OK');
+    }
+  } else {
+    const avg = totals.reduce((a, b) => a + b, 0) / roster.length;
+    const deltas = totals.map(t => Math.round((t - avg) * ndState.rate));
+    if (state.playMode === 'local') {
+      deltas.forEach((d, idx) => adjustPlayerChipsByIdx(idx, d));
+    } else if (state.playMode === 'online') {
+      const myIdx = getMyOnlineSeatIdx();
+      if (deltas[myIdx] !== undefined) adjustPlayerChipsByIdx(myIdx, deltas[myIdx]);
+    }
+    const ranked = roster.map((r, i) => ({ name: r.name, score: totals[i], delta: deltas[i] }))
+      .sort((a, b) => b.score - a.score);
+    const lines = ranked.map((x, rank) => {
+      const medal = rank === 0 ? '🥇' : (rank === 1 ? '🥈' : (rank === 2 ? '🥉' : '4️⃣'));
+      const dStr = x.delta >= 0 ? `<span style="color:#4ade80;">+${x.delta}🪙</span>` : `<span style="color:#f87171;">${x.delta}🪙</span>`;
+      return `${medal} <strong>${escapeHtml(x.name)}</strong>：${x.score}点 (${dStr})`;
+    }).join('<br>');
+    showRewardModal('🎲', `ナインダイス ${roster.length}人マッチ決着！`, lines, '👑 結果確認！');
+  }
+  checkBankruptNotice();
+  updateGameBackLockUI();
+}
+
+function renderNineDiceUI() {
+  const roster = getNineDiceRoster();
+  const isAiMode = state.playMode === 'ai';
+  const soloBtn = document.getElementById('ndSoloToggleBtn');
+  if (soloBtn) {
+    soloBtn.style.display = isAiMode ? 'inline-block' : 'none';
+    soloBtn.textContent = ndState.soloMode ? '🤖 AI対戦に切替' : '🎯 ソロ挑戦に切替';
+  }
+  const rateInfo = document.getElementById('ndRateInfoText');
+  if (rateInfo) {
+    rateInfo.textContent = (isAiMode && ndState.soloMode)
+      ? '🎯 ソロ挑戦 (参加20🪙 / 目標220点〜)'
+      : `点差レート: 1点差 = ${ndState.rate} 🪙`;
+  }
+  const bestEl = document.getElementById('ndBestBadge');
+  if (bestEl) bestEl.textContent = `👑 自己ベスト: ${getNineDiceBestScore()}点`;
+
+  const banner = document.getElementById('ndTurnBanner');
+  const rollBtn = document.getElementById('ndRollBtn');
+  const curP = roster[ndState.turnIdx] || roster[0];
+
+  if (ndState.matchOver) {
+    if (banner) banner.textContent = ndState.allOneWinnerIdx >= 0 ? '🌟 全て1 自動勝利達成！！' : '🏁 全15ラウンド終了！';
+    if (rollBtn) { rollBtn.disabled = true; rollBtn.textContent = '試合終了'; }
+  } else {
+    const who = curP.isAi ? '🤖 AI思考中...' : (isMyNineDiceTurn() ? `🎯 ${curP.name} の番` : `⏳ ${curP.name} の番`);
+    if (banner) banner.textContent = `${who} (${ndState.round}/${NINEDICE_CATEGORIES.length})`;
+    if (rollBtn) {
+      rollBtn.disabled = ndState.rollsLeft <= 0 || !isMyNineDiceTurn() || ndState.rollingAnim;
+      if (!ndState.hasRolledThisTurn) {
+        rollBtn.textContent = '🎲 最初のロール！(計4回)';
+      } else {
+        rollBtn.textContent = `🎲 キープ以外を振り直す (残り${ndState.rollsLeft}回)`;
+      }
+    }
+  }
+
+  // 3×3 サイコログリッド描画
+  const grid = document.getElementById('ndDiceGrid');
+  if (grid) {
+    const isAllOne = ndState.hasRolledThisTurn && ndState.dice.every(v => v === 1);
+    grid.innerHTML = ndState.dice.map((val, idx) => {
+      const kept = ndState.kept[idx];
+      const valCls = val === 1 ? 'is-one' : (val >= 7 ? 'is-high' : '');
+      const btnCls = `nd-die-btn${kept ? ' kept' : ''}${isAllOne ? ' all-one' : ''}${ndState.rollingAnim && !kept ? ' rolling' : ''}`;
+      return `
+        <button class="${btnCls}" onclick="toggleNineDiceKeep(${idx})" ${!ndState.hasRolledThisTurn || !isMyNineDiceTurn() ? 'disabled' : ''}>
+          <span class="nd-die-val ${valCls}">${val}</span>
+          <span class="nd-die-keep-pill">${kept ? '🔒 KEEP' : 'タップ固定'}</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  // スコア表描画
+  const headRow = document.getElementById('ndTableHeadRow');
+  if (headRow) {
+    headRow.innerHTML = `<th style="text-align:left;">役名</th>` + roster.map((r, idx) => {
+      const isTurn = !ndState.matchOver && ndState.turnIdx === idx;
+      return `<th style="color:${r.color}; ${isTurn ? 'background:rgba(102,224,192,0.18); border-bottom:3px solid #66E0C0;' : ''}">${escapeHtml(r.name)}</th>`;
+    }).join('');
+  }
+
+  const tbody = document.getElementById('ndScoreBody');
+  if (tbody) {
+    const previewMap = {};
+    let maxPreview = 0;
+    const myTurn = !ndState.matchOver && isMyNineDiceTurn() && ndState.hasRolledThisTurn && !curP.isAi;
+    if (myTurn) {
+      NINEDICE_CATEGORIES.forEach(c => {
+        if ((ndState.scores[curP.slotKey] || {})[c.id] === undefined) {
+          const p = calcNineDiceScore(c.id, ndState.dice);
+          previewMap[c.id] = p;
+          if (p > maxPreview) maxPreview = p;
+        }
+      });
+    }
+
+    tbody.innerHTML = NINEDICE_CATEGORIES.map((c, cIdx) => {
+      const cells = roster.map((r, rIdx) => {
+        const val = (ndState.scores[r.slotKey] || {})[c.id];
+        if (val !== undefined) return `<td class="nd-cell-filled">${val}</td>`;
+        if (myTurn && rIdx === ndState.turnIdx) {
+          const p = previewMap[c.id] || 0;
+          const bestCls = (p > 0 && p === maxPreview) ? ' is-best' : '';
+          return `<td class="nd-cell-pick${bestCls}" onclick="selectNineDiceCategory('${c.id}')">+${p}</td>`;
+        }
+        return `<td style="color:#475569;">-</td>`;
+      }).join('');
+      let rowHtml = `<tr><td class="nd-cat-col">${c.name}<span class="nd-cat-sub">${c.sub}</span></td>${cells}</tr>`;
+      if (cIdx === 8) {
+        rowHtml += `<tr style="background:rgba(242,198,109,0.12);"><td class="nd-cat-col" style="color:#F2C66D;">⭐ 上段合計<span class="nd-cat-sub">160点〜で +60点</span></td>` +
+          roster.map(r => {
+            const det = getNineDiceScoreDetail(r.slotKey);
+            return `<td style="font-weight:900; color:${det.bonus ? '#66E0C0' : '#F2C66D'};">${det.upper}${det.bonus ? `<br><span style="font-size:0.68rem;">(+${det.bonus})</span>` : ''}</td>`;
+          }).join('') + `</tr>`;
+      }
+      return rowHtml;
+    }).join('') + `
+      <tr style="background:#152431;">
+        <td class="nd-cat-col" style="color:#F2C66D;">👑 合計スコア</td>
+        ${roster.map(r => `<td style="font-weight:900; font-size:0.95rem; color:${r.color};">${getNineDiceTotalScore(r.slotKey)}</td>`).join('')}
+      </tr>
+    `;
+  }
 }
 
 /* ============================================================================
@@ -7475,6 +8394,10 @@ let pkState = {
 
 function adjustPkBet(val) {
   if (pkState.phase === 'draw') return;
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'host') {
+    showToast('🌐 ベット額はホスト（1P）が設定します');
+    return;
+  }
   playSE('click');
   if (val === 'reset') pkState.bet = Math.min(10, state.chips);
   else if (val === 'max') pkState.bet = state.chips;
@@ -7557,6 +8480,7 @@ function resetPokerUI() {
   document.getElementById('pkBetText').textContent = pkState.bet;
 
   const isMulti = state.playMode !== 'ai';
+  const isOnlineGuest = state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'host';
   document.getElementById('pkMultiSeatsGrid').style.display = isMulti ? 'grid' : 'none';
   document.getElementById('pkSingleOpponentArea').style.display = isMulti ? 'none' : 'block';
   document.getElementById('pkPrivacyCover').style.display = 'none';
@@ -7566,11 +8490,13 @@ function resetPokerUI() {
   document.getElementById('pkPlayerHand').innerHTML = '';
   document.getElementById('pkOpponentRank').textContent = '???';
   document.getElementById('pkPlayerRank').textContent = '-';
-  document.getElementById('pkDealBtn').style.display = 'inline-block';
+  document.getElementById('pkDealBtn').style.display = isOnlineGuest ? 'none' : 'inline-block';
   document.getElementById('pkDealBtn').textContent = '🃏 カードを配る';
   document.getElementById('pkDrawBtn').style.display = 'none';
   document.getElementById('pkRaiseBtn').style.display = 'none';
-  document.getElementById('pkStatusText').textContent = '「カードを配る」でポーカー開始！';
+  document.getElementById('pkStatusText').textContent = isOnlineGuest
+    ? '⏳ ホスト（1P）が「カードを配る」を押すのを待っています...'
+    : '「カードを配る」でポーカー開始！';
   if (isMulti) renderPokerMultiSeats();
   updateGameBackLockUI();
 }
@@ -7599,8 +8525,66 @@ function pushPokerToOnline(extra = {}) {
   });
 }
 
+let pkProcessedGuestActionId = '';
+
+function pkSendGuestAction(actionObj) {
+  if (state.playMode !== 'online' || !onlineRoomState.active) return;
+  pushOnlineRoomPatch({
+    pokerAction: {
+      ...actionObj,
+      seatId: onlineRoomState.mySeatId,
+      id: Math.random().toString(36).slice(2, 9),
+      at: Date.now()
+    }
+  });
+}
+
+function pkHandleGuestAction(act) {
+  if (!act || !act.id || act.id === pkProcessedGuestActionId) return;
+  if (state.playMode !== 'online' || !onlineRoomState.active || onlineRoomState.role !== 'host') return;
+  if (pkState.phase !== 'draw') return;
+  if (act.roundId && pkState.roundId && act.roundId !== pkState.roundId) return;
+
+  const players = getActivePlayers();
+  const curIdx = pkState.turnIdx;
+  const curPlayer = players[curIdx];
+  if (!curPlayer || !act.seatId || act.seatId !== curPlayer.id) return;
+
+  pkProcessedGuestActionId = act.id;
+  if (act.isRaise) {
+    pkState.bets[curIdx] = Math.min(getPlayerChipsByIdx(curIdx), (pkState.bets[curIdx] || pkState.bet) * 2);
+  }
+  const heldArr = Array.isArray(act.held) ? act.held.slice(0, 5).map(Boolean) : [false, false, false, false, false];
+  const curHand = pkState.hands[curIdx];
+  if (curHand) {
+    for (let i = 0; i < 5; i++) {
+      if (!heldArr[i]) {
+        if (pkState.deck.length === 0) pkState.deck = createShuffledDeck();
+        curHand[i] = pkState.deck.pop();
+      }
+    }
+  }
+  pkState.doneFlags[curIdx] = true;
+
+  const nextIdx = curIdx + 1;
+  if (nextIdx < players.length) {
+    pkState.turnIdx = nextIdx;
+    const nextP = players[nextIdx];
+    const msg = `🎯 ${nextP.name} の交換ターンです！`;
+    document.getElementById('pkStatusText').textContent = msg;
+    const isMyTurn = nextIdx === getMyOnlineSeatIdx();
+    document.getElementById('pkDrawBtn').style.display = isMyTurn ? 'inline-block' : 'none';
+    document.getElementById('pkRaiseBtn').style.display = (isMyTurn && state.chips >= (pkState.bets[nextIdx] || pkState.bet) * 2) ? 'inline-block' : 'none';
+    renderPokerHands();
+    pushPokerToOnline({ settled: false });
+  } else {
+    finishPokerMultiShowdown();
+  }
+}
+
 function syncPokerFromOnline(pData) {
   if (!pData) return;
+  if (onlineRoomState.role === 'host') return; // ホストが進行権限を持つため自己上書き防止
   if (pData.bet) {
     pkState.bet = pData.bet;
     document.getElementById('pkBetText').textContent = pkState.bet;
@@ -7637,8 +8621,7 @@ function syncPokerFromOnline(pData) {
     document.getElementById('pkDrawBtn').style.display = isMyTurn ? 'inline-block' : 'none';
     document.getElementById('pkRaiseBtn').style.display = (isMyTurn && state.chips >= (pkState.bets[myIdx] || pkState.bet) * 2) ? 'inline-block' : 'none';
   } else {
-    document.getElementById('pkDealBtn').style.display = 'inline-block';
-    document.getElementById('pkDealBtn').textContent = pkState.phase === 'done' ? '🃏 次の勝負へ' : '🃏 カードを配る';
+    document.getElementById('pkDealBtn').style.display = 'none';
     document.getElementById('pkDrawBtn').style.display = 'none';
     document.getElementById('pkRaiseBtn').style.display = 'none';
 
@@ -7659,6 +8642,10 @@ function syncPokerFromOnline(pData) {
 }
 
 function startPoker() {
+  if (state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role !== 'host') {
+    showToast('🌐 通信ルームではホスト（1P）が「カードを配る」を押します！');
+    return;
+  }
   if (state.chips <= 0) { checkBankruptNotice(); return; }
   playSE('click');
   pkState.bet = Math.min(pkState.bet, state.chips);
@@ -7841,7 +8828,17 @@ function pokerRaiseAndDraw() {
   if (pkState.phase !== 'draw') return;
   if (state.playMode !== 'ai') {
     const idx = state.playMode === 'online' ? getMyOnlineSeatIdx() : pkState.turnIdx;
-    if (state.playMode === 'online' && pkState.turnIdx !== idx) return;
+    if (state.playMode === 'online') {
+      if (pkState.turnIdx !== idx) return;
+      if (onlineRoomState.role !== 'host') {
+        playSE('coin');
+        document.getElementById('pkDrawBtn').style.display = 'none';
+        document.getElementById('pkRaiseBtn').style.display = 'none';
+        document.getElementById('pkStatusText').textContent = '📡 レイズ＆交換内容をホストへ送信中...';
+        pkSendGuestAction({ roundId: pkState.roundId, seatIdx: idx, held: pkState.held.slice(0, 5), isRaise: true });
+        return;
+      }
+    }
     pkState.bets[idx] = Math.min(getPlayerChipsByIdx(idx), (pkState.bets[idx] || pkState.bet) * 2);
     pokerDrawAndShowdown();
     return;
@@ -7859,9 +8856,18 @@ function pokerDrawAndShowdown() {
   if (state.playMode !== 'ai') {
     const players = getActivePlayers();
     const curIdx = pkState.turnIdx;
-    if (state.playMode === 'online' && curIdx !== getMyOnlineSeatIdx()) {
-      showToast('⏳ 相手の交換ターンです！');
-      return;
+    if (state.playMode === 'online') {
+      if (curIdx !== getMyOnlineSeatIdx()) {
+        showToast('⏳ 相手の交換ターンです！');
+        return;
+      }
+      if (onlineRoomState.role !== 'host') {
+        document.getElementById('pkDrawBtn').style.display = 'none';
+        document.getElementById('pkRaiseBtn').style.display = 'none';
+        document.getElementById('pkStatusText').textContent = '📡 交換内容をホストへ送信中...';
+        pkSendGuestAction({ roundId: pkState.roundId, seatIdx: curIdx, held: pkState.held.slice(0, 5), isRaise: false });
+        return;
+      }
     }
 
     const curHand = pkState.hands[curIdx];
@@ -7969,6 +8975,16 @@ function finishPokerMultiShowdown() {
   updateGameBackLockUI();
 
   if (state.playMode === 'online' && onlineRoomState.active) {
+    onlineRoomState.processedRoundId = pkState.roundId;
+    const myIdx = getMyOnlineSeatIdx();
+    const myDelta = Number(deltas[myIdx]) || 0;
+    if (myDelta !== 0) {
+      adjustPlayerChipsByIdx(myIdx, myDelta);
+      playSE(myDelta > 0 ? 'win' : 'lose');
+    } else {
+      playSE('click');
+    }
+    checkBankruptNotice();
     pushPokerToOnline({ settled: true, deltas, statusText: msg });
     return;
   }
@@ -10515,6 +11531,7 @@ function initMahjongUI(fromRemoteSync = false) {
 
 function resetMahjongToSetup() {
   if (mjState.aiTimer) { clearTimeout(mjState.aiTimer); mjState.aiTimer = null; }
+  if (typeof mjClearOnlineClaimTimeout === 'function') mjClearOnlineClaimTimeout();
   mjState.phase = 'setup';
   mjState.guaranteePaid = 0;
   document.getElementById('mjSetupPanel').style.display = 'block';
@@ -10714,6 +11731,27 @@ function syncMahjongFromOnline(remote) {
 }
 
 let mjProcessedGuestActionId = '';
+let mjClaimTimer = null;
+
+function mjClearOnlineClaimTimeout() {
+  if (mjClaimTimer) {
+    clearTimeout(mjClaimTimer);
+    mjClaimTimer = null;
+  }
+}
+
+function mjStartOnlineClaimTimeout() {
+  mjClearOnlineClaimTimeout();
+  if (state.playMode !== 'online' || !onlineRoomState.active || onlineRoomState.role !== 'host') return;
+  if (mjState.phase !== 'claim' || !mjState.claimQueue || mjState.claimQueue.length === 0) return;
+  mjClaimTimer = setTimeout(() => {
+    mjClaimTimer = null;
+    if (mjState.phase === 'claim' && mjState.lastDiscard) {
+      mjState.claimQueue = [];
+      mjAdvanceTurn((mjState.lastDiscard.fromIdx + 1) % 4);
+    }
+  }, 8500);
+}
 
 function mjIsGuestOnline() {
   return state.playMode === 'online' && onlineRoomState.active && onlineRoomState.role === 'guest';
@@ -10721,12 +11759,18 @@ function mjIsGuestOnline() {
 
 function mjHandleGuestAction(act) {
   if (!act || !act.id || act.id === mjProcessedGuestActionId) return;
-  mjProcessedGuestActionId = act.id;
-  const seatIdx = mjState.seats.findIndex(s => s.id === act.seatId);
+  if (!act.seatId || typeof act.seatId !== 'string') return;
+  const seatIdx = mjState.seats.findIndex(s => s.id === act.seatId && s.isHuman);
   if (seatIdx < 0) return;
+  mjProcessedGuestActionId = act.id;
 
   if (act.type === 'discard' && mjState.phase === 'playing' && mjState.turnIdx === seatIdx) {
-    mjExecuteDiscard(seatIdx, act.pos, !!act.riichi);
+    const s = mjState.seats[seatIdx];
+    const pos = Number(act.pos);
+    const maxPos = mjState.drawnTile !== null ? s.hand.length : s.hand.length - 1;
+    if (!Number.isInteger(pos) || pos < 0 || pos > maxPos) return;
+    if (s.riichi && pos !== s.hand.length) return;
+    mjExecuteDiscard(seatIdx, pos, !!act.riichi);
   } else if (act.type === 'tsumo' && mjState.phase === 'playing' && mjState.turnIdx === seatIdx && mjState.drawnTile !== null) {
     const s = mjState.seats[seatIdx];
     const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(seatIdx, true));
@@ -10735,11 +11779,17 @@ function mjHandleGuestAction(act) {
     const claim = mjState.claimQueue.find(c => c.seatIdx === seatIdx);
     if (!claim) return;
     if (act.actionType === 'ron' && claim.canRon) {
+      mjClearOnlineClaimTimeout();
       mjExecuteWin(seatIdx, mjState.lastDiscard.fromIdx, mjState.lastDiscard.tile, false, claim.winEval);
     } else if (act.actionType === 'pon' && claim.canPon) {
+      mjClearOnlineClaimTimeout();
       mjExecuteMeld(seatIdx, 'pon', claim.ponTiles);
-    } else if (act.actionType === 'chi' && claim.chiCombos[act.comboIdx || 0]) {
-      mjExecuteMeld(seatIdx, 'chi', claim.chiCombos[act.comboIdx || 0]);
+    } else if (act.actionType === 'chi' && Array.isArray(claim.chiCombos)) {
+      const cIdx = Number(act.comboIdx ?? 0);
+      if (Number.isInteger(cIdx) && cIdx >= 0 && cIdx < claim.chiCombos.length && claim.chiCombos[cIdx]) {
+        mjClearOnlineClaimTimeout();
+        mjExecuteMeld(seatIdx, 'chi', claim.chiCombos[cIdx]);
+      }
     } else if (act.actionType === 'pass') {
       mjState.claimQueue = mjState.claimQueue.filter(c => c.seatIdx !== seatIdx);
       mjResolveClaimQueue();
@@ -10752,7 +11802,8 @@ function mjSendGuestAction(actionObj) {
     mahjongAction: {
       ...actionObj,
       seatId: onlineRoomState.mySeatId,
-      id: Math.random().toString(36).slice(2, 9)
+      id: Math.random().toString(36).slice(2, 9),
+      at: Date.now()
     }
   });
 }
@@ -11050,6 +12101,7 @@ function mjExecuteDiscard(seatIdx, pos, declareRiichi = false) {
 function mjResolveClaimQueue() {
   if (mjState.phase !== 'claim') return;
   if (mjState.claimQueue.length === 0) {
+    mjClearOnlineClaimTimeout();
     mjAdvanceTurn((mjState.lastDiscard.fromIdx + 1) % 4);
     return;
   }
@@ -11058,6 +12110,7 @@ function mjResolveClaimQueue() {
   const aiClaim = mjState.claimQueue.find(c => !mjState.seats[c.seatIdx].isHuman);
   if (aiClaim) {
     if (aiClaim.canRon) {
+      mjClearOnlineClaimTimeout();
       const s = mjState.seats[aiClaim.seatIdx];
       mjExecuteWin(aiClaim.seatIdx, mjState.lastDiscard.fromIdx, mjState.lastDiscard.tile, false, aiClaim.winEval);
       return;
@@ -11067,6 +12120,7 @@ function mjResolveClaimQueue() {
     const s = mjState.seats[aiClaim.seatIdx];
     const isYakuhai = tile >= 31 || tile === 27 + mjState.roundWind || tile === 27 + s.wind;
     if (aiClaim.canPon && isYakuhai && mjOpts.aiDiff !== 'easy') {
+      mjClearOnlineClaimTimeout();
       mjExecuteMeld(aiClaim.seatIdx, 'pon', aiClaim.ponTiles);
       return;
     }
@@ -11075,11 +12129,13 @@ function mjResolveClaimQueue() {
     return;
   }
 
-  // 人間プレイヤーの判断待ち
+  // 人間プレイヤーの判断待ち（オンライン時は8.5秒後に自動スルー）
   mjSyncAndRender();
+  mjStartOnlineClaimTimeout();
 }
 
 function mjExecuteMeld(seatIdx, type, consumeTiles) {
+  mjClearOnlineClaimTimeout();
   const s = mjState.seats[seatIdx];
   const targetTile = mjState.lastDiscard.tile;
   const fromIdx = mjState.lastDiscard.fromIdx;
@@ -11107,6 +12163,7 @@ function mjExecuteMeld(seatIdx, type, consumeTiles) {
 }
 
 function mjAdvanceTurn(nextIdx) {
+  mjClearOnlineClaimTimeout();
   if (mjState.wall.length === 0) {
     mjExecuteDrawRound();
     return;
@@ -11488,7 +12545,7 @@ function renderMahjongTable() {
       });
       actHtml += `<button class="mj-act-btn btn-pass" onclick="onClickMahjongClaim('pass')">💨 スルー</button>`;
     } else {
-      actHtml = `<span style="font-size:0.74rem; color:#94a3b8; font-weight:900;">⏳ 相手の判断待ち...</span>`;
+      actHtml = `<span style="font-size:0.74rem; color:#94a3b8; font-weight:900;">⏳ 相手の判断待ち...（最大8秒で自動進行）</span>`;
     }
   } else {
     actHtml = `<span style="font-size:0.74rem; color:#cbd5e1; font-weight:900;">⏳ ${escapeHtml(mjState.seats[mjState.turnIdx]?.name || '')} の手番中...</span>`;
