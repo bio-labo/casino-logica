@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>カジノ・ロジカ (CASINO LOGICA) 公式ポータル ｜ 課金ゼロの息抜き＆確率・戦略ゲーム</title>
+<meta name="description" content="完全無料・課金要素ゼロのテーブル＆ダイス＆スロット＆麻雀ゲーム！チンチロ・ヨット・ブラックジャック・ポーカー・ルーレット・ビッグシックス・バイオスロット・リーチ麻雀の全8種を搭載。最大4人対戦＆破産したら『バイオ・ロジカ』で勉強して復活！">
+<meta property="og:type" content="website">
+<meta property="og:title" content="カジノ・ロジカ (CASINO LOGICA) 公式紹介サイト">
+<meta property="og:description" content="課金ゼロの息抜きミニゲーム！チップが尽きたら勉強で復活できる、最大4人対戦対応のカジノゲーム。">
+<meta name="theme-color" content="#0b0618">
+<style>
+  :root {
+    --bg-dark: #0b0618;
+    --bg-card: rgba(24, 14, 42, 0.84);
+    --border-color: rgba(250, 204, 21, 0.28);
+    --gold: #facc15;
+    --amber: #f59e0b;
+    --purple: #a855f7;
+    --crimson: #e11d48;
+    --emerald: #10b981;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --font-sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.65;
+    overflow-x: hidden;
+    position: relative;
+    background-image:
+      radial-gradient(circle at 18% 18%, rgba(168, 85, 247, 0.2) 0%, transparent 42%),
+      radial-gradient(circle at 84% 52%, rgba(225, 29, 72, 0.16) 0%, transparent 45%),
+      radial-gradient(circle at 45% 90%, rgba(250, 204, 21, 0.14) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 🌟 ナビバー */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(11, 6, 24, 0.9);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    gap: 10px;
+  }
+
+  .nav-left { display: flex; align-items: center; gap: 10px; }
+
+  .btn-back-portal {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(250, 204, 21, 0.14);
+    border: 1px solid rgba(250, 204, 21, 0.45);
+    color: #fef08a;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .brand-icon-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    box-shadow: 0 0 16px rgba(250, 204, 21, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    object-fit: cover;
+  }
+
+  .brand-text {
+    font-size: 1.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff 30%, #fde047 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .brand-badge {
+    font-size: 0.65rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #be123c, #eab308);
+    padding: 2px 7px;
+    border-radius: 6px;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+    margin-left: 5px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    list-style: none;
+  }
+  .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.86rem; font-weight: 700; }
+  .nav-links a:hover { color: #fde047; }
+
+  .btn-play-nav {
+    background: linear-gradient(135deg, #d97706, #9333ea);
+    color: #fff !important;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 900 !important;
+    box-shadow: 0 0 18px rgba(250, 204, 21, 0.35);
+  }
+
+  /* スマホ目次 */
+  .mobile-quick-nav {
+    display: none;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 6px 16px 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    scrollbar-width: none;
+  }
+  .mobile-quick-nav::-webkit-scrollbar { display: none; }
+  .mobile-quick-nav a {
+    flex-shrink: 0;
+    text-decoration: none;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  /* 🚀 ヒーロー */
+  .hero-section { padding: 60px 0 50px; text-align: center; }
+
+  .hero-tag {
+    display: inline-flex;
+    padding: 6px 18px;
+    border-radius: 999px;
+    background: rgba(250, 204, 21, 0.12);
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    color: #fef08a;
+    font-size: 0.84rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+  }
+
+  .hero-icon-wrap {
+    width: 132px;
+    height: 132px;
+    margin: 0 auto 24px;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 36px rgba(250, 204, 21, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: floatAnim 4s ease-in-out infinite;
+  }
+  .hero-icon-wrap img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+  @keyframes floatAnim {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  .hero-title .glow {
+    background: linear-gradient(135deg, #fff 15%, #fde047 55%, #f43f5e 95%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-sub {
+    font-size: clamp(0.96rem, 2.2vw, 1.15rem);
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto 30px;
+    font-weight: 600;
+  }
+
+  .btn-huge-play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 46px;
+    border-radius: 16px;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(135deg, #d97706 0%, #be123c 55%, #7c3aed 100%);
+    box-shadow: 0 10px 30px rgba(190, 18, 60, 0.45), 0 0 28px rgba(250, 204, 21, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    transition: transform 0.2s;
+  }
+  .btn-huge-play:hover { transform: translateY(-3px); }
+
+  /* 📊 スタッツ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 30px 0 80px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 22px;
+    text-align: center;
+  }
+  .stat-num { font-size: 2.3rem; font-weight: 900; line-height: 1.1; margin-bottom: 6px; }
+  .stat-label { font-size: 0.92rem; font-weight: 800; color: #fff; }
+  .stat-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 3px; }
+
+  /* セクション共通 */
+  .section-wrap { margin-bottom: 88px; }
+  .section-head { text-align: center; margin-bottom: 36px; }
+  .section-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 999px;
+    background: rgba(250, 204, 21, 0.12);
+    border: 1px solid rgba(250, 204, 21, 0.38);
+    color: #fde047;
+    font-size: 0.74rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .section-title { font-size: clamp(1.6rem, 3.6vw, 2.3rem); font-weight: 900; margin-bottom: 8px; }
+  .section-desc { color: var(--text-secondary); font-size: 0.94rem; max-width: 640px; margin: 0 auto; }
+
+  /* 🎲 ミニ運試し体験 */
+  .dice-demo-box {
+    background: var(--bg-card);
+    border: 1.5px solid rgba(250, 204, 21, 0.42);
+    border-radius: 24px;
+    padding: 28px;
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .dice-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .die-face {
+    width: 74px;
+    height: 74px;
+    background: linear-gradient(145deg, #ffffff, #e2e8f0);
+    color: #0f172a;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+    box-shadow: 0 6px 0 #94a3b8, 0 12px 24px rgba(0, 0, 0, 0.45);
+    border: 2px solid #fff;
+  }
+
+  .btn-roll-demo {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #0f172a;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 0 #92400e;
+  }
+  .btn-roll-demo:active { transform: translateY(2px); }
+
+  /* 🃏 収録ゲーム一覧 */
+  .games-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .mini-game-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 20px;
+  }
+  .mini-game-card h4 { font-size: 1.08rem; font-weight: 900; color: #fde047; margin-bottom: 6px; }
+  .mini-game-card p { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; }
+
+  /* 🧬 バイオ連動・安心設計 */
+  .link-feature-box {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(24, 14, 42, 0.9));
+    border: 1.5px solid rgba(16, 185, 129, 0.45);
+    border-radius: 22px;
+    padding: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  /* ❓ FAQ */
+  .faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .faq-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; }
+  .faq-q { padding: 16px 20px; font-weight: 800; font-size: 0.94rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q::after { content: '+'; font-size: 1.3rem; color: #fde047; }
+  .faq-item.open .faq-q::after { transform: rotate(45deg); }
+  .faq-a { padding: 0 20px 16px; font-size: 0.86rem; color: var(--text-secondary); display: none; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 12px; }
+  .faq-item.open .faq-a { display: block; }
+
+  /* 📩 フッター */
+  .footer-cta {
+    text-align: center;
+    background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.18), transparent 70%);
+    padding: 74px 20px;
+    border-top: 1px solid var(--border-color);
+  }
+  .footer-links { display: flex; justify-content: center; gap: 22px; margin: 26px 0; font-size: 0.85rem; flex-wrap: wrap; }
+  .footer-links a { color: var(--text-secondary); text-decoration: none; }
+  .footer-links a:hover { color: #fde047; }
+
+  .floating-play-cta {
+    display: none; position: fixed; bottom: 16px; right: 16px; z-index: 95;
+    background: linear-gradient(135deg, #d97706, #9333ea); color: #fff; text-decoration: none;
+    padding: 12px 20px; border-radius: 999px; font-size: 0.9rem; font-weight: 900;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55); border: 1.5px solid rgba(255, 255, 255, 0.35);
+  }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .mobile-quick-nav { display: flex; }
+    .floating-play-cta { display: inline-flex; }
+    .btn-huge-play { width: 100%; padding: 16px 24px; font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container nav-inner">
+    <div class="nav-left">
+      <a href="#" onclick="openLogicaPortal(); return false;" class="btn-back-portal">⬅️ ポータル</a>
+      <a href="#" class="brand">
+        <img id="navCasinoIcon" class="brand-icon-img" alt="カジノ・ロジカ アイコン">
+        <span class="brand-text">カジノ・ロジカ <span class="brand-badge">Ver 1.0</span></span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#preview">運試し体験</a></li>
+      <li><a href="#games">全8種ゲーム</a></li>
+      <li><a href="#bio-link">バイオ連動</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="index.html" class="btn-play-nav">🎰 今すぐ遊ぶ</a></li>
+    </ul>
+  </div>
+  <nav class="mobile-quick-nav" aria-label="クイックナビ">
+    <a href="#" onclick="openLogicaPortal(); return false;" style="border-color:rgba(250,204,21,0.5); color:#fde047;">🏠 ポータル</a>
+    <a href="#preview">🎲 運試し</a>
+    <a href="#games">🃏 全8種</a>
+    <a href="#bio-link">🧬 バイオ連動</a>
+    <a href="#faq">❓ FAQ</a>
+  </nav>
+</header>
+
+<main>
+  <!-- 🚀 ヒーロー -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-tag">
+        <span>✨ LOGICA PORTAL 公式タイトル ｜ 課金要素ゼロの息抜きミニゲーム</span>
+      </div>
+
+      <div class="hero-icon-wrap">
+        <img id="heroCasinoIcon" alt="カジノ・ロジカ 公式アイコン">
+      </div>
+
+      <h1 class="hero-title">
+        勉強の合間に、<br>
+        <span class="glow">確率と心理戦を楽しもう。</span>
+      </h1>
+
+      <p class="hero-sub">
+        <strong>課金要素は一切ゼロ！</strong>チンチロ・ヨット・ブラックジャック・ポーカー・ルーレット・ビッグシックス・バイオスロット・リーチ麻雀の<strong>全8種</strong>を搭載。<br>
+        AIや友達と最大4人でワイワイ対戦して、<strong>チップが尽きたら『バイオ・ロジカ』で勉強して復活！</strong>
+      </p>
+
+      <a href="index.html" class="btn-huge-play">
+        <span>🎲 カジノ・ロジカで息抜きする</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 📊 スタッツ -->
+  <section class="container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--gold);">0<span style="font-size:1.2rem;">円</span></div>
+        <div class="stat-label">🆓 完全無料・課金なし</div>
+        <div class="stat-sub">お金は一切かからない安心設計</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--crimson);">8<span style="font-size:1.2rem;">種目</span></div>
+        <div class="stat-label">🃏 テーブル＆ダイス＆麻雀</div>
+        <div class="stat-sub">定番からオリジナルまで完全網羅</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--purple);">4<span style="font-size:1.2rem;">人</span></div>
+        <div class="stat-label">👥 1台＆通信ルーム対戦</div>
+        <div class="stat-sub">4桁部屋コードでリアルタイム同期</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--emerald);">🧬</div>
+        <div class="stat-label">📝 破産したら勉強で復活</div>
+        <div class="stat-sub">0チップ時はバイオ・ロジカへ！</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🎲 運試し体験 -->
+  <section id="preview" class="container section-wrap">
+    <div class="section-head">
+      <span class="section-badge">MINI DICE DEMO</span>
+      <h2 class="section-title">チンチロ・ミニ運試し！</h2>
+      <p class="section-desc">3つのサイコロを振って、役（ピンゾロ・アラシ・シゴロなど）が出るか試してみよう！</p>
+    </div>
+
+    <div class="dice-demo-box">
+      <div class="dice-row">
+        <div class="die-face" id="die1">1</div>
+        <div class="die-face" id="die2">1</div>
+        <div class="die-face" id="die3">1</div>
+      </div>
+      <div id="diceResultText" style="font-size:1.1rem; font-weight:900; color:#fde047; margin-bottom:16px;">
+        ボタンを押してサイコロを振ってみよう！
+      </div>
+      <button type="button" class="btn-roll-demo" onclick="rollDemoDice()">🎲 サイコロを振る！</button>
+    </div>
+  </section>
+
+  <!-- 🃏 収録ゲーム -->
+  <section id="games" class="container section-wrap">
+    <div class="section-head">
+      <span class="section-badge">8 GAMES LINEUP</span>
+      <h2 class="section-title">収録されている全8種類のゲーム</h2>
+    </div>
+
+    <div class="games-list-grid">
+      <div class="mini-game-card"><h4>🥣 チンチロ</h4><p>3つのサイコロで役を競う！親vs子の最大4人バトル対応。</p></div>
+      <div class="mini-game-card"><h4>⛵ ヨット</h4><p>サイコロ5個を振り直して役を埋める、頭脳派ダイスゲーム！</p></div>
+      <div class="mini-game-card"><h4>🃏 ブラックジャック</h4><p>合計21に近づけろ！ルールガイド付きで初心者も安心。</p></div>
+      <div class="mini-game-card"><h4>👑 ポーカー</h4><p>役見本図鑑付き！1台プレイ時は覗き見防止カバー対応。</p></div>
+      <div class="mini-game-card"><h4>🎯 ルーレット</h4><p>340pxの特大盤面で玉が転がる！全員同時ベット対応。</p></div>
+      <div class="mini-game-card"><h4>🎡 ビッグシックス</h4><p>1〜10の数字や倍率を選んで回す爽快マネーホイール！</p></div>
+      <div class="mini-game-card"><h4>🎰 バイオ・スロット</h4><p>理系モチーフ絵柄×稲妻リーチ×DNA OVERDRIVE搭載！</p></div>
+      <div class="mini-game-card"><h4>🀄 リーチ麻雀</h4><p>初心者テンパイアシスト・全役一覧付き！AI・4人対局に対応。</p></div>
+    </div>
+  </section>
+
+  <!-- 🧬 破産からの2大復活ルート -->
+  <section id="bio-link" class="container section-wrap">
+    <div class="section-head">
+      <span class="section-badge">2 RECOVERY ROUTES</span>
+      <h2 class="section-title">チップが0になっても大丈夫！2つの復活方法</h2>
+      <p class="section-desc">破産しても課金は一切不要。勉強で稼ぐか、友達の信用で乗り切るか、2通りの復活ルートが用意されているよ！</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(290px, 1fr)); gap:20px;">
+      <div class="link-feature-box" style="display:block;">
+        <span class="section-badge" style="background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.45); color:#6ee7b7;">方法①：勉強で復活</span>
+        <h3 style="font-size:1.25rem; font-weight:900; color:#fff; margin-bottom:8px;">📝 『バイオ・ロジカ』で勉強してチップ稼ぎ</h3>
+        <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.65;">
+          所持チップが0になると「📝 勉強でチップ稼ぎ」ボタンが解放！『バイオ・ロジカ』でクイズを解いてチップを稼いで戻ってこられる、勉強と息抜きが繋がる王道復活ルートです。
+        </p>
+      </div>
+
+      <div class="link-feature-box" style="display:block; background:linear-gradient(135deg, rgba(14,165,233,0.14), rgba(24,14,42,0.9)); border-color:rgba(56,189,248,0.45);">
+        <span class="section-badge" style="background:rgba(56,189,248,0.15); border-color:rgba(56,189,248,0.45); color:#7dd3fc;">方法②：友達に借りて復活</span>
+        <h3 style="font-size:1.25rem; font-weight:900; color:#fff; margin-bottom:8px;">📜 デジタル借用書でフレンドから借りる</h3>
+        <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.65;">
+          「🤝 フレンド ➔ チップ貸し借り」から友達にチップを借りてすぐ再挑戦！※ただし借りたチップまで溶かして破産すると、<strong>勉強で稼いで完済するまでカジノがロックされる信用教育システム</strong>付き！
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ❓ FAQ -->
+  <section id="faq" class="container section-wrap">
+    <div class="section-head">
+      <span class="section-badge">FAQ</span>
+      <h2 class="section-title">よくある質問</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Q. 本当にお金はかかりませんか？</div>
+        <div class="faq-a">はい、完全無料・課金要素は一切ゼロです！すべてゲーム内の仮想チップで遊ぶ息抜きミニゲームなので安心して遊べます。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Q. 友達とどうやって対戦できますか？</div>
+        <div class="faq-a">1台のスマホで交互に遊ぶ「ローカル対戦」と、4桁の部屋番号やフレンド招待を使ってオンラインで最大4人同時に遊べる「通信ルーム」の両方に対応しています！</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Q. チップが0になったらもう遊べませんか？</div>
+        <div class="faq-a">大丈夫！<strong>①『バイオ・ロジカ』でクイズを解いてチップを稼ぐ方法</strong>と、<strong>②フレンドからデジタル借用書でチップを借りる方法</strong>の2通りでいつでも復活できます！（※借りたチップを溶かした場合は、勉強で返済するまでロックされます）</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer-cta">
+  <div class="container">
+    <h2 style="font-size:clamp(1.7rem, 3.8vw, 2.4rem); font-weight:900; margin-bottom:14px;">
+      勉強の息抜きに、一勝負いかが？
+    </h2>
+    <p style="color:var(--text-secondary); max-width:540px; margin:0 auto 28px; font-size:0.95rem;">
+      課金ゼロ・登録不要。AIとも友達ともすぐ遊べる！
+    </p>
+    <a href="index.html" class="btn-huge-play"><span>🎰 カジノ・ロジカを起動する</span></a>
+
+    <div class="footer-links">
+      <a href="index.html">カジノ・ロジカを起動</a>
+      <a href="#" onclick="openLogicaPortal(); return false;">LOGICA PORTAL（総合トップ）</a>
+      <a href="#preview">運試し</a>
+      <a href="#games">全8種ゲーム</a>
+      <a href="#bio-link">バイオ連動</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div style="font-size:0.76rem; color:var(--text-muted);">&copy; 2026 Casino-Logica Project (Ver 1.0). All Rights Reserved.</div>
+  </div>
+</footer>
+
+<a href="index.html" class="floating-play-cta">🎰 今すぐ遊ぶ</a>
+
+<script>
+/* ============================================================================
+   1. カジノ・ロジカ 公式アイコン（icon.html 再現）
+============================================================================ */
+function createCasinoIconDataUrl() {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 512;
+  const ctx = c.getContext('2d');
+  ctx.scale(0.5, 0.5);
+  const W = 1024, H = 1024, R = 224;
+
+  function drawIsoPip(origin, axisU, axisV, u, v, radius, color) {
+    const px = origin.x + u * axisU.x + v * axisV.x;
+    const py = origin.y + u * axisU.y + v * axisV.y;
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.transform(axisU.x / 100, axisU.y / 100, axisV.x / 100, axisV.y / 100, 0, 0);
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * 100, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(R, 0); ctx.lineTo(W - R, 0); ctx.quadraticCurveTo(W, 0, W, R);
+  ctx.lineTo(W, H - R); ctx.quadraticCurveTo(W, H, W - R, H);
+  ctx.lineTo(R, H); ctx.quadraticCurveTo(0, H, 0, H - R);
+  ctx.lineTo(0, R); ctx.quadraticCurveTo(0, 0, R, 0); ctx.closePath(); ctx.clip();
+
+  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+  bgGrad.addColorStop(0.0, '#4c1d95'); bgGrad.addColorStop(0.5, '#881337'); bgGrad.addColorStop(1.0, '#b45309');
+  ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, W, H);
+
+  const cx = 512, cy = 528, S = 285;
+  const cos30 = Math.cos(Math.PI / 6), sin30 = Math.sin(Math.PI / 6);
+  const C  = { x: cx, y: cy };
+  const T  = { x: cx, y: cy - S };
+  const TR = { x: cx + S * cos30, y: cy - S * sin30 };
+  const BR = { x: cx + S * cos30, y: cy + S * sin30 };
+  const B  = { x: cx, y: cy + S };
+  const BL = { x: cx - S * cos30, y: cy + S * sin30 };
+  const TL = { x: cx - S * cos30, y: cy - S * sin30 };
+
+  ctx.beginPath(); ctx.moveTo(T.x, T.y); ctx.lineTo(TR.x, TR.y); ctx.lineTo(C.x, C.y); ctx.lineTo(TL.x, TL.y); ctx.closePath();
+  ctx.fillStyle = '#ffffff'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(TL.x, TL.y); ctx.lineTo(C.x, C.y); ctx.lineTo(B.x, B.y); ctx.lineTo(BL.x, BL.y); ctx.closePath();
+  ctx.fillStyle = '#e2e8f0'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(C.x, C.y); ctx.lineTo(TR.x, TR.y); ctx.lineTo(BR.x, BR.y); ctx.lineTo(B.x, B.y); ctx.closePath();
+  ctx.fillStyle = '#94a3b8'; ctx.fill();
+
+  const topOrigin = { x: (T.x + C.x) / 2, y: (T.y + C.y) / 2 };
+  const topU = { x: (TR.x - T.x) * 0.5, y: (TR.y - T.y) * 0.5 };
+  const topV = { x: (TL.x - T.x) * 0.5, y: (TL.y - T.y) * 0.5 };
+  drawIsoPip(topOrigin, topU, topV, 0, 0, 0.42, '#dc2626');
+
+  const leftOrigin = { x: (TL.x + B.x) / 2, y: (TL.y + B.y) / 2 };
+  const leftU = { x: (C.x - TL.x) * 0.5, y: (C.y - TL.y) * 0.5 };
+  const leftV = { x: (BL.x - TL.x) * 0.5, y: (BL.y - TL.y) * 0.5 };
+  drawIsoPip(leftOrigin, leftU, leftV, -0.5, -0.5, 0.21, '#1e293b');
+  drawIsoPip(leftOrigin, leftU, leftV,  0.0,  0.0, 0.21, '#1e293b');
+  drawIsoPip(leftOrigin, leftU, leftV,  0.5,  0.5, 0.21, '#1e293b');
+
+  const rightOrigin = { x: (C.x + BR.x) / 2, y: (C.y + BR.y) / 2 };
+  const rightU = { x: (TR.x - C.x) * 0.5, y: (TR.y - C.y) * 0.5 };
+  const rightV = { x: (B.x - C.x) * 0.5,  y: (B.y - C.y) * 0.5 };
+  [[-0.5,-0.5],[0.5,-0.5],[0,0],[-0.5,0.5],[0.5,0.5]].forEach(([u,v]) => {
+    drawIsoPip(rightOrigin, rightU, rightV, u, v, 0.20, '#1e293b');
+  });
+
+  ctx.restore();
+  return c.toDataURL('image/png');
+}
+
+/* ============================================================================
+   2. ミニ運試しダイス
+============================================================================ */
+function rollDemoDice() {
+  const d = [
+    Math.floor(Math.random() * 6) + 1,
+    Math.floor(Math.random() * 6) + 1,
+    Math.floor(Math.random() * 6) + 1
+  ];
+  document.getElementById('die1').textContent = d[0];
+  document.getElementById('die2').textContent = d[1];
+  document.getElementById('die3').textContent = d[2];
+
+  const s = [...d].sort((a, b) => a - b);
+  let msg = '';
+  if (s[0] === 1 && s[1] === 1 && s[2] === 1) msg = '👑 ピンゾロ（5倍役）！！最高の運勢！';
+  else if (s[0] === s[1] && s[1] === s[2]) msg = `🔥 ${s[0]}のアラシ（3倍役）！大当たり！`;
+  else if (s[0] === 4 && s[1] === 5 && s[2] === 6) msg = '✨ シゴロ（2倍役）！ナイスロール！';
+  else if (s[0] === 1 && s[1] === 2 && s[2] === 3) msg = '💀 ヒフミ（2倍負け）…でも課金ゼロだから安心！';
+  else if (s[0] === s[1]) msg = `🎲 出目【${s[2]}】！`;
+  else if (s[1] === s[2]) msg = `🎲 出目【${s[0]}】！`;
+  else msg = '💨 役なし（目なし）！もう一回振ってみよう！';
+
+  document.getElementById('diceResultText').textContent = msg;
+}
+
+function toggleFaq(el) { el.parentElement.classList.toggle('open'); }
+
+function openLogicaPortal() {
+  const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  window.location.href = isLocal ? '../ロジカ・ポータル/index.html' : 'https://bio-labo.github.io/';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const iconUrl = createCasinoIconDataUrl();
+  document.getElementById('navCasinoIcon').src = iconUrl;
+  document.getElementById('heroCasinoIcon').src = iconUrl;
+});
+</script>
+</body>
+</html>
