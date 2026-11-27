@@ -2053,6 +2053,16 @@ html, body {
 .mj-act-btn.btn-call { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
 .mj-act-btn.btn-pass { background: linear-gradient(180deg, #64748b, #334155); }
 .mj-act-btn.btn-discard { background: linear-gradient(180deg, #10b981, #059669); }
+.mj-act-btn.btn-kan { background: linear-gradient(180deg, #a855f7, #7e22ce); border-color: #f3e8ff; }
+
+.mj-tile.mj-tile-real {
+  padding: 2px;
+}
+.mj-tile-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
 /* ルール図解モーダルタブ */
 .mj-rule-tabs {
@@ -2078,13 +2088,69 @@ html, body {
 }
 
 @media (max-width: 520px) {
+  .mj-hand-row {
+    padding: 12px 1px 6px;
+    min-height: 76px;
+  }
   .mj-hand-row .mj-tile {
-    height: 44px;
-    font-size: 0.78rem;
+    height: 56px;
+    font-size: 0.86rem;
   }
   .mj-hand-row .mj-tile.drawn-gap { margin-left: 4px; }
   .mj-tile.mj-tile-sm { width: 19px; height: 26px; font-size: 0.6rem; }
-  .mj-act-btn { padding: 8px 11px; font-size: 0.8rem; }
+  .mj-act-btn { padding: 9px 12px; font-size: 0.84rem; }
+}
+
+/* 📱 スマホ用疑似横画面（ワイド雀卓）モード */
+.mj-table-felt.mj-mobile-landscape {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vh;
+  width: 100dvh;
+  height: 100vw;
+  height: 100dvw;
+  transform: translate(-50%, -50%) rotate(90deg);
+  z-index: 900;
+  border-radius: 0;
+  border-width: 3px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.mj-table-felt.mj-mobile-landscape .mj-top-bar {
+  margin-bottom: 4px;
+  padding: 3px 8px;
+}
+.mj-table-felt.mj-mobile-landscape .mj-opponent-top {
+  padding: 4px 8px;
+  margin-bottom: 4px;
+}
+.mj-table-felt.mj-mobile-landscape .mj-opponent-sides {
+  margin-bottom: 4px;
+  gap: 6px;
+}
+.mj-table-felt.mj-mobile-landscape .mj-seat-box {
+  padding: 4px 6px;
+}
+.mj-table-felt.mj-mobile-landscape .mj-center-info {
+  padding: 4px 8px;
+  margin-bottom: 4px;
+}
+.mj-table-felt.mj-mobile-landscape .mj-hand-row {
+  padding: 8px 4px 2px;
+  min-height: 58px;
+}
+.mj-table-felt.mj-mobile-landscape .mj-hand-row .mj-tile {
+  height: 50px;
+  max-width: 44px;
+  font-size: 0.94rem;
+}
+.mj-table-felt.mj-mobile-landscape .mj-action-bar {
+  margin-top: 4px;
 }
 
 /* 全役一覧カードUI */
@@ -3727,6 +3793,15 @@ html, body {
         </div>
       </div>
 
+      <!-- 牌の絵柄（数字表記 vs リアル牌） -->
+      <div class="mj-opt-group">
+        <div class="mj-opt-label">🀄 牌の絵柄デザイン</div>
+        <div class="mj-opt-pills cols-2">
+          <button class="mj-opt-btn active" id="mjTileStyleBtnText" onclick="setMahjongOption('tileStyle', 'text')">🔤 数字・文字（見やすい）</button>
+          <button class="mj-opt-btn" id="mjTileStyleBtnReal" onclick="setMahjongOption('tileStyle', 'real')">🀄 リアル牌（本格柄）</button>
+        </div>
+      </div>
+
       <div id="mjSetupNotice" style="font-size:0.75rem; color:#fde047; font-weight:800; text-align:center; margin-bottom:8px;">
         現在の保証金：250 🪙（対局終了時に持ち点に応じて精算返還されます）
       </div>
@@ -3738,13 +3813,15 @@ html, body {
 
     <!-- ② 麻雀卓メインエリア (#mjTablePanel) -->
     <div id="mjTablePanel" style="display:none;">
-      <div class="mj-table-felt">
+      <div class="mj-table-felt" id="mjTableFelt">
         <!-- 上部コントロール＆場況 -->
         <div class="mj-top-bar">
           <div style="color:#fef08a;" id="mjRoundStatusText">東1局 0本場</div>
           <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+            <button class="chip-bet-btn c-5" id="mjLiveTileStyleToggle" onclick="toggleMahjongTileStyleLive()" style="font-size:0.68rem; padding:3px 8px;">🀄 牌: 数字</button>
             <button class="chip-bet-btn c-10" id="mjLiveAssistToggle" onclick="toggleMahjongAssistLive()" style="font-size:0.68rem; padding:3px 8px;">💡 アシスト: ON</button>
             <button class="chip-bet-btn c-25" id="mjLiveFastToggle" onclick="toggleMahjongFastLive()" style="font-size:0.68rem; padding:3px 8px;">⚡ 爆速: OFF</button>
+            <button class="chip-bet-btn c-50" id="mjLiveLandscapeToggle" onclick="toggleMahjongLandscapeLive()" style="font-size:0.68rem; padding:3px 8px;">📱 横画面</button>
           </div>
         </div>
 
@@ -4469,7 +4546,16 @@ function ensureFirestoreDb() {
   return db;
 }
 
+function isCloudRankingBlockedForTest() {
+  try {
+    return localStorage.getItem('casino_logica_admin_no_rank_v1') === '1';
+  } catch (e) {
+    return false;
+  }
+}
+
 function buildMyRankEntry() {
+  if (isCloudRankingBlockedForTest()) return null;
   if (!isSafeId(state.playerId) || !state.playerName) return null;
   const check = validatePlayerName(state.playerName);
   if (!check.ok) return null;
@@ -4491,6 +4577,7 @@ function getRankEntrySignature(entry) {
 }
 
 async function flushMyScoreToCloudNow(force = false) {
+  if (isCloudRankingBlockedForTest()) return false;
   const fdb = ensureFirestoreDb();
   const myEntry = buildMyRankEntry();
   if (!fdb || !myEntry) return false;
@@ -11073,11 +11160,13 @@ const MJ_WINDS = ['東', '南', '西', '北'];
 const MJ_AI_NAMES = ['🤖 ケンジ', '🤖 ミサキ', '🤖 マスター'];
 
 let mjOpts = {
-  rate: 10,         // 10 (保証250) | 100 (保証2500) | 1000 (保証25000)
-  uma: true,        // 1位 +10000 / 4位 -10000
-  aiDiff: 'normal', // 'easy' | 'normal' | 'hard'
-  aiFast: false,    // true = 90ms爆速
-  assist: true      // 初心者アシスト ON/OFF
+  rate: 10,          // 10 (保証250) | 100 (保証2500) | 1000 (保証25000)
+  uma: true,         // 1位 +10000 / 4位 -10000
+  aiDiff: 'normal',  // 'easy' | 'normal' | 'hard'
+  aiFast: false,     // true = 90ms爆速
+  assist: true,      // 初心者アシスト ON/OFF
+  tileStyle: 'text', // 'text' | 'real'
+  mobileLandscape: false
 };
 
 let mjState = {
@@ -11094,6 +11183,7 @@ let mjState = {
   doraCount: 1,
   seats: [],        // 4人 [{ id, name, isHuman, score, hand, melds, river, riichi, riichiTurn, ippatsu, doubleRiichi, furiten }]
   drawnTile: null,  // 現在手番プレイヤーがツモった直後の牌（handの末尾扱い）
+  rinshanTurn: false, // カン後の嶺上ツモ中かどうか
   lastDiscard: null,// { tile, fromIdx, isRinshan }
   claimQueue: [],   // 鳴き/ロン可能なプレイヤーと選択肢
   selectedHandPos: -1, // 2タップ捨て用の選択インデックス
@@ -11137,9 +11227,96 @@ function mjIsTerminalOrHonor(t) {
   return n === 0 || n === 8;
 }
 
+function mjRenderRealTileSvg(t) {
+  const kanNums = ['一', '二', '三', '四', '五', '六', '七', '八', '九'];
+  if (t >= 0 && t <= 8) {
+    // 萬子
+    return `<svg class="mj-tile-svg" viewBox="0 0 40 54" aria-hidden="true">
+      <text x="20" y="23" text-anchor="middle" font-size="19" font-weight="900" fill="#1e293b" font-family="serif">${kanNums[t]}</text>
+      <text x="20" y="46" text-anchor="middle" font-size="19" font-weight="900" fill="#b91c1c" font-family="serif">萬</text>
+    </svg>`;
+  }
+  if (t >= 9 && t <= 17) {
+    // 筒子
+    const n = t - 8;
+    const pipLayouts = {
+      1: [[20, 27, 11.5, '#b91c1c', true]],
+      2: [[20, 15, 6.2, '#1d4ed8'], [20, 39, 6.2, '#15803d']],
+      3: [[11, 13, 5.2, '#1d4ed8'], [20, 27, 5.2, '#b91c1c'], [29, 41, 5.2, '#15803d']],
+      4: [[12, 15, 5.6, '#1d4ed8'], [28, 15, 5.6, '#15803d'], [12, 39, 5.6, '#15803d'], [28, 39, 5.6, '#1d4ed8']],
+      5: [[11, 13, 4.9, '#1d4ed8'], [29, 13, 4.9, '#15803d'], [20, 27, 4.9, '#b91c1c'], [11, 41, 4.9, '#15803d'], [29, 41, 4.9, '#1d4ed8']],
+      6: [[12, 12, 4.8, '#15803d'], [28, 12, 4.8, '#15803d'], [12, 29, 4.8, '#b91c1c'], [28, 29, 4.8, '#b91c1c'], [12, 42, 4.8, '#b91c1c'], [28, 42, 4.8, '#b91c1c']],
+      7: [[10, 9, 3.9, '#15803d'], [20, 13.5, 3.9, '#15803d'], [30, 18, 3.9, '#15803d'], [12, 30, 4.5, '#b91c1c'], [28, 30, 4.5, '#b91c1c'], [12, 43, 4.5, '#b91c1c'], [28, 43, 4.5, '#b91c1c']],
+      8: [[12, 10, 4.3, '#1d4ed8'], [28, 10, 4.3, '#1d4ed8'], [12, 21, 4.3, '#1d4ed8'], [28, 21, 4.3, '#1d4ed8'], [12, 33, 4.3, '#1d4ed8'], [28, 33, 4.3, '#1d4ed8'], [12, 44, 4.3, '#1d4ed8'], [28, 44, 4.3, '#1d4ed8']],
+      9: [[10, 12, 4.1, '#15803d'], [20, 12, 4.1, '#15803d'], [30, 12, 4.1, '#15803d'], [10, 27, 4.1, '#b91c1c'], [20, 27, 4.1, '#b91c1c'], [30, 27, 4.1, '#b91c1c'], [10, 42, 4.1, '#1d4ed8'], [20, 42, 4.1, '#1d4ed8'], [30, 42, 4.1, '#1d4ed8']]
+    };
+    const circles = (pipLayouts[n] || []).map(([cx, cy, r, col, big]) => {
+      if (big) {
+        return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="#1d4ed8" stroke-width="2.4"/>
+                <circle cx="${cx}" cy="${cy}" r="${r * 0.68}" fill="${col}"/>
+                <circle cx="${cx}" cy="${cy}" r="${r * 0.3}" fill="#fff"/>`;
+      }
+      return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" stroke="#0f172a" stroke-width="0.6"/>
+              <circle cx="${cx}" cy="${cy}" r="${r * 0.42}" fill="#fff"/>
+              <circle cx="${cx}" cy="${cy}" r="${r * 0.2}" fill="${col}"/>`;
+    }).join('');
+    return `<svg class="mj-tile-svg" viewBox="0 0 40 54" aria-hidden="true">${circles}</svg>`;
+  }
+  if (t >= 18 && t <= 26) {
+    // 索子
+    const n = t - 17;
+    if (n === 1) {
+      return `<svg class="mj-tile-svg" viewBox="0 0 40 54" aria-hidden="true">
+        <path d="M20 9 C26 9 29 14 27 19 C29 22 33 25 32 30 C28 29 25 27 23 25 L25 39 L20 35 L15 39 L17 25 C14 28 10 30 8 30 C7 25 11 22 13 19 C11 14 14 9 20 9 Z" fill="#15803d"/>
+        <circle cx="20" cy="14" r="2.2" fill="#fef08a"/>
+        <path d="M16 41 Q20 47 24 41" fill="none" stroke="#b91c1c" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>`;
+    }
+    const bamboo = (x1, y1, x2, y2, col) => {
+      const xm = (x1 + x2) / 2;
+      const ym = (y1 + y2) / 2;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = (-dy / len) * 2.1;
+      const ny = (dx / len) * 2.1;
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="3.4" stroke-linecap="round"/>
+              <line x1="${(xm - nx).toFixed(1)}" y1="${(ym - ny).toFixed(1)}" x2="${(xm + nx).toFixed(1)}" y2="${(ym + ny).toFixed(1)}" stroke="#fff" stroke-width="1.2"/>`;
+    };
+    const stalks = {
+      2: [[20, 8, 20, 24, '#15803d'], [20, 30, 20, 46, '#15803d']],
+      3: [[20, 8, 20, 24, '#15803d'], [12, 30, 12, 46, '#15803d'], [28, 30, 28, 46, '#15803d']],
+      4: [[13, 8, 13, 24, '#15803d'], [27, 8, 27, 24, '#15803d'], [13, 30, 13, 46, '#15803d'], [27, 30, 27, 46, '#15803d']],
+      5: [[11, 8, 11, 22, '#15803d'], [29, 8, 29, 22, '#15803d'], [20, 21, 20, 33, '#b91c1c'], [11, 32, 11, 46, '#15803d'], [29, 32, 29, 46, '#15803d']],
+      6: [[11, 8, 11, 24, '#15803d'], [20, 8, 20, 24, '#15803d'], [29, 8, 29, 24, '#15803d'], [11, 30, 11, 46, '#15803d'], [20, 30, 20, 46, '#15803d'], [29, 30, 29, 46, '#15803d']],
+      7: [[20, 6, 20, 17, '#b91c1c'], [11, 20, 11, 32, '#15803d'], [20, 20, 20, 32, '#1d4ed8'], [29, 20, 29, 32, '#15803d'], [11, 35, 11, 48, '#15803d'], [20, 35, 20, 48, '#1d4ed8'], [29, 35, 29, 48, '#15803d']],
+      8: [
+        [9, 8, 9, 23, '#15803d'], [12, 9, 19, 22, '#15803d'], [28, 9, 21, 22, '#15803d'], [31, 8, 31, 23, '#15803d'],
+        [9, 31, 9, 46, '#15803d'], [19, 32, 12, 45, '#15803d'], [21, 32, 28, 45, '#15803d'], [31, 31, 31, 46, '#15803d']
+      ],
+      9: [[10, 7, 10, 19, '#15803d'], [20, 7, 20, 19, '#b91c1c'], [30, 7, 30, 19, '#15803d'], [10, 22, 10, 34, '#15803d'], [20, 22, 20, 34, '#b91c1c'], [30, 22, 30, 34, '#15803d'], [10, 37, 10, 48, '#15803d'], [20, 37, 20, 48, '#b91c1c'], [30, 37, 30, 48, '#15803d']]
+    };
+    return `<svg class="mj-tile-svg" viewBox="0 0 40 54" aria-hidden="true">${(stalks[n] || []).map(([x1, y1, x2, y2, c]) => bamboo(x1, y1, x2, y2, c)).join('')}</svg>`;
+  }
+  // 字牌
+  if (t === 31) {
+    return `<svg class="mj-tile-svg" viewBox="0 0 40 54" aria-hidden="true">
+      <rect x="6" y="7" width="28" height="40" rx="3" fill="none" stroke="#94a3b8" stroke-width="2"/>
+    </svg>`;
+  }
+  const zChars = { 27: ['東', '#0f172a'], 28: ['南', '#0f172a'], 29: ['西', '#0f172a'], 30: ['北', '#0f172a'], 32: ['發', '#15803d'], 33: ['中', '#dc2626'] };
+  const [ch, col] = zChars[t] || ['?', '#0f172a'];
+  return `<svg class="mj-tile-svg" viewBox="0 0 40 54" aria-hidden="true">
+    <text x="20" y="36" text-anchor="middle" font-size="27" font-weight="900" fill="${col}" font-family="serif">${ch}</text>
+  </svg>`;
+}
+
 function mjRenderTileHtml(t, extraClass = '', clickAttr = '') {
   if (t < 0) {
     return `<div class="mj-tile mj-tile-back ${extraClass}"></div>`;
+  }
+  if (mjOpts.tileStyle === 'real') {
+    return `<div class="mj-tile mj-tile-real ${extraClass}" ${clickAttr}>${mjRenderRealTileSvg(t)}</div>`;
   }
   const info = mjTileInfo(t);
   const inner = info.sub
@@ -11428,6 +11605,8 @@ function mjEvaluateWin(hand13, winTile, melds = [], ctx = {}) {
     if (allTilesFlat.every(t => t < 27 && (t % 9 === 0 || t % 9 === 8))) yakumanList.push({ name: '清老頭', han: 13 });
     const greenSet = new Set([19, 20, 21, 23, 25, 32]); // 2,3,4,6,8s + 發
     if (allTilesFlat.every(t => greenSet.has(t))) yakumanList.push({ name: '緑一色', han: 13 });
+    const kanCount = allMentsu.filter(m => m.isKan).length;
+    if (kanCount === 4) yakumanList.push({ name: '四槓子', han: 13 });
 
     if (yakumanList.length > 0) {
       const sc = mjCalcScoreFromHanFu(13 * yakumanList.length, 30, isDealer, ctx.isTsumo, true, yakumanList.length);
@@ -11502,6 +11681,9 @@ function mjEvaluateWin(hand13, winTile, melds = [], ctx = {}) {
     }
     if (closedKotsu === 3) {
       yaku.push({ name: '三暗刻', han: 2 });
+    }
+    if (kanCount === 3) {
+      yaku.push({ name: '三槓子', han: 2 });
     }
 
     // 小三元・混老頭
@@ -11623,15 +11805,39 @@ function syncMahjongOptionUI() {
   if (aOn) aOn.classList.toggle('active', !!mjOpts.assist);
   if (aOff) aOff.classList.toggle('active', !mjOpts.assist);
 
+  const tsText = document.getElementById('mjTileStyleBtnText');
+  const tsReal = document.getElementById('mjTileStyleBtnReal');
+  if (tsText) tsText.classList.toggle('active', mjOpts.tileStyle !== 'real');
+  if (tsReal) tsReal.classList.toggle('active', mjOpts.tileStyle === 'real');
+
   const notice = document.getElementById('mjSetupNotice');
   const guar = getMahjongGuarantee(mjOpts.rate);
   if (notice) {
     notice.textContent = `現在の保証金：${guar.toLocaleString()} 🪙（1,000点=${mjOpts.rate}🪙 ／ ウマ:${mjOpts.uma ? 'あり' : 'なし'}）`;
   }
+  const liveTile = document.getElementById('mjLiveTileStyleToggle');
+  if (liveTile) liveTile.textContent = `🀄 牌: ${mjOpts.tileStyle === 'real' ? 'リアル' : '数字'}`;
   const liveAssist = document.getElementById('mjLiveAssistToggle');
   if (liveAssist) liveAssist.textContent = `💡 アシスト: ${mjOpts.assist ? 'ON' : 'OFF'}`;
   const liveFast = document.getElementById('mjLiveFastToggle');
   if (liveFast) liveFast.textContent = `⚡ 爆速: ${mjOpts.aiFast ? 'ON' : 'OFF'}`;
+  const liveLand = document.getElementById('mjLiveLandscapeToggle');
+  if (liveLand) liveLand.textContent = mjOpts.mobileLandscape ? '📱 縦に戻す' : '📱 横画面';
+  const felt = document.getElementById('mjTableFelt');
+  if (felt) felt.classList.toggle('mj-mobile-landscape', !!mjOpts.mobileLandscape);
+}
+
+function toggleMahjongTileStyleLive() {
+  playSE('click');
+  mjOpts.tileStyle = mjOpts.tileStyle === 'real' ? 'text' : 'real';
+  syncMahjongOptionUI();
+  renderMahjongTable();
+}
+
+function toggleMahjongLandscapeLive() {
+  playSE('click');
+  mjOpts.mobileLandscape = !mjOpts.mobileLandscape;
+  syncMahjongOptionUI();
 }
 
 function toggleMahjongAssistLive() {
@@ -11680,6 +11886,8 @@ function resetMahjongToSetup() {
   if (typeof mjClearOnlineClaimTimeout === 'function') mjClearOnlineClaimTimeout();
   mjState.phase = 'setup';
   mjState.guaranteePaid = 0;
+  mjState.rinshanTurn = false;
+  mjOpts.mobileLandscape = false;
   document.getElementById('mjSetupPanel').style.display = 'block';
   document.getElementById('mjTablePanel').style.display = 'none';
   document.getElementById('mjRoundResultBox').style.display = 'none';
@@ -11781,6 +11989,7 @@ function mjStartRound() {
   mjState.phase = 'playing';
   mjState.turnIdx = mjState.dealerIdx;
   mjState.drawnTile = mjState.wall.shift();
+  mjState.rinshanTurn = false;
 
   document.getElementById('mjSetupPanel').style.display = 'none';
   document.getElementById('mjTablePanel').style.display = 'block';
@@ -11919,14 +12128,23 @@ function mjHandleGuestAction(act) {
     mjExecuteDiscard(seatIdx, pos, !!act.riichi);
   } else if (act.type === 'tsumo' && mjState.phase === 'playing' && mjState.turnIdx === seatIdx && mjState.drawnTile !== null) {
     const s = mjState.seats[seatIdx];
-    const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(seatIdx, true));
+    const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(seatIdx, true, mjState.rinshanTurn));
     if (ev) mjExecuteWin(seatIdx, seatIdx, mjState.drawnTile, true, ev);
+  } else if (act.type === 'selfKan' && mjState.phase === 'playing' && mjState.turnIdx === seatIdx && mjState.drawnTile !== null) {
+    const kTile = Number(act.tile);
+    const kKind = act.kind === 'kakan' ? 'kakan' : 'ankan';
+    const opts = mjGetSelfKanOptions(seatIdx);
+    const valid = opts.find(o => o.kind === kKind && o.tile === kTile);
+    if (valid) mjExecuteSelfKan(seatIdx, valid.kind, valid.tile);
   } else if (act.type === 'claim' && mjState.phase === 'claim') {
     const claim = mjState.claimQueue.find(c => c.seatIdx === seatIdx);
     if (!claim) return;
     if (act.actionType === 'ron' && claim.canRon) {
       mjClearOnlineClaimTimeout();
       mjExecuteWin(seatIdx, mjState.lastDiscard.fromIdx, mjState.lastDiscard.tile, false, claim.winEval);
+    } else if (act.actionType === 'kan' && claim.canKan) {
+      mjClearOnlineClaimTimeout();
+      mjExecuteDaiminkan(seatIdx, claim.kanTiles);
     } else if (act.actionType === 'pon' && claim.canPon) {
       mjClearOnlineClaimTimeout();
       mjExecuteMeld(seatIdx, 'pon', claim.ponTiles);
@@ -12117,11 +12335,169 @@ function onClickMahjongRiichiBtn() {
   renderMahjongTable();
 }
 
+function mjTotalKanCount() {
+  return (mjState.seats || []).reduce((acc, s) => {
+    const melds = Array.isArray(s.melds) ? s.melds : [];
+    return acc + melds.filter(m => m && (m.type === 'kan' || m.type === 'ankan')).length;
+  }, 0);
+}
+
+function mjGetSelfKanOptions(seatIdx) {
+  const s = mjState.seats[seatIdx];
+  if (!s || mjState.phase !== 'playing' || mjState.turnIdx !== seatIdx || mjState.drawnTile === null) return [];
+  if (mjTotalKanCount() >= 4 || mjState.wall.length <= 0 || mjState.doraCount >= 5) return [];
+
+  const full = s.hand.concat([mjState.drawnTile]);
+  const counts = mjHandToCounts(full);
+  const out = [];
+
+  // 1. 暗槓（アンカン）
+  for (let t = 0; t < 34; t++) {
+    if (counts[t] === 4) {
+      if (s.riichi) {
+        if (t !== mjState.drawnTile) continue;
+        const baseWaits = mjGetWaitingTiles(s.hand, s.melds).join(',');
+        const afterHand = s.hand.filter(x => x !== t);
+        const afterMelds = s.melds.concat([{ type: 'ankan', tiles: [t, t, t, t], open: false }]);
+        const afterWaits = mjGetWaitingTiles(afterHand, afterMelds).join(',');
+        if (baseWaits && baseWaits === afterWaits) {
+          out.push({ kind: 'ankan', tile: t });
+        }
+      } else {
+        out.push({ kind: 'ankan', tile: t });
+      }
+    }
+  }
+
+  // 2. 加槓（カカン：既存のポンに4枚目を追加）
+  if (!s.riichi) {
+    (s.melds || []).forEach((m, idx) => {
+      if (m && m.type === 'pon' && Array.isArray(m.tiles) && m.tiles.length >= 3) {
+        const t = m.tiles[0];
+        if (counts[t] >= 1) {
+          out.push({ kind: 'kakan', tile: t, meldIdx: idx });
+        }
+      }
+    });
+  }
+  return out;
+}
+
+function mjDrawRinshanAndFlipDora(seatIdx) {
+  const s = mjState.seats[seatIdx];
+  if (!s) return;
+  const rinshanTile = (mjState.deadWall && mjState.deadWall.length > 0)
+    ? mjState.deadWall[0]
+    : mjState.wall.pop();
+  if (mjState.deadWall && mjState.deadWall.length > 0 && mjState.wall.length > 0) {
+    mjState.deadWall[0] = mjState.wall.pop();
+  }
+  mjState.doraCount = Math.min(5, (mjState.doraCount || 1) + 1);
+  mjState.phase = 'playing';
+  mjState.claimQueue = [];
+  mjState.turnIdx = seatIdx;
+  mjState.drawnTile = rinshanTile;
+  mjState.rinshanTurn = true;
+  mjState.selectedHandPos = -1;
+  mjState.riichiSelectMode = false;
+  mjSyncAndRender();
+  mjScheduleAiIfNeeded();
+}
+
+function mjExecuteDaiminkan(seatIdx, consumeTiles) {
+  mjClearOnlineClaimTimeout();
+  const s = mjState.seats[seatIdx];
+  const targetTile = mjState.lastDiscard.tile;
+  const fromIdx = mjState.lastDiscard.fromIdx;
+
+  mjState.seats[fromIdx].river.pop();
+  consumeTiles.forEach(t => {
+    const idx = s.hand.indexOf(t);
+    if (idx >= 0) s.hand.splice(idx, 1);
+  });
+  s.melds.push({ type: 'kan', tiles: [targetTile, targetTile, targetTile, targetTile], open: true });
+  mjState.seats.forEach(x => { x.ippatsu = false; });
+
+  playSE('click');
+  showToast(`🀄 ${s.name}：カン（大明槓）！新ドラ追加！`);
+  mjDrawRinshanAndFlipDora(seatIdx);
+}
+
+function mjExecuteSelfKan(seatIdx, kind, tile) {
+  const s = mjState.seats[seatIdx];
+  if (!s || mjState.drawnTile === null) return;
+  if (mjTotalKanCount() >= 4 || mjState.wall.length <= 0) return;
+
+  s.hand.push(mjState.drawnTile);
+  mjState.drawnTile = null;
+  s.hand.sort((a, b) => a - b);
+
+  if (kind === 'ankan') {
+    let removed = 0;
+    s.hand = s.hand.filter(t => {
+      if (t === tile && removed < 4) { removed++; return false; }
+      return true;
+    });
+    s.melds.push({ type: 'ankan', tiles: [tile, tile, tile, tile], open: false });
+  } else {
+    const idx = s.hand.indexOf(tile);
+    if (idx >= 0) s.hand.splice(idx, 1);
+    const ponMeld = (s.melds || []).find(m => m && m.type === 'pon' && m.tiles[0] === tile);
+    if (ponMeld) {
+      ponMeld.type = 'kan';
+      ponMeld.tiles = [tile, tile, tile, tile];
+      ponMeld.open = true;
+    }
+  }
+  mjState.seats.forEach(x => { x.ippatsu = false; });
+
+  playSE('click');
+  showToast(`🀄 ${s.name}：${kind === 'ankan' ? '暗槓（アンカン）' : '加槓（カカン）'}！新ドラ追加！`);
+
+  // 加槓時のみ槍槓（チャンカン）判定
+  if (kind === 'kakan') {
+    const chankanClaims = [];
+    for (let offset = 1; offset <= 3; offset++) {
+      const idx = (seatIdx + offset) % 4;
+      const os = mjState.seats[idx];
+      const isFuriten = os.river.some(r => r.tile === tile);
+      if (!isFuriten) {
+        const ev = mjEvaluateWin(os.hand, tile, os.melds, mjGetWinContext(idx, false, false, true));
+        if (ev) {
+          chankanClaims.push({ seatIdx: idx, canRon: true, canPon: false, canKan: false, chiCombos: [], winEval: ev, priority: 3 });
+        }
+      }
+    }
+    if (chankanClaims.length > 0) {
+      mjState.lastDiscard = { tile, fromIdx: seatIdx };
+      mjState.claimQueue = chankanClaims;
+      mjState.phase = 'claim';
+      mjResolveClaimQueue();
+      return;
+    }
+  }
+
+  mjDrawRinshanAndFlipDora(seatIdx);
+}
+
+function onClickMahjongSelfKan(kind, tile) {
+  const myIdx = mjGetMyViewOffset();
+  if (mjState.phase !== 'playing' || mjState.turnIdx !== myIdx || mjState.drawnTile === null) return;
+  const opts = mjGetSelfKanOptions(myIdx);
+  const found = opts.find(o => o.kind === kind && o.tile === tile);
+  if (!found) return;
+  if (mjIsGuestOnline()) {
+    mjSendGuestAction({ type: 'selfKan', kind: found.kind, tile: found.tile });
+    return;
+  }
+  mjExecuteSelfKan(myIdx, found.kind, found.tile);
+}
+
 function onClickMahjongTsumo() {
   const myIdx = mjGetMyViewOffset();
   if (mjState.phase !== 'playing' || mjState.turnIdx !== myIdx || mjState.drawnTile === null) return;
   const s = mjState.seats[myIdx];
-  const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(myIdx, true));
+  const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(myIdx, true, mjState.rinshanTurn));
   if (!ev) return;
   if (mjIsGuestOnline()) {
     mjSendGuestAction({ type: 'tsumo' });
@@ -12144,8 +12520,10 @@ function onClickMahjongClaim(actionType, comboIdx = 0) {
   if (actionType === 'ron') {
     const s = mjState.seats[myIdx];
     const tile = mjState.lastDiscard.tile;
-    const ev = mjEvaluateWin(s.hand, tile, s.melds, mjGetWinContext(myIdx, false));
+    const ev = claim.winEval || mjEvaluateWin(s.hand, tile, s.melds, mjGetWinContext(myIdx, false));
     if (ev) mjExecuteWin(myIdx, mjState.lastDiscard.fromIdx, tile, false, ev);
+  } else if (actionType === 'kan' && claim.canKan) {
+    mjExecuteDaiminkan(myIdx, claim.kanTiles);
   } else if (actionType === 'pon') {
     mjExecuteMeld(myIdx, 'pon', claim.ponTiles);
   } else if (actionType === 'chi') {
@@ -12193,14 +12571,15 @@ function mjExecuteDiscard(seatIdx, pos, declareRiichi = false) {
   s.river.push({ tile, isRiichiTile: declareRiichi });
   mjState.selectedHandPos = -1;
   mjState.riichiSelectMode = false;
+  mjState.rinshanTurn = false;
   mjState.lastDiscard = { tile, fromIdx: seatIdx };
 
-  // 他家のロン・ポン・チー判定
+  // 他家のロン・カン・ポン・チー判定
   const claims = [];
   for (let offset = 1; offset <= 3; offset++) {
     const idx = (seatIdx + offset) % 4;
     const os = mjState.seats[idx];
-    const opt = { seatIdx: idx, canRon: false, canPon: false, chiCombos: [], priority: 0 };
+    const opt = { seatIdx: idx, canRon: false, canKan: false, canPon: false, chiCombos: [], priority: 0 };
 
     // ロンチェック（フリテン簡易回避：自分の捨て牌にある牌ではロン不可）
     const isFuriten = os.river.some(r => r.tile === tile);
@@ -12212,9 +12591,14 @@ function mjExecuteDiscard(seatIdx, pos, declareRiichi = false) {
         opt.priority = 3;
       }
     }
-    // リーチ中はポン・チー不可
+    // リーチ中はカン・ポン・チー不可
     if (!os.riichi && mjState.wall.length > 0) {
       const cntSame = os.hand.filter(x => x === tile).length;
+      if (cntSame >= 3 && mjTotalKanCount() < 4 && mjState.doraCount < 5) {
+        opt.canKan = true;
+        opt.kanTiles = [tile, tile, tile];
+        if (opt.priority < 2) opt.priority = 2;
+      }
       if (cntSame >= 2) {
         opt.canPon = true;
         opt.ponTiles = [tile, tile];
@@ -12230,7 +12614,7 @@ function mjExecuteDiscard(seatIdx, pos, declareRiichi = false) {
         if (opt.chiCombos.length > 0 && opt.priority < 1) opt.priority = 1;
       }
     }
-    if (opt.canRon || opt.canPon || opt.chiCombos.length > 0) {
+    if (opt.canRon || opt.canKan || opt.canPon || opt.chiCombos.length > 0) {
       claims.push(opt);
     }
   }
@@ -12339,7 +12723,7 @@ function mjRunAiTurn(seatIdx) {
 
   // 1. ツモアガリ判定
   if (mjState.drawnTile !== null) {
-    const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(seatIdx, true));
+    const ev = mjEvaluateWin(s.hand, mjState.drawnTile, s.melds, mjGetWinContext(seatIdx, true, mjState.rinshanTurn));
     if (ev) {
       mjExecuteWin(seatIdx, seatIdx, mjState.drawnTile, true, ev);
       return;
@@ -12351,6 +12735,16 @@ function mjRunAiTurn(seatIdx) {
   if (s.riichi) {
     mjExecuteDiscard(seatIdx, s.hand.length, false);
     return;
+  }
+
+  // 1.5 暗槓・加槓判定（普通・難しいAIは手役を崩さない範囲で実行）
+  if (mjOpts.aiDiff !== 'easy' && mjState.drawnTile !== null) {
+    const kanOpts = mjGetSelfKanOptions(seatIdx);
+    const ankanOpt = kanOpts.find(o => o.kind === 'ankan');
+    if (ankanOpt) {
+      mjExecuteSelfKan(seatIdx, 'ankan', ankanOpt.tile);
+      return;
+    }
   }
 
   // 2. リーチ宣言判定（普通・難しいはテンパイで即リーチ）
@@ -12579,9 +12973,12 @@ function renderMahjongTable() {
     const windLabel = MJ_WINDS[s.wind || 0];
     const isDealer = sIdx === mjState.dealerIdx;
     const riverHtml = (s.river || []).map(r => mjRenderTileHtml(r.tile, 'mj-tile-sm' + (r.isRiichiTile ? ' mj-tile-riichi' : ''))).join('');
-    const meldsHtml = (s.melds || []).map(m =>
-      `<div class="mj-meld-group">${m.tiles.map(t => mjRenderTileHtml(t, 'mj-tile-sm')).join('')}</div>`
-    ).join('');
+    const meldsHtml = (s.melds || []).map(m => {
+      const displayTiles = m.type === 'ankan'
+        ? [-1, m.tiles[1], m.tiles[2], -1]
+        : m.tiles;
+      return `<div class="mj-meld-group">${displayTiles.map(t => mjRenderTileHtml(t, 'mj-tile-sm')).join('')}</div>`;
+    }).join('');
 
     const seatScore = Number(s.score) || 0;
     box.innerHTML = `
@@ -12660,10 +13057,15 @@ function renderMahjongTable() {
   let actHtml = '';
   if (isMyTurn) {
     if (mjState.drawnTile !== null) {
-      const tsumoEv = mjEvaluateWin(me.hand, mjState.drawnTile, me.melds, mjGetWinContext(myIdx, true));
+      const tsumoEv = mjEvaluateWin(me.hand, mjState.drawnTile, me.melds, mjGetWinContext(myIdx, true, mjState.rinshanTurn));
       if (tsumoEv) {
         actHtml += `<button class="mj-act-btn btn-win" onclick="onClickMahjongTsumo()">🎉 ツモ！(${tsumoEv.total.toLocaleString()}点)</button>`;
       }
+      const selfKanOpts = mjGetSelfKanOptions(myIdx);
+      selfKanOpts.forEach(ko => {
+        const kLabel = ko.kind === 'ankan' ? '暗槓' : '加槓';
+        actHtml += `<button class="mj-act-btn btn-kan" onclick="onClickMahjongSelfKan('${ko.kind}', ${ko.tile})">🀄 カン(${kLabel}:${escapeHtml(mjTileInfo(ko.tile).text)})</button>`;
+      });
     }
     const riichiCandidates = mjCanDeclareRiichi(myIdx);
     if (riichiCandidates.length > 0) {
@@ -12681,6 +13083,9 @@ function renderMahjongTable() {
       if (myClaim.canRon) {
         const ronPts = Number(myClaim.winEval && myClaim.winEval.total) || 0;
         actHtml += `<button class="mj-act-btn btn-win" onclick="onClickMahjongClaim('ron')">⚡ ロン！(${ronPts.toLocaleString()}点)</button>`;
+      }
+      if (myClaim.canKan) {
+        actHtml += `<button class="mj-act-btn btn-kan" onclick="onClickMahjongClaim('kan')">🀄 カン</button>`;
       }
       if (myClaim.canPon) {
         actHtml += `<button class="mj-act-btn btn-call" onclick="onClickMahjongClaim('pon')">🀄 ポン</button>`;
@@ -12700,6 +13105,10 @@ function renderMahjongTable() {
 }
 
 function renderMahjongRoundResult() {
+  if (mjOpts.mobileLandscape) {
+    mjOpts.mobileLandscape = false;
+    syncMahjongOptionUI();
+  }
   const box = document.getElementById('mjRoundResultBox');
   const res = mjState.roundResult;
   if (!box || !res) return;
@@ -12744,6 +13153,10 @@ function renderMahjongRoundResult() {
 }
 
 function renderMahjongMatchResult(fromSync = false) {
+  if (mjOpts.mobileLandscape) {
+    mjOpts.mobileLandscape = false;
+    syncMahjongOptionUI();
+  }
   document.getElementById('mjTablePanel').style.display = 'none';
   document.getElementById('mjRoundResultBox').style.display = 'none';
   const box = document.getElementById('mjMatchResultBox');
