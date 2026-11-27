@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>カジノ・ロジカ (CASINO LOGICA) - 総合テーブル＆ダイスカジノ</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 /* ============================================================================
@@ -4367,14 +4368,83 @@ const firebaseConfig = {
 };
 
 let db = null;
-try {
-  if (typeof firebase !== 'undefined') {
-    if (firebase.apps.length === 0) {
-      firebase.initializeApp(firebaseConfig);
+let firebaseAuth = null;
+const cloudAuthState = {
+  ready: false,
+  uid: '',
+  error: '',
+  promise: null
+};
+
+function withTimeout(promise, ms = 7000, timeoutMessage = 'timeout') {
+  let timer = null;
+  return Promise.race([
+    Promise.resolve(promise),
+    new Promise((_, rej) => {
+      timer = setTimeout(() => rej(new Error(timeoutMessage)), ms);
+    })
+  ]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+}
+
+function initFirebaseServices() {
+  try {
+    if (typeof firebase !== 'undefined') {
+      if (firebase.apps.length === 0) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      if (!db) {
+        db = firebase.firestore();
+      }
+      if (!firebaseAuth && typeof firebase.auth === 'function') {
+        firebaseAuth = firebase.auth();
+      }
     }
-    db = firebase.firestore();
+  } catch (e) {
+    cloudAuthState.error = (e && (e.code || e.message)) || 'firebase-init-error';
   }
-} catch (e) {}
+}
+
+async function ensureFirebaseAuth(timeoutMs = 7000) {
+  initFirebaseServices();
+  if (!firebaseAuth) {
+    cloudAuthState.error = 'auth-sdk-unavailable';
+    return false;
+  }
+  if (firebaseAuth.currentUser) {
+    cloudAuthState.ready = true;
+    cloudAuthState.uid = firebaseAuth.currentUser.uid || '';
+    cloudAuthState.error = '';
+    return true;
+  }
+  if (!cloudAuthState.promise) {
+    cloudAuthState.promise = withTimeout(
+      firebaseAuth.signInAnonymously(),
+      timeoutMs,
+      'auth-timeout'
+    ).then(cred => {
+      const user = (cred && cred.user) || firebaseAuth.currentUser;
+      cloudAuthState.ready = !!user;
+      cloudAuthState.uid = (user && user.uid) || '';
+      cloudAuthState.error = '';
+      return !!user;
+    }).catch(e => {
+      cloudAuthState.ready = false;
+      cloudAuthState.error = (e && (e.code || e.message)) || 'auth-failed';
+      console.warn('Firebase anonymous auth error:', e);
+      return false;
+    }).finally(() => {
+      cloudAuthState.promise = null;
+    });
+  }
+  return cloudAuthState.promise;
+}
+
+initFirebaseServices();
+if (firebaseAuth) {
+  ensureFirebaseAuth(7000);
+}
 
 let cloudRankCache = [];
 let rankTabMode = 'current'; // 'current' | 'max'
@@ -4392,15 +4462,7 @@ function getCasinoRankTitle(chips) {
 let syncRankTimer = null;
 let lastSyncedRankSignature = '';
 function ensureFirestoreDb() {
-  if (db) return db;
-  try {
-    if (typeof firebase !== 'undefined') {
-      if (firebase.apps.length === 0) {
-        firebase.initializeApp(firebaseConfig);
-      }
-      db = firebase.firestore();
-    }
-  } catch (e) {}
+  initFirebaseServices();
   return db;
 }
 
@@ -4433,6 +4495,7 @@ async function flushMyScoreToCloudNow(force = false) {
   if (!force && sig === lastSyncedRankSignature) return false;
 
   try {
+    await ensureFirebaseAuth(5000);
     const p1 = fdb.collection('players').doc('MATCH_CASINO_RANKINGS').set({
       isSystemDoc: true,
       entries: {
@@ -5701,15 +5764,67 @@ function renderOnlineInviteFriendsBar() {
   });
 }
 
-async function createOnlineRoom() {
-  playSE('click');
+let lastRoomPatchErrorToastAt = 0;
+
+function formatFirestoreRoomError(err, fallbackMsg) {
+  const code = (err && err.code) ? String(err.code) : '';
+  const msg = (err && err.message) ? String(err.message) : '';
+  if (code === 'auth-failed' || code === 'auth-sdk-unavailable' || msg === 'auth-timeout') {
+    return `⚠️ クラウド認証に失敗しました（${cloudAuthState.error || code || msg}）。通信環境を確認してください`;
+  }
+  if (code === 'permission-denied') {
+    return '⚠️ 通信ルームへの書き込み権限がありません（permission-denied）。ページを再読み込みして再試行してください';
+  }
+  if (msg === 'timeout') {
+    return '⚠️ クラウド通信がタイムアウトしました。電波状況を確認して再試行してください';
+  }
+  return `${fallbackMsg}（${code || msg || 'unknown'}）`;
+}
+
+function resetLocalOnlineRoomState() {
   if (onlineRoomState.unsub) {
     try { onlineRoomState.unsub(); } catch (e) {}
     onlineRoomState.unsub = null;
   }
+  myRoomCode = '';
+  onlineRoomState.active = false;
+  onlineRoomState.code = '';
+  onlineRoomState.role = '';
+  onlineRoomState.mySeatId = '';
+  onlineRoomState.docId = '';
+  onlineRoomState.seats = [];
+  onlineRoomState.status = 'idle';
+  onlineRoomState.activeGame = '';
+  onlineRoomState.processedRoundId = '';
+  onlineRoomState.lastData = null;
+  const entryView = document.getElementById('onlineRoomEntryView');
+  const activeLobby = document.getElementById('onlineRoomActiveLobby');
+  if (entryView) entryView.style.display = 'block';
+  if (activeLobby) activeLobby.style.display = 'none';
+}
+
+async function createOnlineRoom() {
+  playSE('click');
+  resetLocalOnlineRoomState();
+
+  if (!ensureFirestoreDb()) {
+    showToast('⚠️ クラウドDBに接続できないため部屋を作成できません');
+    return '';
+  }
+
+  const authOk = await ensureFirebaseAuth(7000);
+  if (!authOk) {
+    showToast(formatFirestoreRoomError({ code: cloudAuthState.error || 'auth-failed' }, '⚠️ 部屋の作成に失敗しました'));
+    return '';
+  }
 
   const code = String(Math.floor(1000 + Math.random() * 9000));
-  myRoomCode = code;
+  const ref = getRoomDocRef(code);
+  if (!ref) {
+    showToast('⚠️ 部屋ドキュメントの参照作成に失敗しました');
+    return '';
+  }
+
   const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ホスト');
   const hostSeat = {
     id: state.playerId,
@@ -5718,32 +5833,6 @@ async function createOnlineRoom() {
     role: 'host',
     joinedAt: Date.now()
   };
-
-  onlineRoomState = {
-    ...onlineRoomState,
-    active: true,
-    code,
-    role: 'host',
-    mySeatId: state.playerId,
-    docId: 'MATCH_CASINO_ROOM_' + code,
-    hostId: state.playerId,
-    hostName: mySafeName,
-    hostChips: state.chips,
-    guestId: '',
-    guestName: '',
-    guestChips: 100,
-    seats: [hostSeat],
-    status: 'waiting',
-    activeGame: '',
-    processedRoundId: ''
-  };
-
-  document.getElementById('onlineRoomEntryView').style.display = 'none';
-  document.getElementById('onlineRoomActiveLobby').style.display = 'block';
-  document.getElementById('onlineRoleBadge').textContent = '🏠 ホスト (1P)';
-  document.getElementById('myRoomCodeText').textContent = code;
-  document.getElementById('onlineStatusMsg').textContent = `🟢 部屋【${code}】を作成！最大4人まで入室できます！`;
-  renderOnlineLobbySeats();
 
   const initialPayload = {
     isSystemDoc: true,
@@ -5766,20 +5855,54 @@ async function createOnlineRoom() {
     updatedAt: Date.now()
   };
 
-  onlineRoomState.lastData = initialPayload;
-
-  if (db) {
-    try {
-      const ref = getRoomDocRef(code);
-      await ref.set(initialPayload);
-      registerRoomToIndex(code, 'waiting', mySafeName, state.chips, 1);
-      onlineRoomState.unsub = ref.onSnapshot(snap => {
-        if (snap && snap.exists) {
-          handleOnlineRoomDocUpdate(snap.data());
-        }
-      });
-    } catch (e) {}
+  try {
+    await withTimeout(ref.set(initialPayload), 7000, 'timeout');
+  } catch (e) {
+    console.warn('createOnlineRoom error:', e);
+    resetLocalOnlineRoomState();
+    showToast(formatFirestoreRoomError(e, '⚠️ 部屋の作成に失敗しました'));
+    return '';
   }
+
+  myRoomCode = code;
+  onlineRoomState = {
+    ...onlineRoomState,
+    active: true,
+    code,
+    role: 'host',
+    mySeatId: state.playerId,
+    docId: 'MATCH_CASINO_ROOM_' + code,
+    hostId: state.playerId,
+    hostName: mySafeName,
+    hostChips: state.chips,
+    guestId: '',
+    guestName: '',
+    guestChips: 100,
+    seats: [hostSeat],
+    status: 'waiting',
+    activeGame: '',
+    processedRoundId: '',
+    lastData: initialPayload
+  };
+
+  registerRoomToIndex(code, 'waiting', mySafeName, state.chips, 1);
+  onlineRoomState.unsub = ref.onSnapshot(
+    snap => {
+      if (snap && snap.exists) {
+        handleOnlineRoomDocUpdate(snap.data());
+      }
+    },
+    err => {
+      console.warn('Host room onSnapshot error:', err);
+    }
+  );
+
+  document.getElementById('onlineRoomEntryView').style.display = 'none';
+  document.getElementById('onlineRoomActiveLobby').style.display = 'block';
+  document.getElementById('onlineRoleBadge').textContent = '🏠 ホスト (1P)';
+  document.getElementById('myRoomCodeText').textContent = code;
+  document.getElementById('onlineStatusMsg').textContent = `🟢 部屋【${code}】を作成！最大4人まで入室できます！`;
+  renderOnlineLobbySeats();
 
   try {
     if (onlineRoomState.bc) {
@@ -5794,112 +5917,137 @@ async function createOnlineRoom() {
 async function joinOnlineRoom(forcedCode) {
   playSE('click');
   const rawCode = forcedCode || (document.getElementById('joinRoomInput').value || '').trim();
-  const code = rawCode.replace(/[^0-9]/g, '');
+  const code = String(rawCode)
+    .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+    .replace(/[^0-9]/g, '');
   if (code.length !== 4) {
     showToast('⚠️ 4桁のルーム番号を入力してください');
     return;
   }
 
-  if (onlineRoomState.unsub) {
-    try { onlineRoomState.unsub(); } catch (e) {}
-    onlineRoomState.unsub = null;
+  if (!ensureFirestoreDb()) {
+    showToast('⚠️ クラウドDBに接続できないため入室できません');
+    return;
   }
 
-  myRoomCode = code;
+  const authOk = await ensureFirebaseAuth(7000);
+  if (!authOk) {
+    showToast(formatFirestoreRoomError({ code: cloudAuthState.error || 'auth-failed' }, `⚠️ 部屋【${code}】への入室に失敗しました`));
+    return;
+  }
+
+  const ref = getRoomDocRef(code);
+  if (!ref) {
+    showToast('⚠️ 無効なルーム番号です');
+    return;
+  }
+
+  resetLocalOnlineRoomState();
+
   const mySafeName = sanitizeDisplayPlayerName(state.playerName || 'ゲスト');
   const myJoinId = state.playerId + '_' + Math.random().toString(36).slice(2, 5);
 
-  onlineRoomState = {
-    ...onlineRoomState,
-    active: true,
-    code,
-    role: 'guest',
-    mySeatId: myJoinId,
-    docId: 'MATCH_CASINO_ROOM_' + code,
-    guestId: myJoinId,
-    guestName: mySafeName,
-    guestChips: state.chips,
-    status: 'connected',
-    processedRoundId: ''
-  };
+  try {
+    const snap = await withTimeout(ref.get(), 7000, 'timeout');
 
-  if (db) {
-    try {
-      const ref = getRoomDocRef(code);
-      const snap = await Promise.race([
-        ref.get(),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
-      ]);
+    if (!snap || !snap.exists || (snap.data() && snap.data().status === 'closed')) {
+      showToast(`⚠️ 部屋【${code}】が見つかりません。番号を確認してください！`);
+      resetLocalOnlineRoomState();
+      return;
+    }
 
-      if (!snap || !snap.exists || snap.data().status === 'closed') {
-        showToast(`⚠️ 部屋【${code}】が見つかりません。番号を確認してください！`);
-        leaveOnlineRoom(true);
-        return;
-      }
+    const d = snap.data();
+    let seats = Array.isArray(d.seats) ? [...d.seats] : [
+      { id: d.hostId || 'host', name: d.hostName || 'ホスト', chips: d.hostChips || 100, role: 'host' }
+    ];
+    // 同一playerIdの再入室チェック（別タブ検証時はsuffix違いで別席として許容）
+    if (seats.length >= 4) {
+      showToast(`⚠️ 部屋【${code}】はすでに満員（4/4人）です！`);
+      resetLocalOnlineRoomState();
+      return;
+    }
+    const mySeat = {
+      id: myJoinId,
+      name: mySafeName,
+      chips: state.chips,
+      role: 'guest',
+      joinedAt: Date.now()
+    };
+    seats.push(mySeat);
 
-      const d = snap.data();
-      let seats = Array.isArray(d.seats) ? [...d.seats] : [
-        { id: d.hostId || 'host', name: d.hostName || 'ホスト', chips: d.hostChips || 100, role: 'host' }
-      ];
-      // 同一playerIdの再入室チェック（別タブ検証時はsuffix違いで別席として許容）
-      if (seats.length >= 4) {
-        showToast(`⚠️ 部屋【${code}】はすでに満員（4/4人）です！`);
-        leaveOnlineRoom(true);
-        return;
-      }
-      const mySeat = {
-        id: myJoinId,
-        name: mySafeName,
-        chips: state.chips,
-        role: 'guest',
-        joinedAt: Date.now()
-      };
-      seats.push(mySeat);
-      onlineRoomState.seats = seats;
+    const joinUpdate = {
+      isSystemDoc: true,
+      status: seats.length >= 4 ? 'full' : 'waiting',
+      guestId: myJoinId,
+      guestName: mySafeName,
+      guestChips: state.chips,
+      seats,
+      updatedAt: Date.now()
+    };
+    await withTimeout(ref.set(joinUpdate, { merge: true }), 7000, 'timeout');
 
-      const joinUpdate = {
-        isSystemDoc: true,
-        status: seats.length >= 4 ? 'full' : 'waiting',
-        guestId: myJoinId,
-        guestName: mySafeName,
-        guestChips: state.chips,
-        seats,
-        updatedAt: Date.now()
-      };
-      await ref.set(joinUpdate, { merge: true });
-      registerRoomToIndex(code, joinUpdate.status, d.hostName || 'ホスト', d.hostChips || 100, seats.length);
+    myRoomCode = code;
+    onlineRoomState = {
+      ...onlineRoomState,
+      active: true,
+      code,
+      role: 'guest',
+      mySeatId: myJoinId,
+      docId: 'MATCH_CASINO_ROOM_' + code,
+      hostId: d.hostId || '',
+      hostName: d.hostName || 'ホスト',
+      hostChips: d.hostChips != null ? d.hostChips : 100,
+      guestId: myJoinId,
+      guestName: mySafeName,
+      guestChips: state.chips,
+      seats,
+      status: joinUpdate.status,
+      activeGame: d.activeGame || '',
+      processedRoundId: '',
+      lastData: { ...d, ...joinUpdate }
+    };
 
-      document.getElementById('onlineRoomEntryView').style.display = 'none';
-      document.getElementById('onlineRoomActiveLobby').style.display = 'block';
-      document.getElementById('onlineRoleBadge').textContent = `🚪 ゲスト (${seats.length}P)`;
-      document.getElementById('myRoomCodeText').textContent = code;
-      renderOnlineLobbySeats();
+    registerRoomToIndex(code, joinUpdate.status, d.hostName || 'ホスト', d.hostChips || 100, seats.length);
 
-      onlineRoomState.unsub = ref.onSnapshot(s => {
+    document.getElementById('onlineRoomEntryView').style.display = 'none';
+    document.getElementById('onlineRoomActiveLobby').style.display = 'block';
+    document.getElementById('onlineRoleBadge').textContent = `🚪 ゲスト (${seats.length}P)`;
+    document.getElementById('myRoomCodeText').textContent = code;
+    renderOnlineLobbySeats();
+
+    onlineRoomState.unsub = ref.onSnapshot(
+      s => {
         if (s && s.exists) {
           handleOnlineRoomDocUpdate(s.data());
         }
-      });
+      },
+      err => {
+        console.warn('Guest room onSnapshot error:', err);
+      }
+    );
+
+    try {
+      if (onlineRoomState.bc) {
+        onlineRoomState.bc.postMessage({
+          code,
+          payload: {
+            ...(onlineRoomState.lastData || {}),
+            roomCode: code,
+            status: joinUpdate.status,
+            seats: onlineRoomState.seats,
+            updatedAt: Date.now()
+          }
+        });
+      }
     } catch (e) {}
+
+    playSE('win');
+    showToast(`🎉 部屋【${code}】に入室しました！`);
+  } catch (e) {
+    console.warn('joinOnlineRoom error:', e);
+    resetLocalOnlineRoomState();
+    showToast(formatFirestoreRoomError(e, `⚠️ 部屋【${code}】への入室に失敗しました`));
   }
-
-  try {
-    if (onlineRoomState.bc) {
-      onlineRoomState.bc.postMessage({
-        code,
-        payload: {
-          ...(onlineRoomState.lastData || {}),
-          roomCode: code,
-          status: 'waiting',
-          seats: onlineRoomState.seats,
-          updatedAt: Date.now()
-        }
-      });
-    }
-  } catch (e) {}
-
-  playSE('win');
-  showToast(`🎉 部屋【${code}】に入室しました！`);
 }
 
 async function leaveOnlineRoom(silent = false) {
@@ -5911,36 +6059,32 @@ async function leaveOnlineRoom(silent = false) {
     try { onlineRoomState.unsub(); } catch (e) {}
     onlineRoomState.unsub = null;
   }
-  if (db && code) {
+  const ref = getRoomDocRef(code);
+  if (ensureFirestoreDb() && code && ref) {
     try {
-      const ref = getRoomDocRef(code);
+      await ensureFirebaseAuth(5000);
       if (role === 'host') {
-        await ref.set({ isSystemDoc: true, status: 'closed', updatedAt: Date.now() }, { merge: true });
+        await withTimeout(ref.set({ isSystemDoc: true, status: 'closed', updatedAt: Date.now() }, { merge: true }), 5000, 'timeout');
         registerRoomToIndex(code, 'closed', onlineRoomState.hostName, state.chips, 0);
       } else {
-        const snap = await ref.get();
+        const snap = await withTimeout(ref.get(), 5000, 'timeout');
         if (snap && snap.exists) {
           const d = snap.data();
           const nextSeats = (Array.isArray(d.seats) ? d.seats : []).filter(s => s.id !== mySeatId);
-          await ref.set({
+          await withTimeout(ref.set({
             isSystemDoc: true,
             status: 'waiting',
             seats: nextSeats,
             updatedAt: Date.now()
-          }, { merge: true });
+          }, { merge: true }), 5000, 'timeout');
           registerRoomToIndex(code, 'waiting', d.hostName || 'ホスト', d.hostChips || 100, nextSeats.length);
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('leaveOnlineRoom error:', e);
+    }
   }
-  onlineRoomState.active = false;
-  onlineRoomState.code = '';
-  onlineRoomState.role = '';
-  onlineRoomState.mySeatId = '';
-  onlineRoomState.seats = [];
-  onlineRoomState.status = 'idle';
-  document.getElementById('onlineRoomEntryView').style.display = 'block';
-  document.getElementById('onlineRoomActiveLobby').style.display = 'none';
+  resetLocalOnlineRoomState();
   refreshOpenCasinoRooms();
   if (!silent) showToast('🚪 通信ルームから退室しました');
 }
@@ -5959,11 +6103,18 @@ async function pushOnlineRoomPatch(patch) {
   };
   onlineRoomState.lastData = merged;
 
-  if (db) {
+  const ref = getRoomDocRef(onlineRoomState.code);
+  if (ensureFirestoreDb() && ref) {
     try {
-      await getRoomDocRef(onlineRoomState.code).set(firestorePatch, { merge: true });
+      await ensureFirebaseAuth(5000);
+      await withTimeout(ref.set(firestorePatch, { merge: true }), 7000, 'timeout');
     } catch (e) {
       console.warn('Firestore room patch error:', e);
+      const now = Date.now();
+      if (now - lastRoomPatchErrorToastAt > 5000) {
+        lastRoomPatchErrorToastAt = now;
+        showToast(formatFirestoreRoomError(e, '⚠️ 通信ルームの同期に失敗しました'));
+      }
     }
   }
   try {
