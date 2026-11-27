@@ -4406,7 +4406,7 @@ function initFirebaseServices() {
   }
 }
 
-async function ensureFirebaseAuth(timeoutMs = 7000) {
+async function ensureFirebaseAuth(timeoutMs = 3000) {
   initFirebaseServices();
   if (!firebaseAuth) {
     cloudAuthState.error = 'auth-sdk-unavailable';
@@ -4417,6 +4417,9 @@ async function ensureFirebaseAuth(timeoutMs = 7000) {
     cloudAuthState.uid = firebaseAuth.currentUser.uid || '';
     cloudAuthState.error = '';
     return true;
+  }
+  if (cloudAuthState.error) {
+    return false;
   }
   if (!cloudAuthState.promise) {
     cloudAuthState.promise = withTimeout(
@@ -4432,7 +4435,7 @@ async function ensureFirebaseAuth(timeoutMs = 7000) {
     }).catch(e => {
       cloudAuthState.ready = false;
       cloudAuthState.error = (e && (e.code || e.message)) || 'auth-failed';
-      console.warn('Firebase anonymous auth error:', e);
+      console.warn('Anonymous auth note (can still operate if rules allow public):', e);
       return false;
     }).finally(() => {
       cloudAuthState.promise = null;
@@ -4443,7 +4446,7 @@ async function ensureFirebaseAuth(timeoutMs = 7000) {
 
 initFirebaseServices();
 if (firebaseAuth) {
-  ensureFirebaseAuth(7000);
+  ensureFirebaseAuth(3000);
 }
 
 let cloudRankCache = [];
@@ -5812,11 +5815,7 @@ async function createOnlineRoom() {
     return '';
   }
 
-  const authOk = await ensureFirebaseAuth(7000);
-  if (!authOk) {
-    showToast(formatFirestoreRoomError({ code: cloudAuthState.error || 'auth-failed' }, '⚠️ 部屋の作成に失敗しました'));
-    return '';
-  }
+  await ensureFirebaseAuth(2500);
 
   const code = String(Math.floor(1000 + Math.random() * 9000));
   const ref = getRoomDocRef(code);
@@ -5930,11 +5929,7 @@ async function joinOnlineRoom(forcedCode) {
     return;
   }
 
-  const authOk = await ensureFirebaseAuth(7000);
-  if (!authOk) {
-    showToast(formatFirestoreRoomError({ code: cloudAuthState.error || 'auth-failed' }, `⚠️ 部屋【${code}】への入室に失敗しました`));
-    return;
-  }
+  await ensureFirebaseAuth(2500);
 
   const ref = getRoomDocRef(code);
   if (!ref) {
